@@ -58,7 +58,13 @@
 
 ## 3. 세부 문서를 만들 조건
 
-아래 문서는 코드에서 해당 패턴이 실제로 보일 때만 만든다.
+기본 원칙:
+
+- 아래 예시 문서들은 코드에서 해당 패턴이 실제로 보일 때만 만든다.
+- 아래 목록에 없는 패턴이라도, 기존 코드베이스에서 **반복적으로 사용되는 새로운 구현 패턴**이 확인되면 그 패턴에 맞는 새 전략 문서를 추가로 만든다.
+- 즉, 문서 생성 기준은 **플레이북 예시 목록**이 아니라 **실제 코드에서 관찰된 구현 전략**이다.
+
+예시 문서 목록:
 
 - `app/strategies/api-convention.md`
 - `app/strategies/rest-design-convention.md`
@@ -75,6 +81,13 @@
 - `storage/strategies/querydsl-convention.md`
 - `external/strategies/api-client-http-client.md`
 - `external/strategies/api-client-logging.md`
+
+새 패턴 문서화 규칙:
+
+- 새 문서 이름은 해당 패턴의 책임이 드러나게 짓는다.
+- README에는 예시 문서와 새로 발견한 문서를 함께 연결한다.
+- 단발성 구현이나 한두 클래스에만 우연히 보이는 패턴은 새 문서로 만들지 않는다.
+- 여러 클래스/모듈에서 반복되고, 팀의 구현 전략으로 볼 수 있을 때만 새 문서를 만든다.
 
 ## 4. 작성 원칙
 
