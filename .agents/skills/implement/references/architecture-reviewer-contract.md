@@ -17,9 +17,9 @@
 [추가 컨텍스트]: 이번 마일스톤에서 A가 집중한 설계 결정 요약
 {A의 "핵심 설계 결정" 섹션 그대로}
 
-[체크포인트 파일]: .claude/checkpoints/arch-reviewer-{run_id}-M{n}-r{iter}.md
+[체크포인트 파일]: .agents/checkpoints/arch-reviewer-{run_id}-M{n}-r{iter}.md
 
-[출력 규격]: 이 문서(.claude/skills/implement/references/architecture-reviewer-contract.md) — Output 섹션 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement/references/architecture-reviewer-contract.md) — Output 섹션 그대로.
 ```
 
 체크포인트 재호출 시 아래 필드가 추가된다:

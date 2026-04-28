@@ -24,9 +24,9 @@
 
 [기술설계문서]: {TDD 절대 경로 — design-writer가 TDD_SKIPPED를 반환한 경우 이 항목 생략}. 코드 작성 전 반드시 읽고 설계 의도에 따라 구현.
 
-[체크포인트 파일]: .claude/checkpoints/code-writer-{run_id}-M{n}.md
+[체크포인트 파일]: .agents/checkpoints/code-writer-{run_id}-M{n}.md
 
-[출력 규격]: 이 문서(.claude/skills/implement/references/code-writer-contract.md) — Output > Case A 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement/references/code-writer-contract.md) — Output > Case A 그대로.
 ```
 
 ### Case B — 위반 수정
@@ -41,9 +41,9 @@
   - 위반 항목 외 코드는 변경하지 말 것.
   - 모든 수정 후 컴파일 성공 확인.
 
-[체크포인트 파일]: .claude/checkpoints/code-writer-{run_id}-M{n}.md
+[체크포인트 파일]: .agents/checkpoints/code-writer-{run_id}-M{n}.md
 
-[출력 규격]: 이 문서(.claude/skills/implement/references/code-writer-contract.md) — Output > Case B 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement/references/code-writer-contract.md) — Output > Case B 그대로.
 ```
 
 체크포인트 재호출 시 Case A·Case B 프롬프트에 아래 필드가 추가된다:
