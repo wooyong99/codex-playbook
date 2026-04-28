@@ -1,0 +1,4 @@
+interface:
+  display_name: "Setup Project Context"
+  short_description: "Fill project-specific placeholders"
+  default_prompt: "Use $setup-project-context to fill project-specific placeholders in AGENTS.md and docs README files."
