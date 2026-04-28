@@ -33,6 +33,11 @@
 - 성공 기준을 먼저 정의한다.
 - 기준이 충족될 때까지 검증을 반복한다.
 
+### 5) 문서 맵 일관성을 유지하라
+
+- `docs/backend` 하위에 디렉토리가 추가·삭제·개편되면 `AGENTS.md`의 Backend 문서 맵도 함께 갱신한다.
+- 고수준 문서 맵은 가능한 한 각 하위 디렉토리의 `README.md`를 단일 진입점으로 참조한다.
+
 ## 프로젝트 구조
 
 ```text
@@ -53,19 +58,9 @@
 ### Backend
 
 - [Getting Started](/Users/jeong-uyong/work/codex-playbook/docs/backend/getting-started.md)
-- [아키텍처 개요 및 규칙](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/documentation-convention.md)
-- [App Layer 가이드](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/app/app-layer-guidelines.md)
-- [Application Layer 가이드](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/application/application-layer-guidelines.md)
-- [Domain Layer 가이드](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/domain/domain-layer-guidelines.md)
-- [Storage Layer 가이드](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/storage/storage-layer-guidelines.md)
-- [External Layer 가이드](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/external/external-layer-guidelines.md)
-- [DDL 관리](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/storage/ddl-management.md)
-- [정책: 보안](/Users/jeong-uyong/work/codex-playbook/docs/backend/policies/security.md)
-- [정책: 로깅](/Users/jeong-uyong/work/codex-playbook/docs/backend/policies/logging.md)
-- [정책: 트랜잭션/정합성](/Users/jeong-uyong/work/codex-playbook/docs/backend/policies/transaction-and-consistency.md)
-- [정책: 동시성/성능](/Users/jeong-uyong/work/codex-playbook/docs/backend/policies/concurrency-and-performance.md)
+- [아키텍처 문서 진입점](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/documentation-convention.md)
+- [정책 문서 모음](/Users/jeong-uyong/work/codex-playbook/docs/backend/policies/README.md)
 - [기술설계 문서 가이드](/Users/jeong-uyong/work/codex-playbook/docs/backend/design/README.md)
-- [기술설계 샘플](/Users/jeong-uyong/work/codex-playbook/docs/backend/design/sample-tdd.md)
 
 ### Frontend
 
