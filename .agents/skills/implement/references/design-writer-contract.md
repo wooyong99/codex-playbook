@@ -20,7 +20,7 @@
   - 관련 레이어: {app/application/domain/storage 중 해당}
   - 관련 도메인: {도메인명}
 
-[체크포인트 파일]: .agents/checkpoints/design-writer-{run_id}-M{n}.md
+[체크포인트 파일]: .agents/checkpoints/{run_id}/design-writer-M{n}.md
 
 [출력 규격]: 이 문서(.agents/skills/implement/references/design-writer-contract.md) — Output 섹션 그대로.
 ```

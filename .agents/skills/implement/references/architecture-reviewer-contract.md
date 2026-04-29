@@ -19,7 +19,7 @@
 [추가 컨텍스트]: 이번 마일스톤에서 A가 집중한 설계 결정 요약
 {A의 `design_decisions` 그대로}
 
-[체크포인트 파일]: .agents/checkpoints/arch-reviewer-{run_id}-M{n}-r{iter}.md
+[체크포인트 파일]: .agents/checkpoints/{run_id}/arch-reviewer-M{n}-r{iter}.md
 
 [출력 규격]: 이 문서(.agents/skills/implement/references/architecture-reviewer-contract.md) — Output 섹션 그대로.
 ```
