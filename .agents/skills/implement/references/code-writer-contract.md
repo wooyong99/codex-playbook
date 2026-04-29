@@ -17,8 +17,8 @@
 {구체적 범위·목표}
 
 [프로젝트 컨텍스트]:
-  - Kotlin + Spring Boot 멀티모듈, 멀티테넌트 e-커머스 플랫폼
-  - 의존 방향: app → application → domain ← infra
+  - {실제 저장소 문서에서 추출한 스택/모듈 구조}
+  - {실제 저장소 문서에서 추출한 의존 방향/레이어 규칙}
   - 관련 레이어: {app/application/domain/storage 중 해당}
   - 관련 도메인: {도메인명}
 
@@ -61,42 +61,66 @@
 
 ### Case A: 신규 구현
 
+````text
+IMPLEMENTATION_COMPLETED
+```yaml
+changed_files:
+  - path: <절대 경로 1>
+    summary: <1~2줄 설명>
+  - path: <절대 경로 2>
+    summary: <1~2줄 설명>
+design_decisions:
+  - <결정 1>
+  - <결정 2>
+verification:
+  compile:
+    command: <실행 명령어>
+    exit_code: <0 또는 비0>
+    result: success | failure | not_run
+    details: <실패 시 에러 또는 성공 요약>
+  tests:
+    command: <실행 명령어>
+    exit_code: <0 또는 비0>
+    result: success | failure | not_run
+    details: <통과 수/총 수 또는 실패 테스트명>
+uncertainties:
+  - <있다면 기재. 없으면 "없음">
 ```
-## 완료 요약
+````
 
-### 변경 파일
-- <절대 경로 1>: <1~2줄 설명>
-- <절대 경로 2>: <1~2줄 설명>
-...
-
-### 핵심 설계 결정
-- <결정 1>
-- <결정 2>
-
-### 빌드/테스트 결과
-- 컴파일: 성공 / 실패 (실패 시 에러)
-- 테스트: <통과 수>/<총 수> (실패가 있으면 파일명·테스트명)
-
-### 불확실한 부분
-- <있다면 기재. 없으면 "없음">
-```
+설명 문장은 추가하지 않는다. 메인 오케스트레이터가 이 YAML을 그대로 파싱해 다음 단계 입력으로 재사용한다.
 
 ### Case B: 위반 수정
 
+````text
+FIX_APPLIED
+```yaml
+changed_files:
+  - path: <절대 경로>
+    summary: <이번 수정으로 바뀐 내용>
+applied:
+  - file: <절대 경로>
+    rule: <문서명:항목>
+    result: applied
+failed:
+  - file: <절대 경로>
+    rule: <문서명:항목>
+    reason: <실패 이유>
+verification:
+  compile:
+    command: <실행 명령어>
+    exit_code: <0 또는 비0>
+    result: success | failure | not_run
+    details: <실패 시 에러 또는 성공 요약>
+  tests:
+    command: <실행 명령어 또는 "not_run">
+    exit_code: <0 또는 비0>
+    result: success | failure | not_run
+    details: <이유 또는 요약>
 ```
-## 수정 적용 결과
+````
 
-### 적용 성공
-- <file, rule>: 적용됨
-- ...
-
-### 적용 실패
-- <file, rule>: 실패 이유
-- ... (없으면 "없음")
-
-### 빌드 결과
-- 컴파일: 성공 / 실패 (실패 시 에러)
-```
+`failed` 가 없으면 빈 배열 `[]` 로 반환한다.
 
 ### Case C: 컨텍스트 체크포인트
 
@@ -105,3 +129,5 @@
 ```
 CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 ```
+
+체크포인트는 이 계약에서 **유일하게 보장되는 복구 메커니즘** 이다. `compact` 또는 `/compact` 명령은 런타임이 실제 제공될 때만 선택적으로 사용할 수 있으며, 사용하지 못한 경우에도 체크포인트 저장과 위 신호 반환은 반드시 수행한다.

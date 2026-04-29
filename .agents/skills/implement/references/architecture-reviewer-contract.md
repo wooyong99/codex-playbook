@@ -14,13 +14,17 @@
 [검토 대상 파일]:
 {A가 반환한 절대 경로 목록}
 
+[기술설계문서]: {D가 반환한 TDD 절대 경로. 없으면 생략}
+
 [추가 컨텍스트]: 이번 마일스톤에서 A가 집중한 설계 결정 요약
-{A의 "핵심 설계 결정" 섹션 그대로}
+{A의 `design_decisions` 그대로}
 
 [체크포인트 파일]: .agents/checkpoints/arch-reviewer-{run_id}-M{n}-r{iter}.md
 
 [출력 규격]: 이 문서(.agents/skills/implement/references/architecture-reviewer-contract.md) — Output 섹션 그대로.
 ```
+
+`[기술설계문서]` 가 전달된 경우, 검토 범위는 `docs/backend/architecture/*`, `docs/backend/policies/*` 뿐 아니라 **해당 마일스톤 TDD의 명시 결정 사항 준수 여부** 까지 포함한다. 단, TDD에 없는 개인적 선호나 대안 제안은 여전히 금지한다.
 
 체크포인트 재호출 시 아래 필드가 추가된다:
 
@@ -72,6 +76,8 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 ```
 
 이후 완료된 파일 수만큼의 정상 출력 포맷을 작성한다.
+
+체크포인트는 이 계약에서 **유일하게 보장되는 복구 메커니즘** 이다. `compact` 또는 `/compact` 명령은 런타임이 실제 제공될 때만 선택적으로 사용할 수 있으며, 사용하지 못한 경우에도 체크포인트 저장과 위 신호 반환은 반드시 수행한다.
 
 ### 절대 출력하지 말 것
 
