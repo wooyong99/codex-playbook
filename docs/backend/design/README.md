@@ -7,7 +7,7 @@
 - [tdd-writing-guide](tdd-writing-guide.md)  
   작성 시점 기준, 파일명 규칙, 문서 헤더, 표준 섹션 골격
 - [sample-tdd](sample-tdd.md)  
-  가상의 "상품 위시리스트" 기능 설계 예시
+  테넌트 온보딩 기술설계문서 예시
 
 ## 운영 원칙
 
