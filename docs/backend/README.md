@@ -32,7 +32,7 @@ docs/backend/
 | 시작하기 | [getting-started.md](getting-started.md) | 기술 스택, 로컬 실행, 프로필 |
 | 아키텍처 | [architecture/README.md](architecture/README.md) | 백엔드 아키텍처 단위, 의존 경계, 구현 전략 |
 | 정책 | [policies/README.md](policies/README.md) | 모든 레이어에 걸쳐 적용되는 기술 정책 |
-| 설계 문서 | [design/README.md](design/README.md) | 기술설계문서 작성 규칙과 예시 |
+| 설계 문서 | [design/README.md](design/README.md) | 기술설계문서 목록과 예시 |
 
 ---
 

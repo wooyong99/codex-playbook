@@ -10,7 +10,7 @@
 | Getting Started | `docs/backend/getting-started.md` | 로컬 실행, 빌드, 테스트, 프로필, 의존 서비스 |
 | Architecture | `docs/backend/architecture/README.md` | 실제 아키텍처 단위 맵, 단위별 guideline 링크 |
 | Policies | `docs/backend/policies/README.md` | 전역 정책 목록과 링크 |
-| Design | `docs/backend/design/README.md` | 기술설계문서 목록과 작성 가이드 링크 |
+| Design | `docs/backend/design/README.md` | 기술설계문서 목록과 운영 원칙 |
 
 하위 영역의 세부 문서 목록은 가장 가까운 `README.md`가 소유한다. `AGENTS.md`는 최상위 `docs/backend/README.md`만 참조한다.
 

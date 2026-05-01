@@ -21,7 +21,7 @@ description: Analyze an existing backend codebase, infer its real modules, archi
 - `docs/backend/getting-started.md`: 코드에서 확인한 빌드·실행·테스트·프로필 정보
 - `docs/backend/architecture/**`: 실제 코드 단위, 책임, 의존 경계, 구현 전략
 - `docs/backend/policies/**`: 여러 단위가 공통으로 따라야 하는 전역 정책과 금지 규칙
-- `docs/backend/design/**`: 기술설계문서 가이드와 요청된 설계 문서. 기존 코드만 보고 임의의 신규 TDD를 만들지 않는다.
+- `docs/backend/design/**`: 기술설계문서 목록과 요청된 설계 문서. 작성 템플릿은 `references/backend-doc-templates.md`가 소유하며, 기존 코드만 보고 임의의 신규 TDD를 만들지 않는다.
 
 프론트엔드, PRD, 구현 코드 변경은 이 스킬의 기본 범위가 아니다.
 

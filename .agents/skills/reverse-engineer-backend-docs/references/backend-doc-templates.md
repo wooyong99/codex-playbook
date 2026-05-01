@@ -45,7 +45,7 @@
 | 시작하기 | [getting-started.md](getting-started.md) | 기술 스택, 로컬 실행, 프로필 |
 | 아키텍처 | [architecture/README.md](architecture/README.md) | 백엔드 아키텍처 단위, 의존 경계, 구현 전략 |
 | 정책 | [policies/README.md](policies/README.md) | 모든 레이어에 걸쳐 적용되는 기술 정책 |
-| 설계 문서 | [design/README.md](design/README.md) | 기술설계문서 작성 규칙과 예시 |
+| 설계 문서 | [design/README.md](design/README.md) | 기술설계문서 목록과 예시 |
 
 ## 문서 경계
 
@@ -310,27 +310,196 @@
 - `{저장소 상대 경로}` - {역할 설명}
 ```
 
-## Design Note
+## Design README
 
-기존 코드의 설계 의도 문서화를 사용자가 요청한 경우에만 `docs/backend/design` 하위에 작성한다. 새 기능 구현 전 TDD 작성은 별도 TDD 작성 스킬의 책임이다.
+`docs/backend/design/README.md`는 실제 기술설계문서(TDD) 목록만 소유한다. TDD 작성 규칙 원문은 이 템플릿 문서가 소유하므로 `docs/backend/design` 아래 별도 작성 가이드 파일을 생성하지 않는다.
 
 ```md
-# {Feature/System} Design Note
+# Design Documents (TDD)
 
-## 배경
+기능·서브시스템의 기술설계문서 모음.
+
+## 문서 목록
+
+- [{tdd-file}](./{tdd-file}.md): {언제 읽는지}
+
+## 운영 원칙
+
+- TDD 파일 추가·삭제·이름 변경 시 이 README의 문서 목록을 함께 갱신한다.
+- 상위 문서(예: `docs/backend/README.md`)는 개별 설계 파일이 아닌 이 README를 참조한다.
+- 이 디렉토리는 실제 설계 문서만 소유한다. 작성 가이드 파일을 별도로 만들지 않는다.
+```
+
+## TDD Document
+
+기능·서브시스템의 기술 설계 문서(Technical Design Document)는 아키텍처 판단 근거, 계층 분리, 트랜잭션 경계, 예외·실패 처리, 동시성·정합성, 확장 가능성 등 코드만으로는 읽히지 않는 설계 의도를 담는다.
+
+작성 시점:
+
+- 여러 도메인·모듈에 걸친 새 기능을 설계할 때
+- 기존 기능의 중대한 구조 변경이 필요할 때
+- 동시성·정합성·트랜잭션 경계에 비자명한 선택이 필요한 때
+- 향후 유지보수·확장 시 결정의 맥락을 남겨야 할 때
+
+단일 CRUD·단순 UseCase 추가에는 작성하지 않는다. 새 기능 구현 전 TDD 작성은 별도 TDD 작성 스킬의 책임이며, `$reverse-engineer-backend-docs`는 기존 코드의 설계 의도 문서화를 사용자가 요청한 경우에만 `docs/backend/design` 하위 문서를 작성한다.
+
+파일명 규칙:
+
+```text
+tdd-<feature-slug>.md
+```
+
+예: `tdd-product-wishlist.md`, `tdd-payment-settlement.md`
+
+````md
+# {Feature/System} 기술설계문서 (TDD)
+
+> 작성일: YYYY-MM-DD
+> 상태: Draft | Reviewing | Approved | Superseded
+> 대상 모듈: {module list}
+
+## 1. 설계 배경 및 목적
+
+### 1.1 배경
 
 - {코드에서 확인한 문제 또는 설계 목적}
 
-## 현재 구조
+### 1.2 설계 목표
 
-- `{코드 위치}` - {역할}
+1. {목표 1}
 
-## 주요 결정
+### 1.3 설계 비목표
 
-- {결정}: {코드 근거}
+- {의도적으로 다루지 않는 범위}
 
-## 관련 문서
+### 1.4 기술적 제약사항
 
-- [architecture/{actual-unit}](../architecture/{actual-unit}/{actual-unit}-guidelines.md)
-- [policies/{policy}](../policies/{policy}.md)
+- {프레임워크, 모듈, 운영, 데이터 제약}
+
+## 2. 현행 시스템 분석
+
+### 2.1 관련 도메인 구조
+
+```text
+{ASCII 다이어그램}
 ```
+
+### 2.2 현재 처리 흐름
+
+1. {현재 흐름}
+
+### 2.3 현행 스키마 분석
+
+- `{schema/table}` - {역할 또는 한계}
+
+## 3. 아키텍처 설계
+
+### 3.1 계층별 책임 분배
+
+| 계층 | 구성 요소 | 책임 | 설계 근거 |
+|------|-----------|------|-----------|
+| {layer} | `{component}` | {responsibility} | {reason} |
+
+### 3.2 처리 흐름
+
+1. {처리 단계 또는 의사코드}
+
+### 3.3 설계 대안 분석
+
+| 대안 | 장점 | 단점 | 채택 여부 | 사유 |
+|------|------|------|-----------|------|
+| {alternative} | {pros} | {cons} | {selected?} | {reason} |
+
+## 4. 도메인 모델 설계
+
+### 4.1 애그리거트 경계
+
+- {aggregate} - {boundary reason}
+
+### 4.2 도메인 모델 상세
+
+- {aggregate/entity}: 역할, 불변식, 주요 행위, 상태 전이
+
+### 4.3 데이터 스키마 설계
+
+```sql
+-- {DDL snippet}
+```
+
+### 4.4 데이터 변환 흐름
+
+```text
+HTTP -> DTO -> Command -> Domain -> Entity -> DB
+```
+
+## 5. 트랜잭션 설계
+
+### 5.1 트랜잭션 경계
+
+| 연산 | 시작점 | 범위 | 격리 수준 | 사유 |
+|------|--------|------|-----------|------|
+| {operation} | `{entry}` | {scope} | {isolation} | {reason} |
+
+### 5.2 정합성 보장 전략
+
+- {consistency strategy}
+
+### 5.3 이벤트 처리
+
+- {event strategy}
+
+## 6. 예외 및 실패 처리
+
+### 6.1 예외 분류
+
+| 예외 유형 | ErrorCode | 발생 조건 | HTTP 상태 | 사용자 메시지 |
+|-----------|-----------|-----------|-----------|---------------|
+| {type} | `{code}` | {condition} | {status} | {message} |
+
+### 6.2 실패 시나리오 및 복구 전략
+
+| 시나리오 | 발생 가능성 | 영향 | 복구 |
+|----------|-------------|------|------|
+| {scenario} | {probability} | {impact} | {recovery} |
+
+### 6.3 멱등성 보장
+
+- {idempotency strategy}
+
+## 7. 동시성 및 성능
+
+### 7.1 동시성 제어
+
+- {경합 지점}: {제어 방식}
+
+### 7.2 성능 고려사항
+
+- {performance consideration}
+
+### 7.3 확장 가능성
+
+- 열어둔 포인트: {extension point}
+- 의도적으로 닫아둔 제약: {closed constraint}
+
+## 8. 변경 파일 목록
+
+| 파일 경로 | 모듈 | 변경 유형 | 설명 |
+|-----------|------|-----------|------|
+| `{path}` | {module} | 신규/수정 | {description} |
+
+## 9. 검증 계획
+
+| 시나리오 | 테스트 유형 | 검증 내용 | 예상 결과 |
+|----------|-------------|-----------|-----------|
+| {scenario} | 단위/통합 | {verification} | {expected} |
+
+## 부록
+
+- {요청/응답 예시, 추가 다이어그램, 외부 인용 등}
+````
+
+검토 에이전트의 취급:
+
+- `architecture-reviewer`는 `docs/backend/design`을 Source of Truth에서 제외한다.
+- 설계 의도는 참고하되 준수 규칙으로 강제하지 않는다.
+- 강제할 규칙은 `architecture/*` 또는 `policies/*`에 규정으로 승격한다.
