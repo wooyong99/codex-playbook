@@ -21,7 +21,7 @@
 
 - [ ] `.agents/skills/setup-project-context`가 현재 프로젝트에도 맞는지 확인
 - [ ] `.agents/skills/implement`의 계약 문서와 지시가 현재 프로젝트 규칙에 맞는지 확인
-- [ ] 기존 코드베이스가 있다면 `reverse-engineer-strategies-v1` 적용 여부 결정
+- [ ] 기존 코드베이스가 있다면 `reverse-engineer-strategies` 적용 여부 결정
 - [ ] 프로젝트에 필요 없는 스킬은 제거 또는 수정
 
 ## 서브에이전트

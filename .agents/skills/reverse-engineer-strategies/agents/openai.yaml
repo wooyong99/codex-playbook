@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reverse Engineer Strategies"
+  short_description: "Generate strategy docs from backend code"
+  default_prompt: "Use $reverse-engineer-strategies to analyze an existing backend codebase and generate docs/backend/architecture/*/strategies documents."

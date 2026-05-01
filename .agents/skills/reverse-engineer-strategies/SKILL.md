@@ -1,9 +1,9 @@
 ---
-name: reverse-engineer-strategies-v1
+name: reverse-engineer-strategies
 description: Analyze an existing backend codebase, infer the real implementation strategies used in each architecture layer, and generate `docs/backend/architecture/*/strategies/` documents that reflect the codebase's actual conventions. Use this when applying codex-playbook to a legacy Kotlin + Spring Boot backend, when `strategies/` folders are empty or generic, or when a user asks to reverse-engineer architecture strategy documents from existing code.
 ---
 
-# Reverse Engineer Strategies V1
+# Reverse Engineer Strategies
 
 기존 백엔드 코드베이스를 읽어 각 아키텍처 레이어의 실제 구현 전략을 파악하고, `docs/backend/architecture/*/strategies/` 하위 문서를 생성하거나 갱신한다.
 

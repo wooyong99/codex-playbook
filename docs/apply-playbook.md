@@ -42,7 +42,7 @@
 3. `docs/backend/policies/*`
 4. `docs/backend/design/*`
 
-기존 코드베이스가 있다면 `reverse-engineer-strategies-v1` 같은 스킬로 `strategies/` 문서를 실제 코드에 맞게 채운다.
+기존 코드베이스가 있다면 `reverse-engineer-strategies` 같은 스킬로 `strategies/` 문서를 실제 코드에 맞게 채운다.
 
 ## 5. 프론트엔드 문서 적용 순서
 
