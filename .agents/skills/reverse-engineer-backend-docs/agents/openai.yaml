@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reverse Engineer Backend Docs"
+  short_description: "Mirror backend docs to code"
+  default_prompt: "Use $reverse-engineer-backend-docs to analyze this backend codebase and make docs/backend reflect the actual modules, policies, architecture, and strategies."

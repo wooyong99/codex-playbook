@@ -36,6 +36,20 @@ docs/backend/
 
 ---
 
+## 문서 경계
+
+같은 개념이 정책, 구현 아키텍처, 구현 전략으로 나뉘면 문서 위치를 분리하고 중복 서술하지 않는다.
+
+| 구분 | 위치 | 소유 내용 |
+|------|------|-----------|
+| 정책 | [policies/README.md](policies/README.md) | 모든 아키텍처 단위가 지켜야 하는 원칙, 금지 규칙, 민감 정보·정합성·운영 기준 |
+| 구현 아키텍처 | [architecture/README.md](architecture/README.md) | 실제 코드 단위, 책임, 컴포넌트, 의존 경계, 정책을 만족하는 구조 |
+| 구현 전략 | `architecture/{actual-unit}/strategies/` | 특정 단위 안에서 반복되는 구현 방식, 패턴, 체크리스트, 코드 근거 |
+
+정책 원문은 `policies`가 소유한다. 아키텍처와 전략 문서는 정책을 재기술하지 않고 링크한 뒤, 실제 코드 구조와 구현 방식만 설명한다.
+
+---
+
 ## 아키텍처
 
 아키텍처 문서의 단일 진입점은 [architecture/README.md](architecture/README.md)다. 세부 아키텍처 단위, 전략 문서, migration 상태는 해당 README가 소유한다.

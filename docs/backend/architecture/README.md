@@ -6,7 +6,7 @@
 
 ## 현재 상태
 
-현재 문서 구조는 codex-playbook의 개념 레이어(`app`, `application`, `domain`, `storage`, `external`)를 기준으로 구성되어 있다. 실제 코드베이스 기반 문서로 전환할 때는 `$reverse-engineer-strategies`의 `migrate` 모드를 사용해 실제 모듈·패키지·책임 단위 중심 구조로 교체한다.
+현재 문서 구조는 codex-playbook의 개념 레이어(`app`, `application`, `domain`, `storage`, `external`)를 기준으로 구성되어 있다. 실제 코드베이스 기반 문서로 전환할 때는 `$reverse-engineer-backend-docs`의 `migrate` 모드를 사용해 `docs/backend` 지식 시스템을 실제 모듈·패키지·책임 단위 중심 구조로 교체한다.
 
 ## 문서 맵
 
@@ -17,6 +17,12 @@
 | 도메인 계층 | [domain/domain-layer-guidelines.md](domain/domain-layer-guidelines.md) | Entity, Value Object, 도메인 규칙 |
 | 저장소 계층 | [storage/storage-layer-guidelines.md](storage/storage-layer-guidelines.md) | DB 어댑터, Repository, DDL |
 | 외부 연동 계층 | [external/external-layer-guidelines.md](external/external-layer-guidelines.md) | 외부 API 어댑터, ApiClient |
+
+## 정책과의 경계
+
+전역 정책은 [../policies/README.md](../policies/README.md)가 소유한다. 이 디렉토리의 문서는 정책 원문을 재기술하지 않고, 실제 코드 단위가 해당 정책을 어떻게 만족하는지 코드 위치·책임·의존 경계 중심으로 설명한다.
+
+반복 구현 방식은 각 단위의 `strategies/` 하위 문서가 소유한다.
 
 ## Strategies
 
@@ -30,7 +36,7 @@
 
 ## Migration 방침
 
-`$reverse-engineer-strategies`를 사용할 때는 먼저 `inspect` 수준의 사전 판단을 수행한다.
+`$reverse-engineer-backend-docs`를 사용할 때는 먼저 `inspect` 수준의 사전 판단을 수행한다.
 
 - 기존 구조가 실제 코드 구조와 충돌하지 않으면 `merge`로 보강한다.
 - 기존 구조가 플레이북 개념 레이어 중심이고 실제 코드 구조와 충돌하면 `migrate`로 전환한다.
