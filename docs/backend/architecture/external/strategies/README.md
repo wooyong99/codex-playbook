@@ -1,6 +1,6 @@
 # External 계층 ApiClient 구현 전략
 
-[external-layer-guidelines.md](../external-layer-guidelines.md)의 보편 원칙(R1–R4) 위에서,
+[external-guidelines.md](../external-guidelines.md)의 보편 원칙(R1–R4) 위에서,
 이 프로젝트가 선택한 External 계층 ApiClient 세부 구현 전략을 정의한다.
 
 ---
@@ -23,15 +23,15 @@
 | 외부 API 호출 로깅 | `{Provider}ApiClient` | [api-client-logging.md](api-client-logging.md) |
 
 **Post-Work Verification 체크리스트**:
-- [../adapter-convention.md](../adapter-convention.md)
-- [../api-client-convention.md](../api-client-convention.md)
+- [adapter-convention.md](adapter-convention.md)
+- [api-client-convention.md](api-client-convention.md)
 - [api-client-http-client.md](api-client-http-client.md)
 - [api-client-logging.md](api-client-logging.md)
-- [../dto-convention.md](../dto-convention.md)
-- [../exception-convention.md](../exception-convention.md)
-- [../errorcode-convention.md](../errorcode-convention.md)
-- [../config-convention.md](../config-convention.md)
-- [../mock-adapter-convention.md](../mock-adapter-convention.md)
+- [dto-convention.md](dto-convention.md)
+- [exception-convention.md](exception-convention.md)
+- [errorcode-convention.md](errorcode-convention.md)
+- [config-convention.md](config-convention.md)
+- [mock-adapter-convention.md](mock-adapter-convention.md)
 
 ---
 
@@ -66,13 +66,13 @@ ApiClient 구현 시 관여하는 역할 정의.
 | 외부 API 호출 로깅 | `{Provider}ApiClient` | [api-client-logging.md](api-client-logging.md) |
 
 **Post-Work Verification 체크리스트**:
-- [../adapter-convention.md](../adapter-convention.md)
-- [../api-client-convention.md](../api-client-convention.md)
+- [adapter-convention.md](adapter-convention.md)
+- [api-client-convention.md](api-client-convention.md)
 - [api-client-http-client.md](api-client-http-client.md)
 - [api-client-logging.md](api-client-logging.md)
-- [../dto-convention.md](../dto-convention.md)
-- [../exception-convention.md](../exception-convention.md)
-- [../errorcode-convention.md](../errorcode-convention.md)
-- [../config-convention.md](../config-convention.md)
-- [../mock-adapter-convention.md](../mock-adapter-convention.md)
+- [dto-convention.md](dto-convention.md)
+- [exception-convention.md](exception-convention.md)
+- [errorcode-convention.md](errorcode-convention.md)
+- [config-convention.md](config-convention.md)
+- [mock-adapter-convention.md](mock-adapter-convention.md)
 ```

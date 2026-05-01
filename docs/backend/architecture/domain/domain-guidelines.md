@@ -1,4 +1,4 @@
-# Domain Layer Guidelines
+# Domain Guidelines
 
 ## Domain 계층의 본질적 책임
 

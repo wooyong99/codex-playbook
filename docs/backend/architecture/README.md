@@ -12,15 +12,15 @@
 
 | 영역 | 진입점 | 설명 |
 |------|--------|------|
-| 표현 계층 | [app/app-layer-guidelines.md](app/app-layer-guidelines.md) | Controller, DTO, 예외 처리 |
-| 응용 계층 | [application/application-layer-guidelines.md](application/application-layer-guidelines.md) | UseCase, Flow, Validator |
-| 도메인 계층 | [domain/domain-layer-guidelines.md](domain/domain-layer-guidelines.md) | Entity, Value Object, 도메인 규칙 |
-| 저장소 계층 | [storage/storage-layer-guidelines.md](storage/storage-layer-guidelines.md) | DB 어댑터, Repository, DDL |
-| 외부 연동 계층 | [external/external-layer-guidelines.md](external/external-layer-guidelines.md) | 외부 API 어댑터, ApiClient |
+| 표현 계층 | [app/app-guidelines.md](app/app-guidelines.md) | Controller, DTO, 예외 처리 |
+| 응용 계층 | [application/application-guidelines.md](application/application-guidelines.md) | UseCase, Flow, Validator |
+| 도메인 계층 | [domain/domain-guidelines.md](domain/domain-guidelines.md) | Entity, Value Object, 도메인 규칙 |
+| 저장소 계층 | [storage/storage-guidelines.md](storage/storage-guidelines.md) | DB 어댑터, Repository, DDL |
+| 외부 연동 계층 | [external/external-guidelines.md](external/external-guidelines.md) | 외부 API 어댑터, ApiClient |
 
 ## 정책과의 경계
 
-전역 정책은 [../policies/README.md](../policies/README.md)가 소유한다. 이 디렉토리의 문서는 정책 원문을 재기술하지 않고, 실제 코드 단위가 해당 정책을 어떻게 만족하는지 코드 위치·책임·의존 경계 중심으로 설명한다.
+전역 정책은 [policies/README.md](../policies/README.md)가 소유한다. 이 디렉토리의 문서는 정책 원문을 재기술하지 않고, 실제 코드 단위가 해당 정책을 어떻게 만족하는지 코드 위치·책임·의존 경계 중심으로 설명한다.
 
 반복 구현 방식은 각 단위의 `strategies/` 하위 문서가 소유한다.
 

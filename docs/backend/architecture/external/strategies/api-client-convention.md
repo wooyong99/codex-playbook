@@ -57,7 +57,7 @@ fun call(type: ApiType, request: Any): Any = when (type) {
 - 응답 결과 및 소요시간
 
 로깅 방식은 프로젝트 환경에 따라 선택한다:
-세부 구현 방식(어노테이션 기반, 수동 로깅 등)과 속성 규칙은 [api-client-logging.md](strategies/api-client-logging.md)에 프로젝트별로 정의한다.
+세부 구현 방식(어노테이션 기반, 수동 로깅 등)과 속성 규칙은 [api-client-logging.md](api-client-logging.md)에 프로젝트별로 정의한다.
 
 ---
 
@@ -210,7 +210,7 @@ private fun <T> GiftCardApiResponse<T>?.extractPayload(apiName: String): T =
 - Provider별로 별도 빈을 구성하고 `@Qualifier`로 주입받는다.
 - 메서드 내부에서 클라이언트를 매번 생성하지 않는다.
 
-사용하는 HTTP 클라이언트 유형과 빈 주입 방식은 [api-client-http-client.md](strategies/api-client-http-client.md)에 프로젝트별로 정의한다.
+사용하는 HTTP 클라이언트 유형과 빈 주입 방식은 [api-client-http-client.md](api-client-http-client.md)에 프로젝트별로 정의한다.
 
 ---
 

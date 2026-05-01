@@ -1,4 +1,4 @@
-# Storage Layer Guidelines
+# Storage Guidelines
 
 ## Storage 계층의 본질적 책임
 
@@ -43,7 +43,7 @@ ORM·쿼리 빌더 선택은 프로젝트 환경·팀 선호에 따라 자유롭
 
 **테스트**: Adapter · Repository 테스트는 실제 DB 연동 테스트한다. 동적 조건과 페이지네이션은 통합 테스트로 검증한다.
 
-**DDL**: 인프라 모델 신규·변경 시 DDL 파일을 **같은 커밋**에서 함께 갱신한다. → [ddl-management.md](ddl-management.md) 참고
+**DDL**: 인프라 모델 신규·변경 시 DDL 파일을 **같은 커밋**에서 함께 갱신한다. → [ddl-management.md](strategies/ddl-management.md) 참고
 
 ### Post-Work Verification
 

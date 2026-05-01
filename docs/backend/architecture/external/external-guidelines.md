@@ -1,4 +1,4 @@
-# External Layer Guidelines
+# External Guidelines
 
 ## External 계층의 본질적 책임
 
@@ -62,17 +62,17 @@ external  (Adapter → ApiClient → 외부 시스템)
 
 | 구성 요소 | 핵심 규칙 (한 줄 요약) | 컨벤션 문서 |
 |-----------|---------------------|-----------|
-| Adapter | Outbound Port만 구현하고, 외부 예외는 Port Result로 번역한다 | [adapter-convention.md](adapter-convention.md) |
-| ApiClient | HTTP 호출을 캡슐화하고 HTTP/네트워크 예외를 Provider 예외로 변환한다 | [api-client-convention.md](api-client-convention.md) |
-| Dto | `@JsonIgnoreProperties(ignoreUnknown = true)` + `@JsonProperty`로 외부 스키마를 고정한다 | [dto-convention.md](dto-convention.md) |
-| Exception | Provider별 `sealed class`로 API / Auth / Server / Network / Parsing 5종을 정의한다 | [exception-convention.md](exception-convention.md) |
-| ErrorCode | `{Provider}ErrorCode` enum으로 외부 에러코드를 정의하고 `toPortErrorCode()`로 번역한다 | [errorcode-convention.md](errorcode-convention.md) |
-| Config / Properties | HTTP 클라이언트는 Provider 전용 `@Qualifier` 빈으로, 설정값은 `@ConfigurationProperties`로 바인딩한다 | [config-convention.md](config-convention.md) |
-| Mock Adapter | `@Profile("local")`로 실 Adapter(`@Profile("!local")`)와 대칭 구성한다 | [mock-adapter-convention.md](mock-adapter-convention.md) |
+| Adapter | Outbound Port만 구현하고, 외부 예외는 Port Result로 번역한다 | [adapter-convention.md](strategies/adapter-convention.md) |
+| ApiClient | HTTP 호출을 캡슐화하고 HTTP/네트워크 예외를 Provider 예외로 변환한다 | [api-client-convention.md](strategies/api-client-convention.md) |
+| Dto | `@JsonIgnoreProperties(ignoreUnknown = true)` + `@JsonProperty`로 외부 스키마를 고정한다 | [dto-convention.md](strategies/dto-convention.md) |
+| Exception | Provider별 `sealed class`로 API / Auth / Server / Network / Parsing 5종을 정의한다 | [exception-convention.md](strategies/exception-convention.md) |
+| ErrorCode | `{Provider}ErrorCode` enum으로 외부 에러코드를 정의하고 `toPortErrorCode()`로 번역한다 | [errorcode-convention.md](strategies/errorcode-convention.md) |
+| Config / Properties | HTTP 클라이언트는 Provider 전용 `@Qualifier` 빈으로, 설정값은 `@ConfigurationProperties`로 바인딩한다 | [config-convention.md](strategies/config-convention.md) |
+| Mock Adapter | `@Profile("local")`로 실 Adapter(`@Profile("!local")`)와 대칭 구성한다 | [mock-adapter-convention.md](strategies/mock-adapter-convention.md) |
 
 **ApiClient 구현 전략**: 사용 HTTP 클라이언트·로깅 방식은 프로젝트별로 다르다. 이 프로젝트의 선택 → [`strategies/`](strategies/README.md)
 
-**Profile 관리**: 실 Adapter는 `@Profile("!local")`, Mock Adapter는 `@Profile("local")`로 선언해 동일 Port의 빈 충돌을 방지한다. 상세는 [mock-adapter-convention.md](mock-adapter-convention.md) "Profile 분기" 섹션 참고.
+**Profile 관리**: 실 Adapter는 `@Profile("!local")`, Mock Adapter는 `@Profile("local")`로 선언해 동일 Port의 빈 충돌을 방지한다. 상세는 [mock-adapter-convention.md](strategies/mock-adapter-convention.md) "Profile 분기" 섹션 참고.
 
 **테스트**: ApiClient 순수 로직(해시 계산, 직렬화 등)은 단위 테스트로 검증한다. Adapter는 ApiClient를 MockK로 대체한 BDD 테스트(`BehaviorSpec`)를 작성한다.
 

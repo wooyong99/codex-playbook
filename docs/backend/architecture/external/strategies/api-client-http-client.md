@@ -6,7 +6,7 @@
 
 **ApiClient는 Provider 전용 HTTP 클라이언트 빈을 `@Qualifier`로 주입받아 재사용한다.**
 
-이 문서는 [api-client-convention.md](../api-client-convention.md) "HTTP 클라이언트 사용" 섹션의 프로젝트별 세부 구현을 정의한다. HTTP 클라이언트 유형과 빈 구성 방식은 프로젝트마다 다를 수 있다.
+이 문서는 [api-client-convention.md](api-client-convention.md) "HTTP 클라이언트 사용" 섹션의 프로젝트별 세부 구현을 정의한다. HTTP 클라이언트 유형과 빈 구성 방식은 프로젝트마다 다를 수 있다.
 
 ---
 
@@ -26,7 +26,7 @@
 // 예시 작성
 ```
 
-> 빈 구성은 [../config-convention.md](../config-convention.md) 참고
+> 빈 구성은 [config-convention.md](config-convention.md) 참고
 
 ---
 
@@ -41,4 +41,4 @@
 
 - [ ] HTTP 클라이언트 빈을 `@Qualifier`로 주입받았는가?
 - [ ] 메서드 내부에서 클라이언트를 재생성하지 않는가?
-- [ ] 빈이 [../config-convention.md](../config-convention.md)에 따라 올바르게 구성됐는가?
+- [ ] 빈이 [config-convention.md](config-convention.md)에 따라 올바르게 구성됐는가?

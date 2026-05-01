@@ -1,4 +1,4 @@
-# Application Layer Guidelines
+# Application Guidelines
 
 ## Application 계층의 본질적 책임
 

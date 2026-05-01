@@ -6,7 +6,7 @@
 
 **외부 API를 호출하는 모든 `public` 메서드에 요청·응답·소요시간 로깅을 적용한다.**
 
-이 문서는 [api-client-convention.md](../api-client-convention.md) "외부 API 호출 로깅" 섹션의 프로젝트별 세부 구현을 정의한다. 로깅 방식(AOP, 수동, 인터셉터)은 프로젝트마다 다를 수 있다.
+이 문서는 [api-client-convention.md](api-client-convention.md) "외부 API 호출 로깅" 섹션의 프로젝트별 세부 구현을 정의한다. 로깅 방식(AOP, 수동, 인터셉터)은 프로젝트마다 다를 수 있다.
 
 ---
 

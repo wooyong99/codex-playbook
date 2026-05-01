@@ -1,4 +1,4 @@
-# App Layer Guidelines
+# App Guidelines
 
 ## App 계층의 본질적 책임
 
