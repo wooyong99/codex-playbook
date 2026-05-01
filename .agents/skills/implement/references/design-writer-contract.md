@@ -23,10 +23,14 @@
   - 관련 레이어: {app/application/domain/storage 중 해당}
   - 관련 도메인: {도메인명}
 
-[체크포인트 파일]: .agents/checkpoints/{run_id}/design-writer-M{n}.md
+[결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-D-r00-design-result.v1.yaml
+
+[체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/D-r00-v001.md
 
 [출력 규격]: 이 문서(.agents/skills/implement/references/design-writer-contract.md) — Output 섹션 그대로.
 ```
+
+[결과 파일]은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. D는 정상 완료 시 해당 파일에 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
 
 체크포인트 재호출 시 프롬프트에 아래 필드가 추가된다:
 
@@ -42,38 +46,66 @@
 
 ### Case A: TDD 작성 완료
 
-출력 **첫 줄**:
+먼저 `[결과 파일]`에 아래 handoff artifact를 저장한다. 저장이 끝난 뒤 출력 **첫 줄**에 결과 파일 경로만 반환한다:
 
 ```
-TDD_CREATED: {docs/backend/design/tdd-{feature-slug}.md 절대 경로}
-```
-
-이후 아래 요약을 이어서 작성한다:
-
-```
-## 설계 요약
-
-### 핵심 아키텍처 결정
-- <결정 1>
-- <결정 2>
-
-### 주요 도메인 모델
-- <모델명>: <역할 요약>
-
-### 트랜잭션·정합성 전략
-- <전략 요약>
-
-### 구현 시 주의사항
-- <code-writer에게 전달할 설계 제약·선택>
+TDD_CREATED: {[결과 파일] 절대 경로}
 ```
 
 ### Case B: TDD 불필요
 
-출력 **단일 행**:
+먼저 `[결과 파일]`에 아래 handoff artifact를 저장한다. 저장이 끝난 뒤 출력 **첫 줄**에 결과 파일 경로만 반환한다:
 
 ```
-TDD_SKIPPED: {이유 — 예: "단일 UseCase 추가로 설계 결정 사항 없음"}
+TDD_SKIPPED: {[결과 파일] 절대 경로}
 ```
+
+### Handoff Artifact
+
+`[결과 파일]`은 YAML로 작성한다.
+
+```yaml
+schema_version: implement-handoff/v1
+run_id: <run_id>
+milestone: M<n>
+sequence: <오케스트레이터가 파일명에 부여한 순번>
+role: design-writer
+kind: design_result
+iteration: 0
+created_at: <ISO-8601 timestamp>
+status: tdd_created | tdd_skipped
+payload:
+  tdd_path: <TDD 절대 경로 또는 null>
+  skip_reason: <TDD_SKIPPED일 때 이유, 아니면 null>
+  design_summary:
+    architecture_decisions:
+      - <핵심 아키텍처 결정>
+    domain_models:
+      - name: <모델명>
+        role: <역할 요약>
+    transaction_consistency:
+      - <트랜잭션·정합성 전략>
+    implementation_notes:
+      - <code-writer에게 전달할 설계 제약·선택>
+  uncertainties:
+    - <있다면 기재. 없으면 "없음">
+```
+
+### 필드 규칙
+
+- `schema_version`: 항상 `implement-handoff/v1`
+- `run_id`: 오케스트레이터가 생성한 run id
+- `milestone`: `M1`, `M2` 형식
+- `sequence`: 오케스트레이터가 파일명에 부여한 3자리 순번의 정수값
+- `role`: 항상 `design-writer`
+- `kind`: 항상 `design_result`
+- `iteration`: 설계 단계는 항상 `0`
+- `created_at`: ISO-8601 타임스탬프
+- `status`: `tdd_created` 또는 `tdd_skipped`
+- `payload.tdd_path`: TDD를 작성한 경우 절대 경로, 스킵한 경우 `null`
+- `payload.design_summary`: A가 파일을 읽어 구현 판단에 재사용할 수 있는 최소 설계 요약
+
+정상 완료 응답 본문에는 handoff artifact 내용을 복사하지 않는다. 오케스트레이터와 다음 에이전트는 첫 줄의 파일 경로를 통해 필요한 내용을 읽는다.
 
 ### Case C: 컨텍스트 체크포인트
 
