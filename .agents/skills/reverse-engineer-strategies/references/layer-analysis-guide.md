@@ -143,7 +143,6 @@
 ```text
 docs/backend/architecture/
 ├── README.md
-├── architecture-map.md
 ├── {actual-unit}/
 │   ├── README.md
 │   └── strategies/
@@ -177,8 +176,7 @@ docs/backend/architecture/
 
 반드시 갱신할 수 있는 문서:
 
-- `docs/backend/architecture/README.md`: 전체 아키텍처 단위 진입점
-- `docs/backend/architecture/architecture-map.md`: 실제 단위, 위치, 책임, 의존 방향 요약
+- `docs/backend/architecture/README.md`: 전체 아키텍처 단위 진입점, 실제 단위 맵, 위치, 책임, 의존 방향 요약
 - 각 `{actual-unit}/README.md`: 단위별 책임과 하위 전략 링크
 - 각 `{actual-unit}/strategies/README.md`: 관찰된 전략 목록
 - `docs/backend/README.md`: architecture 단일 진입점 경로가 바뀔 때만 갱신

@@ -4,21 +4,27 @@
 
 ## 목차
 
-- [1. Architecture Map](#1-architecture-map)
+- [1. Architecture README](#1-architecture-readme)
 - [2. Architecture Unit README](#2-architecture-unit-readme)
 - [3. Strategies README](#3-strategies-readme)
 - [4. Strategy Detail](#4-strategy-detail)
 - [5. 문서 생성 조건](#5-문서-생성-조건)
 - [6. 작성 원칙](#6-작성-원칙)
 
-## 1. Architecture Map
+## 1. Architecture README
 
-`docs/backend/architecture/architecture-map.md`는 실제 코드 구조의 전체 지도를 제공한다.
+`docs/backend/architecture/README.md`는 architecture 단일 진입점이자 실제 코드 구조의 전체 지도를 제공한다. 별도 `architecture-map.md`는 생성하지 않는다.
 
 ````md
-# Backend Architecture Map
+# Backend Architecture
 
-이 문서는 현재 코드베이스에서 확인한 실제 아키텍처 단위, 코드 위치, 책임, 의존 방향을 요약한다.
+백엔드 아키텍처 문서의 단일 진입점.
+
+이 문서는 현재 코드베이스에서 확인한 실제 아키텍처 단위, 코드 위치, 책임, 의존 방향, 하위 문서 링크를 요약한다.
+
+## 언제 읽을지
+
+- {이 문서를 읽어야 하는 상황}
 
 ## 아키텍처 단위
 
@@ -35,6 +41,11 @@
 ## 문서 구조
 
 - [{actual-unit}](./{actual-unit}/README.md) - {언제 읽는지}
+
+## 운영 원칙
+
+- architecture 하위 디렉토리나 전략 문서가 추가·삭제·개편되면 이 README를 먼저 갱신한다.
+- 백엔드 문서 홈은 이 README만 참조하고, 아키텍처 내부 세부 링크는 이 README가 소유한다.
 
 ## Playbook compatibility
 

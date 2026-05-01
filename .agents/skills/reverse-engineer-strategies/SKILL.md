@@ -90,7 +90,6 @@ description: Analyze an existing backend codebase, infer its real architecture u
 ```text
 docs/backend/architecture/
 ├── README.md
-├── architecture-map.md
 ├── {actual-unit}/
 │   ├── README.md
 │   └── strategies/
@@ -100,6 +99,8 @@ docs/backend/architecture/
     └── ...
 ```
 
+`docs/backend/architecture/README.md`는 architecture 단일 진입점이자 전체 아키텍처 맵이다. 이 파일은 실제 아키텍처 단위 목록, 코드 위치, 책임, 의존 방향, 하위 단위 README 링크를 함께 소유한다. 별도 `architecture-map.md`는 생성하지 않는다.
+
 세부 전략 문서는 코드에서 반복 패턴이 확인된 경우에만 만든다. architecture 하위 디렉토리를 추가·삭제·개편하면 먼저 `docs/backend/architecture/README.md`를 갱신한다. `docs/backend/README.md`는 architecture 진입점 경로가 바뀔 때만 갱신하고, `AGENTS.md`는 최상위 Backend 문서 홈 경로가 바뀔 때만 갱신한다.
 
 ### 5. 완료 전 검증
@@ -107,7 +108,7 @@ docs/backend/architecture/
 - 생성한 문서가 실제 코드 패턴과 연결되는지 샘플 클래스 기준으로 다시 확인한다.
 - 코드에서 발견되지 않은 패턴 문서를 새로 만들지 않았는지 확인한다.
 - 각 아키텍처 단위 README에서 세부 문서 링크가 맞는지 확인한다.
-- `architecture-map.md`가 실제 모듈·패키지·의존 방향과 어긋나지 않는지 확인한다.
+- `docs/backend/architecture/README.md`의 아키텍처 맵이 실제 모듈·패키지·의존 방향과 어긋나지 않는지 확인한다.
 - 문서 맵 갱신이 필요한 경우 누락되지 않았는지 확인한다.
 
 ## 작성 규칙
