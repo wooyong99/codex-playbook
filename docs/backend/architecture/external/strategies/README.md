@@ -1,78 +1,29 @@
-# External 계층 ApiClient 구현 전략
+# External Strategies
 
-[external-guidelines.md](../external-guidelines.md)의 보편 원칙(R1–R4) 위에서,
-이 프로젝트가 선택한 External 계층 ApiClient 세부 구현 전략을 정의한다.
+이 프로젝트에서 `external` 단위에 실제로 사용 중인 구현 전략 요약.
 
----
+## 핵심 전략
 
-## 이 프로젝트의 전략
+- Adapter는 application Port만 구현하고 외부 예외를 내부 Result/ErrorCode로 번역한다.
+- ApiClient는 HTTP 호출과 Provider 예외 변환을 캡슐화한다.
+- Provider별 DTO, Exception, ErrorCode, Config, Properties, Mock Adapter를 같은 경계에 둔다.
+- Mock Adapter는 `local` 프로필에서 실 외부 시스템 의존을 대체한다.
 
-> **[커스터마이징 영역]** 새 프로젝트 적용 시 이 섹션을 아래 템플릿으로 교체한다.
+## 근거가 된 코드 패턴
 
-**HTTP 클라이언트**: {RestClient / RestTemplate / WebClient 중 선택}
+- `{Provider}{Function}Adapter`, `Mock{Function}Adapter` - 실 Adapter와 로컬 Mock 분리
+- `{Provider}ApiClient`, `{Provider}Dtos` - 외부 API 호출과 스키마 캡슐화
+- `{Provider}ErrorCode`, `{Provider}Exception` - 외부 오류의 내부 표현 번역
+- `{Provider}Config`, `{Provider}Properties` - Provider별 HTTP 클라이언트 설정
 
-**로깅 방식**: {AOP 어노테이션 / 수동 로깅 / 인터셉터 중 선택}
+## 세부 문서
 
-**선택 이유**: {이 전략을 선택한 이유}
-
-**역할별 컴포넌트**:
-
-| 역할 | 컴포넌트 | 컨벤션 문서 |
-|-----|---------|-----------|
-| HTTP 클라이언트 구성 | `{Provider}Config` | [api-client-http-client.md](api-client-http-client.md) |
-| 외부 API 호출 로깅 | `{Provider}ApiClient` | [api-client-logging.md](api-client-logging.md) |
-
-**Post-Work Verification 체크리스트**:
-- [adapter-convention.md](adapter-convention.md)
-- [api-client-convention.md](api-client-convention.md)
-- [api-client-http-client.md](api-client-http-client.md)
-- [api-client-logging.md](api-client-logging.md)
-- [dto-convention.md](dto-convention.md)
-- [exception-convention.md](exception-convention.md)
-- [errorcode-convention.md](errorcode-convention.md)
-- [config-convention.md](config-convention.md)
-- [mock-adapter-convention.md](mock-adapter-convention.md)
-
----
-
-## 역할 정의
-
-ApiClient 구현 시 관여하는 역할 정의.
-
-| 역할 | 설명 | 구현 컴포넌트 |
-|-----|------|------------|
-| HTTP 호출 | 외부 엔드포인트 요청·응답·예외 변환 | `{Provider}ApiClient` |
-| 토큰 캐싱 | Bearer Token 발급·갱신·만료 관리 | `{Provider}TokenHolder` |
-| HTTP 클라이언트 빈 | Provider 전용 HTTP 클라이언트 생성·구성 | `{Provider}Config` |
-
----
-
-## 전략 정의 템플릿
-
-새 프로젝트가 "이 프로젝트의 전략" 섹션을 채울 때 사용하는 템플릿:
-
-```markdown
-**HTTP 클라이언트**: {선택한 클라이언트}
-
-**로깅 방식**: {선택한 로깅 방식}
-
-**선택 이유**: {이 전략을 선택한 이유}
-
-**역할별 컴포넌트**:
-
-| 역할 | 컴포넌트 | 컨벤션 문서 |
-|-----|---------|-----------|
-| HTTP 클라이언트 구성 | `{Provider}Config` | [api-client-http-client.md](api-client-http-client.md) |
-| 외부 API 호출 로깅 | `{Provider}ApiClient` | [api-client-logging.md](api-client-logging.md) |
-
-**Post-Work Verification 체크리스트**:
-- [adapter-convention.md](adapter-convention.md)
-- [api-client-convention.md](api-client-convention.md)
-- [api-client-http-client.md](api-client-http-client.md)
-- [api-client-logging.md](api-client-logging.md)
-- [dto-convention.md](dto-convention.md)
-- [exception-convention.md](exception-convention.md)
-- [errorcode-convention.md](errorcode-convention.md)
-- [config-convention.md](config-convention.md)
-- [mock-adapter-convention.md](mock-adapter-convention.md)
-```
+- [adapter-convention](adapter-convention.md) - Outbound Port 구현 Adapter를 작성할 때
+- [api-client-convention](api-client-convention.md) - HTTP 호출과 예외 변환을 작성할 때
+- [api-client-http-client](api-client-http-client.md) - Provider 전용 HTTP 클라이언트를 구성할 때
+- [api-client-logging](api-client-logging.md) - 외부 API 호출 로그를 남길 때
+- [dto-convention](dto-convention.md) - 외부 요청/응답 DTO를 작성할 때
+- [exception-convention](exception-convention.md) - Provider 예외 계층을 작성할 때
+- [errorcode-convention](errorcode-convention.md) - 외부 에러코드를 내부 ErrorCode로 번역할 때
+- [config-convention](config-convention.md) - Config/Properties를 작성할 때
+- [mock-adapter-convention](mock-adapter-convention.md) - 로컬 Mock Adapter를 작성할 때

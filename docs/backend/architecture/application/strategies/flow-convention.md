@@ -3,13 +3,25 @@
 > **[로컬 컨벤션]** 이 문서는 이 프로젝트의 [구현 전략](README.md)에서 **Flow Orchestrator** 역할을 담당하는 `Flow` 컴포넌트의 컨벤션이다.
 > 다른 프로젝트에서는 동일한 역할을 `BusinessService`, `Saga`, 또는 진입점 내부 로직으로 통합하여 구현할 수 있다.
 
+## 언제 사용하는가
+
+- `application` 단위에서 Flow 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `application` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
 ## 보편 개념
 
 **Business Flow Orchestrator**는 상태 변경을 동반하는 하나의 업무 흐름을 캡슐화하고, 여러 진입점에서 재사용할 수 있도록 한다. 조회·검증·도메인 행위·저장의 실행 순서를 책임지며, 트랜잭션 경계를 정의한다. 다른 동급 흐름 단위를 직접 호출하지 않는다.
 
 ---
 
-## 원칙
+## 핵심 원칙
 
 - Flow는 하나의 업무 흐름이다. 여러 Port·Validator·Policy의 조합을 단일 흐름으로 캡슐화하고, UseCase가 재사용할 수 있는 단위로 유지한다.
 - 상태 변경 없는 흐름은 Flow가 아니다. DB 조회 + 검증만 있다면 ValidateFlow가 아니라 UseCase의 조회 + Validator로 분리하는 것이 올바르다.
@@ -18,7 +30,7 @@
 
 ---
 
-## 핵심 규칙
+## 코드에서 관찰된 규칙
 
 **Flow는 UseCase 아래에서 재사용 가능한 업무 흐름 단위를 담당한다. UseCase는 Flow의 조합만 결정한다.**
 
@@ -150,7 +162,17 @@ DB 커넥션을 불필요하게 오래 점유하지 않는다.
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `application` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [application guidelines](../application-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - Flow에서 다른 Flow를 직접 호출하지 않는다 — Flow 조합은 UseCase가 담당한다.
 - Flow에서 다른 개념 영역의 Port를 직접 주입하지 않는다 — 해당 영역의 Handler에 위임한다.
@@ -216,7 +238,11 @@ class RegisterTenantUseCase(
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 - [ ] `@Component`로 선언했는가?
 - [ ] 쓰기는 `@Transactional`, 읽기는 `@Transactional(readOnly = true)`가 선언됐는가?
@@ -225,3 +251,7 @@ class RegisterTenantUseCase(
 - [ ] 단일 Port 호출만을 위한 Flow가 만들어지지 않았는가?
 - [ ] 외부 API 호출(ExternalExecutor)을 트랜잭션 안에서 하지 않는가?
 - [ ] 상태 변경 없이 검증만 수행하는 Flow(`*ValidateFlow`)를 만들지 않았는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

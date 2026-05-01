@@ -2,13 +2,29 @@
 
 ---
 
-## 핵심 규칙
+## 언제 사용하는가
+
+- `external` 단위에서 DTO 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `external` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
+## 핵심 원칙
 
 **외부 API용 DTO는 Provider의 JSON 스키마를 1:1로 표현하는 `data class`로 선언하고, 알 수 없는 필드 허용(`@JsonIgnoreProperties(ignoreUnknown = true)`) + 필드명 명시(`@JsonProperty`)를 모든 타입에 적용한다.**
 
 외부 시스템의 스키마는 예고 없이 확장될 수 있다. 허용 정책을 명시하지 않으면 신규 필드 추가만으로 역직렬화가 깨진다. 또한 Kotlin 프로퍼티명과 외부 JSON 키가 스네이크/카멜 혼용으로 다를 수 있으므로 `@JsonProperty`로 매핑을 고정한다.
 
 ---
+
+## 코드에서 관찰된 규칙
+
+1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
 
 ## 네이밍 규칙
 
@@ -161,7 +177,17 @@ data class GiftCardValidateResponse(
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `external` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [external guidelines](../external-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - `@JsonIgnoreProperties(ignoreUnknown = true)`를 생략하지 않는다.
 - `@JsonProperty`를 일부 필드만 붙이지 않는다. **전부 붙이거나 전부 생략하지 않는다**(일관성).
@@ -172,7 +198,11 @@ data class GiftCardValidateResponse(
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 - [ ] 모든 DTO에 `@JsonIgnoreProperties(ignoreUnknown = true)`가 달려 있는가?
 - [ ] 모든 프로퍼티에 `@get:JsonProperty("...")`가 명시됐는가?
@@ -181,3 +211,7 @@ data class GiftCardValidateResponse(
 - [ ] 원 스키마 타입(Long/String)을 유지하고 도메인 타입 변환은 Adapter에 맡겼는가?
 - [ ] Provider의 DTO가 한 파일에 모여 있는가?
 - [ ] DTO에 비즈니스 로직이 섞이지 않았는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

@@ -1,11 +1,10 @@
 # Design Documents (TDD)
 
-기능·서브시스템의 기술 설계 문서 모음.
+기능·서브시스템의 기술설계문서 모음.
 
 ## 문서 목록
 
-- [sample-tdd](sample-tdd.md)  
-  테넌트 온보딩 기술설계문서 예시
+- [sample-tdd](./sample-tdd.md): 테넌트 온보딩 기술설계문서 예시
 
 ## 운영 원칙
 

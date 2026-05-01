@@ -2,13 +2,29 @@
 
 ---
 
-## 핵심 규칙
+## 언제 사용하는가
+
+- `external` 단위에서 Mock Adapter 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `external` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
+## 핵심 원칙
 
 **실 Adapter와 동일 Port를 구현하는 Mock Adapter를 함께 제공하고, `@Profile("local")` / `@Profile("!local")`로 빈 선택을 분기한다.**
 
 외부 시스템이 로컬에 존재하지 않거나 비용·보안상 호출이 불가능한 환경(로컬 개발)에서 흐름을 재현하려면 Port 구현이 필요하다. Mock Adapter는 실 구현과 동일한 인터페이스를 유지하되 고정된 시나리오를 반환해, 상위 계층이 Profile만 바꿔 실 호출과 Mock 응답을 자유롭게 교환할 수 있게 한다.
 
 ---
+
+## 코드에서 관찰된 규칙
+
+1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
 
 ## 네이밍 규칙
 
@@ -191,7 +207,17 @@ logInfo { "[MOCK-계좌검증] 응답 - suffix=$suffix, status=${result.status}"
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `external` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [external guidelines](../external-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - 실 Adapter와 Mock Adapter의 Profile을 비대칭으로 두지 않는다.
 - Mock Adapter에 ApiClient·Repository·다른 Port를 주입하지 않는다.
@@ -201,7 +227,11 @@ logInfo { "[MOCK-계좌검증] 응답 - suffix=$suffix, status=${result.status}"
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 - [ ] Mock Adapter 이름이 `Mock{Function}Adapter` 패턴인가?
 - [ ] 실 Adapter `@Profile("!local")` + Mock Adapter `@Profile("local")`로 대칭인가?
@@ -210,3 +240,7 @@ logInfo { "[MOCK-계좌검증] 응답 - suffix=$suffix, status=${result.status}"
 - [ ] 성공 응답의 시간값이 `LocalDate.now()` 기준 상대값으로 구성되는가?
 - [ ] 토큰 검사가 대소문자 무시(`ignoreCase = true`)로 수행되는가?
 - [ ] `[MOCK-기능]` prefix로 실 Adapter 로그와 구분되는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

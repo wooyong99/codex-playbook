@@ -3,13 +3,25 @@
 > **[로컬 컨벤션]** 이 문서는 이 프로젝트의 [구현 전략](README.md)에서 **Entry Point** 역할을 담당하는 `UseCase` 컴포넌트의 컨벤션이다.
 > 다른 프로젝트에서는 동일한 역할을 `Service`, `CommandHandler`, `ApplicationService` 등으로 구현할 수 있다.
 
+## 언제 사용하는가
+
+- `application` 단위에서 UseCase 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `application` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
 ## 보편 개념
 
 **Application Entry Point**는 외부(HTTP, 이벤트, CLI 등)의 요청을 받아 업무 흐름을 조립하는 진입점이다. "무엇을 어떤 순서로 실행할지"를 결정하고, 실행 자체는 하위 컴포넌트에 위임한다. 이 역할의 컴포넌트는 다른 동급 진입점을 직접 호출하지 않으며, 비즈니스 로직을 직접 구현하지 않는다.
 
 ---
 
-## 원칙
+## 핵심 원칙
 
 - UseCase는 "무엇을 조합할지"만 결정한다. 비즈니스 로직이 UseCase에 들어오면 재사용 단위인 Flow가 의미를 잃는다.
 - 트랜잭션 경계는 Flow에서 관리하는 것이 원칙이다. UseCase가 트랜잭션을 선언하면 DB 커넥션을 불필요하게 오래 점유할 수 있다.
@@ -18,7 +30,7 @@
 
 ---
 
-## 핵심 규칙
+## 코드에서 관찰된 규칙
 
 **UseCase는 `@Service`로 선언하고 Flow의 조합만 결정한다. 비즈니스 로직은 Flow에 위임한다.**
 
@@ -182,18 +194,32 @@ class UpdateProduct {
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `application` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [application guidelines](../application-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - `BaseUseCase` 같은 공통 상속 클래스를 만들지 않는다.
 - UseCase가 다른 UseCase를 직접 호출하지 않는다.
 - Command `init`에서 DB 조회가 필요한 검증을 하지 않는다.
 - UseCase 파일 하단에 `internal`/`private` 변환 함수를 추가하지 않는다 — Mapper 사용 ([mapper-convention.md](mapper-convention.md) 참고).
 
-> Flow 내부 관련 금지 사항은 [flow-convention.md](flow-convention.md) "금지 사항" 섹션 참고
+> Flow 내부 관련 금지 규칙은 [flow-convention.md](flow-convention.md) "금지 규칙" 섹션 참고
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 - [ ] `@Service`로 선언했는가?
 - [ ] 클래스명이 `{Action}{Entity}UseCase` 형식인가?
@@ -206,3 +232,7 @@ class UpdateProduct {
 - [ ] 파일명이 `{Action}{Entity}.kt` 형식이고 Command/Result가 nested class로 정의됐는가?
 - [ ] Command의 `init`에서 형식 검증만 하고 DB 조회가 없는가?
 - [ ] UseCase → Flow → Validator/Handler/Policy → Port 방향만 의존하는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

@@ -1,56 +1,64 @@
 # Application Guidelines
 
-## Application 계층의 본질적 책임
+이 문서는 `application` 단위의 실제 코드 위치, 책임, 의존 경계, 구현 전략을 정리한다.
 
-Application 계층은 Domain과 Infrastructure 사이의 **조율자**다. 비즈니스 규칙은 Domain에, 인프라 구현은 Infrastructure에 위임하고, Application은 그 조합만 담당한다.
+## 코드 위치
 
-1. **유스케이스 실행**: 외부 요청(HTTP, 이벤트, CLI 등)을 받아 Domain 객체를 조합하여 비즈니스 유스케이스를 완성한다.
-2. **계층 경계 보호**: Domain 로직이 인프라 구현 세부사항에 오염되지 않도록, 그리고 인프라가 Domain 개념에 직접 의존하지 않도록 경계를 유지한다.
-3. **트랜잭션 경계 정의**: 데이터 일관성 단위를 결정한다. 트랜잭션 범위는 의미 단위로 설정하고, 외부 I/O나 장기 연산을 포함하지 않는다.
-4. **입출력 변환**: 외부 계약(Command/DTO)을 Domain 개념으로 변환하고, Domain 결과를 외부 응답(Result/DTO)으로 변환한다.
+- `application` module/package - UseCase 실행, 업무 흐름 조율, 트랜잭션 경계, Port 계약 정의를 담당한다.
 
----
+## 책임
 
-## 반드시 지켜야 할 규칙
+- 외부 요청을 받아 Domain 객체와 Port를 조합해 유스케이스를 완성한다.
+- Domain 로직이 인프라 구현 세부사항에 오염되지 않도록 경계를 유지한다.
+- 데이터 일관성 단위를 결정하고 트랜잭션 범위를 의미 단위로 제한한다.
+- Command/Result, Flow, Validator, Handler, Policy, Mapper 같은 역할을 프로젝트 복잡도에 맞게 배치한다.
 
-- **R1. 비즈니스 규칙은 Domain 계층에 위임한다** — Application 계층에 조건 분기·상태 판단·불변식 검증 같은 비즈니스 로직을 직접 구현하지 않는다. 도메인 객체 메서드 또는 도메인 서비스에 위임한다.
+## 의존 경계
 
-- **R2. 인프라에 직접 의존하지 않는다** — DB, 외부 API, 메시징 등 인프라 구현 세부사항에 직접 의존하지 않고, 추상화 인터페이스(Interface)를 통해 접근한다. Application 계층은 추상화 인터페이스만 알면 된다.
+- depends on: `domain`, outbound Port interface
+- used by: `app`, event/CLI entry
+- 금지되는 방향: 인프라 구현체 직접 참조, application 진입점 간 직접 호출, 트랜잭션 내 외부 I/O
 
-- **R3. 처리 순서를 지킨다** — 각 단계의 책임 소유자를 명확히 한다. 역순이나 혼재를 허용하지 않는다.
-  1. 입력 형식 검증 (null, 범위, 패턴) — 인프라 조회 없이 판단 가능한 것
-  2. 데이터 조회 — 추상화 인터페이스를 통해 필요한 도메인 객체를 로드
-  3. 비즈니스 규칙 검증 — 조회된 객체를 기반으로 도메인 규칙 확인
-  4. 도메인 행위 실행 — Domain 객체의 상태 변경 메서드 호출
-  5. 저장 및 결과 반환 — 추상화 인터페이스를 통해 저장, 결과 변환 후 반환
+## 핵심 원칙
 
-- **R4. 트랜잭션 범위를 의미 단위로 제한한다** — 트랜잭션은 데이터 일관성이 요구되는 최소 범위로 설정한다. 외부 API 호출, 파일 I/O, 장기 계산은 트랜잭션 외부에서 실행한다.
+- 비즈니스 규칙은 Domain에 위임하고 application은 조합과 경계 설정에 집중한다.
+- 인프라 구현체가 아니라 application이 정의한 추상화 인터페이스를 통해 외부 자원에 접근한다.
+- 입력 형식 검증, 데이터 조회, 비즈니스 규칙 검증, 도메인 행위 실행, 저장 및 결과 반환의 책임 단계를 섞지 않는다.
 
----
+## 관련 정책
 
-## 금지 규칙 / 안티패턴
+- [transaction-and-consistency](../../policies/transaction-and-consistency.md) - 트랜잭션 경계와 정합성
+- [concurrency-and-performance](../../policies/concurrency-and-performance.md) - 동시성 제어와 성능
+- [logging](../../policies/logging.md) - 상태 변경과 실패 로깅
 
-- **Application 계층에 비즈니스 로직 직접 구현** — Domain의 책임을 침범하며, 도메인 규칙이 흩어져 유지보수가 어려워진다.
-- **추상화 인터페이스 없이 인프라 직접 참조** — Application과 인프라의 결합이 생겨 교체·테스트가 어려워진다.
-- **Application 진입점이 다른 진입점을 직접 호출** — 순환 의존·책임 중복을 유발하며 재사용 단위가 의미를 잃는다.
-- **트랜잭션 내 외부 I/O 실행** — DB 커넥션을 불필요하게 점유하고, 외부 호출은 롤백되지 않아 일관성 문제를 야기한다.
-- **검증 컴포넌트가 데이터를 직접 조회** — 조회 비용·실패 지점이 감춰지고, 검증 컴포넌트 단독 테스트가 불가능해진다.
-- **입력 형식 검증에 인프라 조회 포함** — 형식 오류와 존재 여부 오류의 책임 단계가 뒤섞여 처리 순서가 무너진다.
+## 금지 규칙
 
----
+- Application 계층에 도메인 불변식이나 상태 판단을 직접 구현하지 않는다.
+- 추상화 인터페이스 없이 DB, 외부 API, 메시징 구현체를 직접 참조하지 않는다.
+- 트랜잭션 안에서 외부 API 호출, 파일 I/O, 장기 계산을 수행하지 않는다.
+- Validator가 데이터를 직접 조회하거나 형식 검증과 존재 여부 검증을 섞지 않는다.
 
-## 이 프로젝트의 로컬 컨벤션
+## 안티패턴
 
-내부 구성 방식은 프로젝트 복잡도·팀 규모·설계 철학에 따라 자유롭게 선택할 수 있다. 어떤 전략을 선택하든 R1–R4는 반드시 지킨다. 역할 정의, 전략 선택 기준, 이 프로젝트의 선택 → [`strategies/`](strategies/README.md)
+- UseCase가 다른 UseCase를 직접 호출해 진입점끼리 결합한다.
+- Flow, Validator, Handler, Policy 역할을 이름만 분리하고 같은 책임을 중복 구현한다.
+- 트랜잭션 경계가 너무 넓어져 DB 커넥션 점유 시간이 불필요하게 길어진다.
 
-### 공통 규칙
+## 주요 컴포넌트
 
-**Logging**: 상태 변경 성공 직후, 반환 직전에만 로그를 남긴다. 자세한 내용은 [`docs/backend/policies/logging.md`](../../policies/logging.md) 참고.
+- Entry Point: UseCase / Service
+- Flow Orchestrator: Flow
+- Rule Checker: Validator
+- ACL / Coordinator: Handler / Facade
+- Strategy: Policy
+- Assembler: Mapper
+- Outbound contract: Port interface
 
-**Testing**: 신규 Entry Point 추가·변경 시 단위 테스트를 함께 추가한다. Kotest `BehaviorSpec` + Mockk 기반, outbound Port는 mock으로 격리한다. 도메인별 `Fixture`(`object XxxFixture`)를 함께 작성한다.
+## 전략 문서
 
-### Post-Work Verification
+- [Strategies](./strategies/README.md)
 
-구현 완료 후 생성·수정한 파일을 직접 읽어 아래 각 문서의 체크리스트를 대조한다. 위반이 발견되면 즉시 수정하고 다시 검증한다.
+## Playbook compatibility
 
-이 프로젝트의 체크리스트 문서 목록 → [`strategies/`](strategies/README.md)
+- 이 단위는 기존 playbook의 `application` 개념 계층과 동일하다.
+- 실제 프로젝트에서 `core-application`, `usecase`, `service` 등 다른 이름을 쓰면 실제 모듈명을 우선한다.

@@ -1,52 +1,61 @@
 # Storage Guidelines
 
-## Storage 계층의 본질적 책임
+이 문서는 `storage` 단위의 실제 코드 위치, 책임, 의존 경계, 구현 전략을 정리한다.
 
-storage 계층은 application 계층의 Port 인터페이스를 구현하여 도메인 객체를 영속화한다. DB 스키마 변경이 도메인 계층으로 전파되지 않도록 인프라 모델(Entity, Row 등)과 도메인 모델을 항상 분리한다.
+## 코드 위치
 
-1. **Port 구현**: application 계층이 선언한 저장소 인터페이스(Port)를 Adapter로 구현한다.
-2. **도메인 격리**: 인프라 모델은 인프라 경계 안에 머무르며, 반환 전 반드시 도메인 객체로 변환한다.
-3. **조회 복잡도 분리**: 저장소를 단순 CRUD와 복잡 쿼리로 역할을 나눈다.
+- `storage` infrastructure module/package - application Port 구현, Entity 매핑, 쿼리 구현, DDL 관리를 담당한다.
 
-```
-application (Port 인터페이스)
-  ↑ 구현
-storage  — Adapter → 저장소 구현체 → DB
-             ↕ (변환)
-          인프라 모델 ↔ Domain
-```
+## 책임
 
----
+- application 계층이 선언한 저장소 Port를 구현한다.
+- 인프라 모델과 도메인 모델을 분리하고 반환 전 도메인 객체로 변환한다.
+- 단순 CRUD와 복잡 쿼리를 역할별 컴포넌트로 나눈다.
+- 인프라 모델 변경 시 DDL 변경을 함께 관리한다.
 
-## 반드시 지켜야 할 규칙
+## 의존 경계
 
-- **R1. 인프라 모델을 인프라 계층 밖으로 노출하지 않는다** — Adapter의 모든 반환값은 도메인 객체로 변환한다. 인프라 모델을 그대로 반환하면 도메인 모델과 인프라 모델이 결합된다.
-- **R2. 변환 로직은 별도 변환 컴포넌트에만 둔다** — 인프라 모델이나 Domain 클래스 내부에 변환 로직을 두지 않는다. 변환 책임을 한 곳에 집중하여 변경 시 단일 지점만 수정한다.
-- **R3. 저장소 역할을 단순 CRUD와 복잡 쿼리로 분리한다** — 두 가지를 하나의 클래스에 혼재하지 않는다.
+- depends on: `application`, `domain`, database
+- used by: `application`
+- 금지되는 방향: Entity 외부 노출, Domain 내부 변환 로직, 단순 저장소와 복잡 쿼리 혼재
 
----
+## 핵심 원칙
 
-## 금지 규칙 / 안티패턴
+- storage 단위는 저장 기술을 캡슐화하고 application에는 Port 계약만 드러낸다.
+- DB 스키마 변경이 domain 모델로 전파되지 않도록 인프라 모델과 도메인 모델을 분리한다.
+- 조회 복잡도는 단순 저장소와 복잡 쿼리 저장소를 분리해 관리한다.
 
-- **인프라 모델 외부 노출** — 인프라 모델을 application이나 domain 계층으로 반환하면 DB 스키마 변경이 상위 계층에 전파된다.
-- **인프라 모델에 비즈니스 로직 포함** — 인프라 모델은 DB 매핑 전용이며 도메인 규칙을 포함해서는 안 된다.
-- **인프라 모델·Domain 클래스 내 변환 로직** — 변환 책임이 여러 클래스에 분산되면 변경 시 모두 찾아야 한다.
-- **단순 저장소에 복잡한 쿼리 구현** — 역할 경계가 흐려지고, 복잡도가 높아질수록 유지보수가 어려워진다.
+## 관련 정책
 
----
+- [transaction-and-consistency](../../policies/transaction-and-consistency.md) - 트랜잭션 경계와 정합성
+- [concurrency-and-performance](../../policies/concurrency-and-performance.md) - 쿼리 성능, 락, 캐시
 
-## 이 프로젝트의 로컬 컨벤션
+## 금지 규칙
 
-ORM·쿼리 빌더 선택은 프로젝트 환경·팀 선호에 따라 자유롭게 결정할 수 있다. 어떤 전략을 선택하든 R1–R3은 반드시 지킨다. 역할 정의, 전략 선택 기준, 이 프로젝트의 선택 → [`strategies/`](strategies/README.md)
+- Entity, Row, Record 같은 인프라 모델을 application이나 domain 계층으로 반환하지 않는다.
+- 인프라 모델에 비즈니스 로직을 넣지 않는다.
+- Domain 클래스나 Entity 클래스 내부에 양방향 변환 로직을 넣지 않는다.
+- 단순 Repository에 복잡한 동적 쿼리와 Projection 조합을 계속 누적하지 않는다.
 
-### 공통 규칙
+## 안티패턴
 
-**테스트**: Adapter · Repository 테스트는 실제 DB 연동 테스트한다. 동적 조건과 페이지네이션은 통합 테스트로 검증한다.
+- DDL 변경 없이 Entity만 수정한다.
+- QueryDsl/JPA 세부 구현이 application Port 시그니처로 드러난다.
+- 변환 책임이 Adapter, Entity, Domain에 흩어져 변경 지점이 늘어난다.
 
-**DDL**: 인프라 모델 신규·변경 시 DDL 파일을 **같은 커밋**에서 함께 갱신한다. → [ddl-management.md](strategies/ddl-management.md) 참고
+## 주요 컴포넌트
 
-### Post-Work Verification
+- Port 구현체: `{Entity}Adapter`
+- 단순 저장소: `{Entity}JpaRepository`
+- 복잡 쿼리 저장소: `{Entity}QueryDslRepository`
+- 변환 컴포넌트: `{Entity}Extension`
+- 인프라 모델: `{Entity}Entity`
 
-구현 완료 후 생성·수정한 파일을 직접 읽어 체크리스트를 대조한다.
+## 전략 문서
 
-이 프로젝트의 체크리스트 문서 목록 → [`strategies/`](strategies/README.md)
+- [Strategies](./strategies/README.md)
+
+## Playbook compatibility
+
+- 이 단위는 기존 playbook의 `storage` 개념 계층과 동일하다.
+- 실제 프로젝트에서 storage가 `persistence`, `repository`, `database` 등으로 나뉘면 실제 모듈명을 우선한다.

@@ -2,13 +2,29 @@
 
 ---
 
-## 핵심 규칙
+## 언제 사용하는가
+
+- `domain` 단위에서 Domain Model 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `domain` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
+## 핵심 원칙
 
 **도메인 모델은 순수 Kotlin/Java로만 작성하고, `private constructor` + `companion object` 팩토리 메서드로 생성한다. 상태 변경은 행위 메서드로만 허용한다.**
 
 외부 프레임워크(Spring / JPA / Jackson) 변경이 도메인 계층으로 전파되지 않도록 격리하고, `init`·`var` 노출 같은 우회 생성/변경을 차단한다. 외부에서 enum/상태를 꺼내 판단하지 않고 도메인 객체에게 질문한다 (Tell, Don't Ask).
 
 ---
+
+## 코드에서 관찰된 규칙
+
+1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
 
 ## 네이밍 규칙
 
@@ -285,7 +301,17 @@ throw CoreException(TenantErrorCode.TENANT_NOT_FOUND)
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `domain` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [domain guidelines](../domain-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - Spring, JPA, Jackson 등 외부 프레임워크 import를 사용하지 않는다.
 - `init` 블록에서 비즈니스 검증을 수행하지 않는다 — `companion object` 팩토리에서 명시적으로 수행한다.
@@ -296,7 +322,11 @@ throw CoreException(TenantErrorCode.TENANT_NOT_FOUND)
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 ### 모델 구조
 - [ ] `private constructor`를 사용하는가?
@@ -324,3 +354,7 @@ throw CoreException(TenantErrorCode.TENANT_NOT_FOUND)
 - [ ] Spring, JPA, Jackson 등 외부 프레임워크 import가 없는가?
 - [ ] 순수 Kotlin / Java 표준 라이브러리만 사용하는가?
 - [ ] 다른 도메인 모델을 직접 포함하지 않고 ID로 참조하는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

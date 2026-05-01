@@ -2,7 +2,19 @@
 
 ---
 
-## 핵심 규칙
+## 언제 사용하는가
+
+- `storage` 단위에서 Storage Adapter 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `storage` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
+## 핵심 원칙
 
 **Port 구현체는 `{Entity}Adapter`로 작성하고, JpaRepository와 QueryDslRepository에 위임한다. 모든 반환값은 도메인 객체로 변환하고, JPA Entity는 인프라 계층 밖으로 노출하지 않는다.**
 
@@ -11,6 +23,10 @@
 > QueryDsl 쿼리 작성 규칙은 [querydsl-convention.md](querydsl-convention.md) 참고
 
 ---
+
+## 코드에서 관찰된 규칙
+
+1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
 
 ## 네이밍 규칙
 
@@ -173,7 +189,17 @@ fun FsNode.toEntity(): FsNodeEntity = FsNodeEntity(
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `storage` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [storage guidelines](../storage-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - JPA Entity를 인프라 계층 밖으로 반환하지 않는다 — 반드시 `toDomain()`으로 변환.
 - Entity에 비즈니스 로직을 두지 않는다.
@@ -184,7 +210,11 @@ fun FsNode.toEntity(): FsNodeEntity = FsNodeEntity(
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 ### Adapter
 - [ ] 클래스명이 `{Entity}Adapter`인가?
@@ -209,3 +239,7 @@ fun FsNode.toEntity(): FsNodeEntity = FsNodeEntity(
 - [ ] `{Entity}Extension.kt`에 `toDomain()` / `toEntity()`가 있는가?
 - [ ] `toDomain()`이 도메인 모델의 `reconstitute()`를 사용하는가?
 - [ ] Entity나 Domain 클래스 내부에 변환 로직이 없는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

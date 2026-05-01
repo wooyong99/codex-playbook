@@ -1,69 +1,59 @@
 # Domain Guidelines
 
-## Domain 계층의 본질적 책임
+이 문서는 `domain` 단위의 실제 코드 위치, 책임, 의존 경계, 구현 전략을 정리한다.
 
-domain 계층은 순수 비즈니스 개념과 규칙을 표현하는 계층이다. 외부 프레임워크에 의존하지 않으므로 인프라 변경이 도메인 로직을 침범하지 않는다.
+## 코드 위치
 
-1. **비즈니스 개념 표현**: 도메인 언어로 비즈니스 개념과 관계를 코드로 구현한다.
-2. **불변식 보호**: 도메인 객체가 스스로 생성과 상태 변경을 통제하여 잘못된 상태를 막는다.
-3. **예외 계층 소유**: 비즈니스 규칙 위반을 도메인 소유 예외로 표현하며, HTTP 개념에 의존하지 않는다.
+- `domain` module/package - 비즈니스 개념, 불변식, 도메인 행위, 도메인 예외를 담당한다.
 
----
+## 책임
 
-## 반드시 지켜야 할 규칙
+- 도메인 언어로 비즈니스 개념과 관계를 표현한다.
+- 도메인 객체가 생성과 상태 변경을 스스로 통제해 잘못된 상태를 막는다.
+- 비즈니스 규칙 위반을 도메인 소유 예외 계층으로 표현한다.
 
-- **R1. 순수성** — Spring, JPA, Jackson 등 외부 프레임워크에 의존하지 않는다. 순수 Kotlin / Java 표준 라이브러리만 사용한다.
-- **R2. 불변식 보호** — 도메인 객체는 스스로 생성·상태 변경을 통제한다. 외부에서 도메인 규칙을 우회하는 경로를 허용하지 않는다.
-- **R3. 도메인 경계** — 다른 도메인의 객체를 직접 포함하지 않는다. ID 참조로 경계를 유지한다.
-- **R4. 예외 계층 소유** — 비즈니스 규칙 위반은 도메인 계층이 소유한 예외 계층(`ErrorCode`, `CoreException`)으로 표현한다. HTTP 프로토콜 개념(`HttpStatus`)에 의존하지 않는다.
+## 의존 경계
 
----
+- depends on: 없음
+- used by: `application`
+- 금지되는 방향: Spring, JPA, Jackson, HTTP 개념, 인프라 모델 의존
 
-## 금지 규칙 / 안티패턴
+## 핵심 원칙
 
-- **프레임워크 import** — `@Entity`, `@Component`, `@JsonProperty`, `HttpStatus` 등을 import하면 인프라 변경이 도메인 계층에 전파된다.
-- **범용 ErrorCode enum** — 여러 도메인이 공유하는 `CommonErrorCode`는 예외의 소속을 모호하게 만들고 도메인 경계를 무너뜨린다.
-- **HTTP 개념 직접 의존** — 도메인 계층이 `HttpStatus` 같은 프로토콜 타입을 직접 사용하면 표현 계층 변경이 도메인에 영향을 준다.
+- Domain은 외부 프레임워크에 의존하지 않는 순수 비즈니스 모델이어야 한다.
+- 도메인 객체는 생성 경로와 상태 전이를 캡슐화해 불변식을 보호한다.
+- 다른 도메인의 객체를 직접 포함하지 않고 ID 참조로 경계를 유지한다.
 
----
+## 관련 정책
 
-## 이 프로젝트의 로컬 컨벤션
+- [security](../../policies/security.md) - 민감 정보가 도메인에 들어오는 방식
+- [transaction-and-consistency](../../policies/transaction-and-consistency.md) - 도메인 행위와 정합성 경계
 
-내부 구성 방식은 프로젝트 환경·팀 선호에 따라 자유롭게 선택할 수 있다. 어떤 전략을 선택하든 R1–R4는 반드시 지킨다. 역할 정의, 전략 선택 기준, 이 프로젝트의 선택 → [`strategies/`](strategies/README.md)
+## 금지 규칙
 
-### 파일 구조
+- Domain에서 `@Entity`, `@Component`, `@JsonProperty`, `HttpStatus` 같은 외부 타입을 import하지 않는다.
+- 범용 `CommonErrorCode`로 여러 도메인의 예외를 뭉뚱그리지 않는다.
+- 외부에서 도메인 불변식을 우회할 수 있는 public setter나 무의미한 생성자를 열어 두지 않는다.
 
-```
-{domain-module}/
-└── src/main/kotlin/{your.package}/
-    ├── {domain}/
-    │   ├── {Entity}.kt              ← Entity 도메인 모델
-    │   ├── {ValueObject}.kt         ← Value Object (data class)
-    │   ├── {Entity}Status.kt        ← 상태 enum (필요 시)
-    │   └── {Domain}ErrorCode.kt     ← 도메인별 ErrorCode enum
-    │
-    └── exception/
-        ├── ErrorCode.kt             ← ErrorCode 인터페이스
-        ├── CoreErrorType.kt         ← HTTP 의미론적 분류 (Spring 미의존)
-        └── CoreException.kt         ← 기반 예외 클래스
-```
+## 안티패턴
 
-### 공통 규칙
+- 도메인 상태 판단을 application의 if/else에 흩어 놓는다.
+- DB 복원 경로와 신규 생성 경로가 같은 불변식을 무조건 재실행한다.
+- 도메인 예외가 HTTP 상태나 메시지 포맷을 직접 소유한다.
 
-**테스팅**: 도메인 모델은 순수 Kotlin이므로 프레임워크 없이 단위 테스트한다.
+## 주요 컴포넌트
 
-**의존성 방향**:
+- Entity: `{Entity}.kt`
+- Value Object: `{ValueObject}.kt`
+- State enum: `{Entity}Status.kt`
+- ErrorCode: `{Domain}ErrorCode.kt`
+- Base exception: `CoreException`
 
-```
-domain (ErrorCode, CoreException, Entity, Value Object)
-  ↑
-application (Flow/UseCase에서 도메인 객체 조립 및 CoreException throw)
-  ↑
-app (GlobalExceptionHandler: CoreErrorType → HttpStatus 매핑)
-```
+## 전략 문서
 
-### Post-Work Verification
+- [Strategies](./strategies/README.md)
 
-구현 완료 후 생성·수정한 파일을 직접 읽어 아래 각 문서의 체크리스트를 대조한다.
+## Playbook compatibility
 
-이 프로젝트의 체크리스트 문서 목록 → [`strategies/README.md`](strategies/README.md)
+- 이 단위는 기존 playbook의 `domain` 개념 계층과 동일하다.
+- 실제 프로젝트에서 도메인 모듈이 bounded context별로 나뉘면 각 실제 모듈을 별도 architecture unit으로 분리한다.

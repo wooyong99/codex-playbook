@@ -2,13 +2,29 @@
 
 ---
 
-## 핵심 규칙
+## 언제 사용하는가
+
+- `domain` 단위에서 예외 처리 컨벤션 (Domain Layer) 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `domain` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
+## 핵심 원칙
 
 **domain 모듈은 프레임워크에 독립적인 예외 계층을 갖는다. HTTP 상태 코드로의 매핑은 표현 계층(app 모듈)의 책임이다.**
 
 Spring `HttpStatus`나 다른 프레임워크 타입을 직접 의존하지 않고, 순수 Kotlin `enum`(`CoreErrorType`)으로 HTTP 의미론을 추상화한다. 비즈니스 규칙 위반은 `CoreException` + 도메인별 `ErrorCode` enum으로 표현한다.
 
 ---
+
+## 코드에서 관찰된 규칙
+
+1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
 
 ## 구성 요소
 
@@ -163,7 +179,17 @@ app (GlobalExceptionHandler: CoreErrorType → HttpStatus 매핑, BaseErrorCode)
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `domain` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [domain guidelines](../domain-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - 도메인 계층에서 Spring `HttpStatus` 등 프레임워크 타입을 직접 의존하지 않는다.
 - 여러 도메인이 공유하는 범용 "잡탕" `ErrorCode` enum(예: `CommonErrorCode`)을 만들지 않는다 — 도메인별 `{Domain}ErrorCode`로 소속을 명확히 한다.
@@ -173,7 +199,11 @@ app (GlobalExceptionHandler: CoreErrorType → HttpStatus 매핑, BaseErrorCode)
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 - [ ] 도메인 계층이 Spring `HttpStatus` 등 프레임워크 타입에 의존하지 않는가?
 - [ ] 에러 코드가 도메인별 `{Domain}ErrorCode` enum에 정의됐는가? (범용 잡탕 enum 사용 금지)
@@ -182,3 +212,7 @@ app (GlobalExceptionHandler: CoreErrorType → HttpStatus 매핑, BaseErrorCode)
 - [ ] 클라이언트에 응답해야 하는 비즈니스 규칙 위반은 `CoreException(errorCode)`로 던지는가?
 - [ ] `RuntimeException`·커스텀 미정의 예외를 직접 throw 하지 않는가?
 - [ ] 도메인 전용 `{Domain}Exception` 클래스를 정말 필요할 때만 만들었는가? (기본은 `CoreException` 직접 사용)
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

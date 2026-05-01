@@ -1,29 +1,6 @@
 # Backend
 
-{프로젝트명} 백엔드 문서. 아키텍처 가이드라인, 정책, 설계 문서로 구성된다.
-
----
-
-## 디렉토리 구조
-
-```
-docs/backend/
-├── getting-started.md # 오리엔테이션 (기술 스택, 로컬 실행)
-├── architecture/      # 백엔드 아키텍처 지식 시스템
-├── policies/          # 레이어를 관통하는 규칙·전략 (멀티테넌트, 보안, 로깅, DDL)
-└── design/            # 기술 설계 문서 (TDD)
-```
-
-**어디로 가야 할지 모르겠다면**
-
-| 작업 | 출발점 |
-|------|-------|
-| 아키텍처 단위·의존 경계·구현 전략 확인 | [architecture/README.md](architecture/README.md) |
-| 테넌트/보안/로깅/DDL 등 전역 규칙 확인 | [policies/README.md](policies/README.md) |
-| 새 기능/서브시스템 설계 | [design/README.md](design/README.md) |
-| 로컬 환경 세팅 | [getting-started.md](getting-started.md) |
-
----
+{프로젝트명} 백엔드 문서. 아키텍처, 정책, 설계 문서, 실행 안내로 구성된다.
 
 ## 문서 맵
 
@@ -34,40 +11,6 @@ docs/backend/
 | 정책 | [policies/README.md](policies/README.md) | 모든 레이어에 걸쳐 적용되는 기술 정책 |
 | 설계 문서 | [design/README.md](design/README.md) | 기술설계문서 목록과 예시 |
 
----
-
 ## 문서 경계
 
-같은 개념이 정책, 구현 아키텍처, 구현 전략으로 나뉘면 문서 위치를 분리하고 중복 서술하지 않는다.
-
-| 구분 | 위치 | 소유 내용 |
-|------|------|-----------|
-| 정책 | [policies/README.md](policies/README.md) | 모든 아키텍처 단위가 지켜야 하는 원칙, 금지 규칙, 민감 정보·정합성·운영 기준 |
-| 구현 아키텍처 | [architecture/README.md](architecture/README.md) | 실제 코드 단위, 책임, 컴포넌트, 의존 경계, 정책을 만족하는 구조 |
-| 구현 전략 | `architecture/{actual-unit}/strategies/` | 특정 단위 안에서 반복되는 구현 방식, 패턴, 체크리스트, 코드 근거 |
-
-정책 원문은 `policies`가 소유한다. 아키텍처와 전략 문서는 정책을 재기술하지 않고 링크한 뒤, 실제 코드 구조와 구현 방식만 설명한다.
-
----
-
-## 아키텍처
-
-아키텍처 문서의 단일 진입점은 [architecture/README.md](architecture/README.md)다. 세부 아키텍처 단위, 전략 문서, migration 상태는 해당 README가 소유한다.
-
----
-
-## 크로스커팅 정책
-
-프로젝트 도메인·아키텍처 선택과 무관하게, 모든 레이어에 걸쳐 일반적으로 적용되는 기술 정책은 [policies/README.md](policies/README.md)에서 관리한다.
-
----
-
-## 설계 문서
-
-기능·서브시스템의 기술 설계 문서(Technical Design Document)는 [design/README.md](design/README.md)에서 관리한다.
-
-## 운영 원칙
-
-- `docs/backend` 바로 아래 새 영역이 생기면 이 README의 문서 맵을 갱신한다.
-- 하위 영역의 세부 문서 목록은 각 하위 디렉토리의 `README.md`가 소유한다.
-- `AGENTS.md`는 개별 백엔드 문서가 아니라 이 README를 참조한다.
+정책 원문은 `policies`, 실제 코드 구조는 `architecture`, 반복 구현 방식은 `architecture/{actual-unit}/strategies`가 소유한다.

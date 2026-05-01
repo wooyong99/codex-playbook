@@ -2,39 +2,46 @@
 
 백엔드 아키텍처 문서의 단일 진입점.
 
-이 디렉토리는 백엔드 코드베이스의 아키텍처 단위, 의존 경계, 구현 전략을 설명한다. 백엔드 문서 홈(`docs/backend/README.md`)은 개별 아키텍처 문서가 아니라 이 README를 참조한다.
+## 아키텍처 단위
 
-## 현재 상태
+| 단위 | 코드 위치 | 주요 책임 | 의존 대상 | 사용 주체 |
+|------|-----------|-----------|-----------|-----------|
+| `app` | `app` module/package | HTTP 진입점, Request/Response 변환, 예외 응답 | `application` | Client / API caller |
+| `application` | `application` module/package | UseCase 실행, 흐름 조율, 트랜잭션 경계 | `domain`, outbound port | `app`, event/CLI entry |
+| `domain` | `domain` module/package | 비즈니스 개념, 불변식, 도메인 예외 | 없음 | `application` |
+| `storage` | `storage` infrastructure module/package | 저장소 Port 구현, Entity 변환, DDL | `application`, `domain`, database | `application` |
+| `external` | `external` infrastructure module/package | 외부 API Port 구현, 외부 오류/응답 번역 | `application`, external systems | `application` |
 
-현재 문서 구조는 codex-playbook의 개념 레이어(`app`, `application`, `domain`, `storage`, `external`)를 기준으로 구성되어 있다. 실제 코드베이스 기반 문서로 전환할 때는 `$reverse-engineer-backend-docs`의 `migrate` 모드를 사용해 `docs/backend` 지식 시스템을 실제 모듈·패키지·책임 단위 중심 구조로 교체한다.
+## 의존 방향
 
-## 문서 맵
+```text
+app -> application -> domain
+storage -> application -> domain
+external -> application -> domain
+```
 
-| 영역 | 진입점 | 설명 |
-|------|--------|------|
-| 표현 계층 | [app/app-guidelines.md](app/app-guidelines.md) | Controller, DTO, 예외 처리 |
-| 응용 계층 | [application/application-guidelines.md](application/application-guidelines.md) | UseCase, Flow, Validator |
-| 도메인 계층 | [domain/domain-guidelines.md](domain/domain-guidelines.md) | Entity, Value Object, 도메인 규칙 |
-| 저장소 계층 | [storage/storage-guidelines.md](storage/storage-guidelines.md) | DB 어댑터, Repository, DDL |
-| 외부 연동 계층 | [external/external-guidelines.md](external/external-guidelines.md) | 외부 API 어댑터, ApiClient |
+## 문서 구조
 
-## 정책과의 경계
+- [app](./app/app-guidelines.md) - HTTP 표현 계층 경계와 Controller/DTO 전략을 확인할 때
+- [application](./application/application-guidelines.md) - UseCase, Flow, Validator, Handler, Policy 경계를 확인할 때
+- [domain](./domain/domain-guidelines.md) - 도메인 모델, 불변식, 도메인 예외 경계를 확인할 때
+- [storage](./storage/storage-guidelines.md) - 저장소 Adapter, Entity, DDL, QueryDsl 전략을 확인할 때
+- [external](./external/external-guidelines.md) - 외부 API Adapter, ApiClient, Mock 전략을 확인할 때
 
-전역 정책은 [policies/README.md](../policies/README.md)가 소유한다. 이 디렉토리의 문서는 정책 원문을 재기술하지 않고, 실제 코드 단위가 해당 정책을 어떻게 만족하는지 코드 위치·책임·의존 경계 중심으로 설명한다.
+## 관련 정책
 
-반복 구현 방식은 각 단위의 `strategies/` 하위 문서가 소유한다.
-
-## Migration 방침
-
-`$reverse-engineer-backend-docs`를 사용할 때는 먼저 `inspect` 수준의 사전 판단을 수행한다.
-
-- 기존 구조가 실제 코드 구조와 충돌하지 않으면 `merge`로 보강한다.
-- 기존 구조가 플레이북 개념 레이어 중심이고 실제 코드 구조와 충돌하면 `migrate`로 전환한다.
-- `generate`는 비어 있거나 충돌 없는 문서 트리에만 새 문서를 추가한다.
-- `migrate`가 실행되면 이 README는 실제 아키텍처 단위, 코드 위치, 책임, 의존 방향, 하위 단위 `{actual-unit}-guidelines.md` 링크를 포함하는 아키텍처 맵 중심으로 갱신된다.
+- [policies/security](../policies/security.md) - 인증/인가와 민감 정보 처리
+- [policies/logging](../policies/logging.md) - 로깅 형식과 민감 정보 차단
+- [policies/transaction-and-consistency](../policies/transaction-and-consistency.md) - 트랜잭션 경계와 정합성
+- [policies/concurrency-and-performance](../policies/concurrency-and-performance.md) - 동시성 제어와 성능
 
 ## 운영 원칙
 
-- 아키텍처 단위가 추가·삭제·개편되면 이 README의 문서 맵을 갱신한다.
+- architecture 단위가 추가·삭제·개편되면 이 README를 먼저 갱신한다.
 - 세부 전략 문서 목록은 각 단위의 `{actual-unit}-guidelines.md`와 `strategies/README.md`가 소유한다.
 - 백엔드 문서 홈은 이 README만 참조하고, 아키텍처 단위 내부 세부 링크는 각 단위 문서가 소유한다.
+
+## Playbook compatibility
+
+- 현재 구조는 codex-playbook의 기본 개념 단위(`app`, `application`, `domain`, `storage`, `external`)를 사용한다.
+- 실제 프로젝트에 적용할 때는 `$reverse-engineer-backend-docs`의 `migrate` 모드로 실제 모듈·패키지·책임 단위 중심 구조로 교체한다.

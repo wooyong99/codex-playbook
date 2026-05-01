@@ -3,13 +3,25 @@
 > **[로컬 컨벤션]** 이 문서는 이 프로젝트의 [구현 전략](README.md)에서 **Assembler** 역할을 담당하는 `Mapper` 컴포넌트의 컨벤션이다.
 > 다른 프로젝트에서는 동일한 역할을 `Assembler`, `Converter`, `DtoFactory` 등으로 구현할 수 있다.
 
+## 언제 사용하는가
+
+- `application` 단위에서 Mapper 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `application` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
 ## 보편 개념
 
 **Result Assembler**는 Domain 객체를 외부 응답(Result/DTO)으로 변환하는 책임을 하나의 컴포넌트에 집중시킨다. 진입점(UseCase) 내부에 인라인 매핑이 산재하면 변환 규칙을 추적하고 수정하기 어려워진다. 이 역할의 컴포넌트는 순수 변환만 수행하며, 비즈니스 로직과 변환 로직을 섞지 않는다.
 
 ---
 
-## 원칙
+## 핵심 원칙
 
 - 변환 로직은 한 곳에 모인다. UseCase 파일 곳곳에 인라인 매핑이 산재하면 변환 규칙을 추적하고 수정하기 어렵다.
 - Mapper는 일관성 원칙을 따른다. 단순한 변환이더라도 Mapper로 분리하면 모든 변환이 예측 가능한 위치에 있다.
@@ -17,7 +29,7 @@
 
 ---
 
-## 핵심 규칙
+## 코드에서 관찰된 규칙
 
 **도메인 객체를 Result DTO로 변환하는 책임은 Mapper 클래스에 위임한다.**
 UseCase에서 직접 인라인 매핑하거나, UseCase 파일 하단에 변환 함수를 추가하지 않는다.
@@ -61,7 +73,17 @@ class MenuCatalogDtoMapper {
 
 ---
 
-## 금지 패턴
+## 의존 및 책임 경계
+
+- 허용되는 의존: `application` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [application guidelines](../application-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 ```kotlin
 // ❌ UseCase 내 인라인 매핑
@@ -90,9 +112,17 @@ fun create(command: CreateMenuCatalog.Command): CreateMenuCatalog.Result {
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 - [ ] `@Component`로 선언했는가?
 - [ ] `mapper/{Entity}DtoMapper.kt`로 `mapper/` 서브패키지에 위치하는가?
 - [ ] UseCase 파일 내부에 인라인 매핑이 남아있지 않는가?
 - [ ] UseCase 파일 하단에 `internal`/`private` 변환 함수를 추가하지 않았는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

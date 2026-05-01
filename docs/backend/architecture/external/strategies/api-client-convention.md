@@ -2,13 +2,29 @@
 
 ---
 
-## 핵심 규칙
+## 언제 사용하는가
+
+- `external` 단위에서 ApiClient 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `external` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
+## 핵심 원칙
 
 **ApiClient는 외부 HTTP 호출만 책임지며, HTTP·네트워크 예외를 Provider 전용 예외로 통일해서 던진다.**
 
 ApiClient는 HTTP 클라이언트를 사용해 외부 엔드포인트를 호출하고, 기술 예외(`HttpClientErrorException`, `ResourceAccessException` 등)를 Provider sealed 예외 계층으로 감싼다. 비즈니스 판단·Port 매핑·결과 해석은 수행하지 않는다. Adapter는 이 예외 계층만 이해하면 되므로 상위 계층이 외부 프레임워크 세부에 결합되지 않는다.
 
 ---
+
+## 코드에서 관찰된 규칙
+
+1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
 
 ## 네이밍 규칙
 
@@ -214,7 +230,17 @@ private fun <T> GiftCardApiResponse<T>?.extractPayload(apiName: String): T =
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `external` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [external guidelines](../external-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - 메서드마다 try-catch를 반복 작성하지 않는다. 단일 `handleErrors` 헬퍼로 통일한다.
 - HTTP 클라이언트를 메서드 내부에서 매번 재생성하지 않는다.
@@ -226,7 +252,11 @@ private fun <T> GiftCardApiResponse<T>?.extractPayload(apiName: String): T =
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 - [ ] 클래스 이름이 `{Provider}ApiClient` 패턴인가? (`Service` 없음)
 - [ ] 모든 외부 호출 메서드에 로깅(요청·응답·소요시간)이 적용됐는가?
@@ -237,3 +267,7 @@ private fun <T> GiftCardApiResponse<T>?.extractPayload(apiName: String): T =
 - [ ] HTTP 4xx (401 제외) / 5xx / 네트워크 / Parsing 예외가 각기 다른 Provider 예외 타입으로 매핑되는가?
 - [ ] 엔드포인트 URL과 `ParameterizedTypeReference`가 companion object 상수로 모여 있는가?
 - [ ] 공통 응답 래퍼의 payload null 처리가 `ResponseParsingException`으로 승격되는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

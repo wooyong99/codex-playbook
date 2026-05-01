@@ -2,13 +2,29 @@
 
 ---
 
-## 핵심 규칙
+## 언제 사용하는가
+
+- `external` 단위에서 ErrorCode 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `external` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
+## 핵심 원칙
 
 **외부 API 비즈니스 에러코드는 Provider 전용 enum으로 정의하고, `toPortErrorCode()`로 Port ErrorCode로 번역한다.**
 
 외부 에러코드 문자열을 Adapter에서 직접 비교하면 외부 API 변경에 취약해지고 번역 로직이 분산된다. `{Provider}ErrorCode` enum이 외부 코드와 Port ErrorCode 간의 단일 번역 테이블 역할을 담당한다.
 
 ---
+
+## 코드에서 관찰된 규칙
+
+1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
 
 ## 네이밍 규칙
 
@@ -96,7 +112,17 @@ else if (e.code == "GIFT_CARD_PIN_NOT_USABLE") { ErrorCode.NOT_USABLE }
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `external` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [external guidelines](../external-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - 외부 에러코드 문자열을 Adapter에서 직접 비교하지 않는다. enum의 `fromCode()`를 경유한다.
 - `fromCode()`에서 예외를 던지지 않는다. `null`을 반환하고 호출부가 폴백을 처리한다.
@@ -106,7 +132,11 @@ else if (e.code == "GIFT_CARD_PIN_NOT_USABLE") { ErrorCode.NOT_USABLE }
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 - [ ] ErrorCode enum이 `{Provider}ErrorCode.kt` 별도 파일로 분리됐는가?
 - [ ] enum 항목이 `code` 필드와 `fromCode()` companion을 갖추고 있는가?
@@ -114,3 +144,7 @@ else if (e.code == "GIFT_CARD_PIN_NOT_USABLE") { ErrorCode.NOT_USABLE }
 - [ ] `toPortErrorCode()`에서 `else` 없이 모든 enum 항목을 `when`으로 명시했는가?
 - [ ] `null`(미매핑 코드)을 폴백 ErrorCode로 처리하는가?
 - [ ] `toPortErrorCode()`가 Adapter 파일 내 private extension function으로 정의됐는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.

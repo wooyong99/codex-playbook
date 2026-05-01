@@ -2,7 +2,19 @@
 
 ---
 
-## 핵심 규칙
+## 언제 사용하는가
+
+- `storage` 단위에서 QueryDsl 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+
+## 코드 위치
+
+- `storage` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+
+## 구조
+
+- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+
+## 핵심 원칙
 
 **동적 조건은 `BooleanExpression?` 반환 방식으로 작성하고, 페이지네이션은 fetchJoin 대신 2-step 조인 방식을 사용한다. Projection은 `Projections.constructor` 기반으로 작성한다.**
 
@@ -11,6 +23,10 @@
 > Adapter · Entity · Extension 작성 규칙은 [storage-adapter-convention.md](storage-adapter-convention.md) 참고
 
 ---
+
+## 코드에서 관찰된 규칙
+
+1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
 
 ## 동적 조건
 
@@ -244,7 +260,17 @@ fun findSummaries(parentId: Long?): List<FsNodeSummary> {
 
 ---
 
-## 금지 사항
+## 의존 및 책임 경계
+
+- 허용되는 의존: `storage` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
+- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+
+## 관련 정책 / 상위 규칙
+
+- [storage guidelines](../storage-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
+- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+
+## 금지 규칙
 
 - `BooleanBuilder`를 사용하지 않는다 — `BooleanExpression?` 방식 사용.
 - fetchJoin과 페이지네이션을 함께 사용하지 않는다 — 2-step 조인 방식 사용.
@@ -254,7 +280,11 @@ fun findSummaries(parentId: Long?): List<FsNodeSummary> {
 
 ---
 
-## 체크리스트
+## 안티패턴
+
+- 없음
+
+## 체크 리스트
 
 ### 동적 조건
 - [ ] `BooleanBuilder` 대신 `BooleanExpression?` 방식을 사용하는가?
@@ -273,3 +303,7 @@ fun findSummaries(parentId: Long?): List<FsNodeSummary> {
 
 ### Projection
 - [ ] `Tuple.get()` 대신 `Projections.constructor`를 사용하는가?
+
+## 예시 코드
+
+- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.
