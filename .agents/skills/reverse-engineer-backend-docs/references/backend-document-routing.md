@@ -8,11 +8,13 @@
 |------|------|-----------|
 | Backend 홈 | `docs/backend/README.md` | backend 하위 문서 맵, 문서 경계, 각 영역 단일 진입점 |
 | Getting Started | `docs/backend/getting-started.md` | 로컬 실행, 빌드, 테스트, 프로필, 의존 서비스 |
-| Architecture | `docs/backend/architecture/README.md` | 실제 아키텍처 단위 맵, 단위별 guideline 링크, 전략 문서 링크 |
+| Architecture | `docs/backend/architecture/README.md` | 실제 아키텍처 단위 맵, 단위별 guideline 링크 |
 | Policies | `docs/backend/policies/README.md` | 전역 정책 목록과 링크 |
 | Design | `docs/backend/design/README.md` | 기술설계문서 목록과 작성 가이드 링크 |
 
 하위 영역의 세부 문서 목록은 가장 가까운 `README.md`가 소유한다. `AGENTS.md`는 최상위 `docs/backend/README.md`만 참조한다.
+
+`docs/backend/architecture/README.md`는 아키텍처 단위 목록까지만 소유한다. 각 단위 내부의 세부 전략 문서 목록은 해당 단위의 `{actual-unit}-guidelines.md`와 `strategies/README.md`가 소유하며, architecture 최상위 README에 직접 나열하지 않는다.
 
 ## 정책 / 구현 아키텍처 / 구현 전략 경계
 
@@ -89,6 +91,7 @@ docs/backend/architecture/
 
 - `docs/backend` 바로 아래 새 영역을 추가·삭제·개편하면 `docs/backend/README.md`를 갱신한다.
 - architecture 하위 단위를 추가·삭제·개편하면 `docs/backend/architecture/README.md`를 갱신한다.
+- architecture 단위 내부 전략 문서를 추가·삭제·개편하면 해당 단위의 `{actual-unit}-guidelines.md` 또는 `strategies/README.md`를 갱신한다.
 - policy 문서를 추가·삭제·개편하면 `docs/backend/policies/README.md`를 갱신한다.
 - design 문서를 추가·삭제·개편하면 `docs/backend/design/README.md`를 갱신한다.
 - `AGENTS.md`는 최상위 Backend 문서 홈 경로가 바뀔 때만 갱신한다.

@@ -24,16 +24,6 @@
 
 반복 구현 방식은 각 단위의 `strategies/` 하위 문서가 소유한다.
 
-## Strategies
-
-각 영역의 `strategies/README.md`는 해당 영역에서 관찰되거나 정의된 세부 구현 전략의 진입점이다.
-
-- [app/strategies/README.md](app/strategies/README.md)
-- [application/strategies/README.md](application/strategies/README.md)
-- [domain/strategies/README.md](domain/strategies/README.md)
-- [storage/strategies/README.md](storage/strategies/README.md)
-- [external/strategies/README.md](external/strategies/README.md)
-
 ## Migration 방침
 
 `$reverse-engineer-backend-docs`를 사용할 때는 먼저 `inspect` 수준의 사전 판단을 수행한다.
@@ -45,5 +35,6 @@
 
 ## 운영 원칙
 
-- 아키텍처 하위 디렉토리나 세부 전략 문서가 추가·삭제·개편되면 이 README의 문서 맵을 갱신한다.
-- 백엔드 문서 홈은 이 README만 참조하고, 아키텍처 내부 세부 링크는 이 README가 소유한다.
+- 아키텍처 단위가 추가·삭제·개편되면 이 README의 문서 맵을 갱신한다.
+- 세부 전략 문서 목록은 각 단위의 `{actual-unit}-guidelines.md`와 `strategies/README.md`가 소유한다.
+- 백엔드 문서 홈은 이 README만 참조하고, 아키텍처 단위 내부 세부 링크는 각 단위 문서가 소유한다.

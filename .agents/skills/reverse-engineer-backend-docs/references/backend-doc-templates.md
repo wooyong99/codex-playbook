@@ -137,8 +137,9 @@
 
 ## 운영 원칙
 
-- architecture 하위 디렉토리나 전략 문서가 추가·삭제·개편되면 이 README를 먼저 갱신한다.
-- 백엔드 문서 홈은 이 README만 참조하고, 아키텍처 내부 세부 링크는 이 README가 소유한다.
+- architecture 단위가 추가·삭제·개편되면 이 README를 먼저 갱신한다.
+- 세부 전략 문서 목록은 각 단위의 `{actual-unit}-guidelines.md`와 `strategies/README.md`가 소유한다.
+- 백엔드 문서 홈은 이 README만 참조하고, 아키텍처 단위 내부 세부 링크는 각 단위 문서가 소유한다.
 
 ## Playbook compatibility
 
