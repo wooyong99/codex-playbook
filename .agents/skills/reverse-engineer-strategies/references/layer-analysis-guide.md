@@ -1,182 +1,227 @@
-# Layer Analysis Guide
+# Architecture Unit Analysis Guide
 
-각 레이어를 분석할 때 무엇을 읽고 어떤 패턴을 추출해야 하는지 정리한 가이드.
+실제 코드베이스를 기준으로 `docs/backend/architecture` 문서 구조와 전략 문서를 설계하기 위한 분석 가이드.
 
-## 먼저: 로컬 레이어 맵을 만든다
+## 목차
 
-이 가이드는 `domain`, `application`, `storage`, `external`, `app`를 **플레이북의 개념 레이어 이름**으로 사용한다.
-하지만 실제 프로젝트는 전혀 다른 이름을 쓸 수 있다.
+- [핵심 원칙](#핵심-원칙)
+- [1. Architecture Unit Discovery](#1-architecture-unit-discovery)
+- [2. Responsibility Classification](#2-responsibility-classification)
+- [3. Dependency Boundary Analysis](#3-dependency-boundary-analysis)
+- [4. Pattern Extraction By Local Unit](#4-pattern-extraction-by-local-unit)
+- [5. Documentation Structure Decision](#5-documentation-structure-decision)
+- [6. Optional Playbook Compatibility Notes](#6-optional-playbook-compatibility-notes)
+- [분석 메모 형식](#분석-메모-형식)
 
-예시:
+## 핵심 원칙
 
-- `app` 대신 `api`, `presentation`, `bootstrap`
-- `storage`와 `external` 대신 상위 `infra`, `infrastructure`
-- `infra` 하위에 `storage`, `external`, `messaging`, `security`
+`docs/backend/architecture`는 플레이북 개념 레이어의 복제본이 아니라, 현재 프로젝트 코드베이스의 지식 시스템이어야 한다.
 
-따라서 분석 시작 전에 반드시 아래 두 단계를 먼저 수행한다.
+- 출력 문서 구조는 실제 코드의 모듈, 패키지, 책임 경계, 의존 방향을 따른다.
+- `domain`, `application`, `storage`, `external`, `app` 같은 플레이북 개념 레이어는 분석 보조 렌즈로만 사용한다.
+- 실제 코드에 없는 레이어명이나 전략 문서를 새로 만들지 않는다.
+- 코드에서 확인한 클래스명, 패키지명, 어노테이션, 인터페이스, 의존 관계를 근거로 남긴다.
+- 이름보다 책임과 의존 방향을 우선하지만, 최종 문서 디렉토리명은 프로젝트가 실제로 쓰는 이름을 우선한다.
 
-1. 프로젝트의 **로컬 레이어 이름**을 식별한다.
-2. 그 로컬 레이어를 플레이북의 **개념 레이어**에 매핑한다.
+## 1. Architecture Unit Discovery
 
-중요:
-
-- 플레이북의 예시 레이어 이름과 **동일한 이름이 존재할 필요는 없다**.
-- 이름이 달라도, 실제 코드에서 수행하는 **역할, 책임, 의존 방향, 포함된 클래스의 종류**를 기준으로 개념 레이어에 매핑한다.
-- 즉, 매핑은 `이름 기반 분류`가 아니라 `역할 기반 분류`다.
-
-예시 매핑 메모:
-
-```text
-로컬 레이어 맵
-- bootstrap -> app
-- core -> domain
-- usecase -> application
-- infrastructure/jpa -> storage
-- infrastructure/client -> external
-```
-
-문서 생성 시에는 이 매핑을 숨기지 말고 README나 본문에 함께 드러낸다.
-
-예를 들어:
-
-- `bootstrap`, `api`, `presentation`은 표현 계층 역할이면 `app`으로 매핑할 수 있다.
-- `usecase`, `service`, `application-service`는 응용 조합 책임이 강하면 `application`으로 매핑할 수 있다.
-- `adapter`, `driven`, `infra`, `infrastructure`는 내부를 다시 쪼개 보고 `storage`, `external`, 기타 infrastructure 책임으로 분해할 수 있다.
-
-## 구조 기준 선택
+먼저 실제 아키텍처 단위를 찾는다. 이 단계에서는 플레이북 레이어에 끼워 맞추지 않는다.
 
 ### 멀티 모듈 프로젝트
 
-- `settings.gradle.kts` 기준으로 모듈 목록을 먼저 파악한다.
-- 모듈명, 의존 관계, `src/main` 클래스 역할을 바탕으로 레이어별 **모듈**을 식별한다.
-- 모듈 내부에 다시 하위 레이어가 섞여 있으면 패키지 기준으로 한 번 더 분해한다.
-- 모듈 이름이 플레이북 예시와 달라도, 실제 책임이 같다면 같은 개념 레이어로 매핑한다.
+우선적으로 볼 대상:
+
+- `settings.gradle.kts`
+- 루트 및 각 모듈의 `build.gradle.kts`
+- 모듈 간 project dependency
+- 각 모듈의 `src/main/kotlin`, `src/test/kotlin`
+- Spring Boot application entrypoint, configuration, component scan 범위
+
+추출할 신호:
+
+- 모듈명이 드러내는 실제 책임: `admin`, `api`, `core`, `batch`, `infrastructure`, `storage`, `notification`
+- 의존 방향: 어떤 모듈이 어떤 모듈을 참조하는가
+- 외부로 노출되는 계약: Controller, UseCase interface, Repository interface, Client port
+- 모듈 내부에 섞인 하위 책임: persistence, client, messaging, security, config
 
 ### 단일 모듈 프로젝트
 
-- `src/main/kotlin` 이하 디렉토리와 패키지 구조를 기준으로 레이어를 식별한다.
-- 패키지명과 클래스 역할이 충돌하면 클래스 역할과 의존 방향을 더 우선한다.
-- 디렉토리 이름이 낯설더라도, 실제 포함된 클래스 종류와 책임을 보고 레이어를 판정한다.
-
-## 1. Domain
-
 우선적으로 볼 대상:
 
-- 로컬 레이어 맵에서 `domain`에 대응된 모듈 또는 디렉토리
-- 순수 Kotlin 모델
-- 도메인 예외
-- 값 객체, 애그리거트, 팩토리, 상태 전이 메서드
+- `src/main/kotlin` 이하 최상위 패키지 구조
+- 패키지별 클래스 역할과 import 방향
+- Spring stereotype annotation 분포
+- 테스트 패키지 구조
 
-확인할 패턴:
+추출할 신호:
 
-- 엔티티/값 객체를 어떻게 나누는가
-- 불변식 검증이 어디에 있는가
-- 도메인 예외 코드 구조가 있는가
-- ID 참조 방식과 연관 규칙이 무엇인가
+- 패키지가 실제로 나누는 책임
+- 패키지 이름과 클래스 역할이 충돌하는 지점
+- 독립 문서 단위로 분리할 만큼 반복되는 하위 책임
+- 진입점, 유스케이스, 도메인 모델, 영속성, 외부 연동, 배치 같은 책임의 배치 방식
 
-## 2. Application
+## 2. Responsibility Classification
 
-우선적으로 볼 대상:
+각 아키텍처 단위의 책임을 실제 코드 언어로 분류한다.
 
-- 로컬 레이어 맵에서 `application`에 대응된 모듈 또는 디렉토리
-- `UseCase`, `Service`, `Flow`, `Validator`, `Handler`, `Policy`, `Mapper`
-- 트랜잭션 경계가 선언된 클래스
-- Port 인터페이스
+확인할 항목:
 
-확인할 패턴:
+- 이 단위가 사용자 요청, 내부 유스케이스, 도메인 규칙, 저장소 구현, 외부 연동, 배치 실행, 설정 중 무엇을 담당하는가
+- 이 단위가 외부에 제공하는 public contract는 무엇인가
+- 이 단위가 내부 구현으로 숨기는 세부사항은 무엇인가
+- 이 단위 내부에서 다시 쪼갤 수 있는 하위 책임은 무엇인가
 
-- UseCase와 Flow를 분리하는가
-- 입력 검증은 어디서 하는가
-- 매핑 책임은 누가 가지는가
-- 정책 객체나 전략 객체를 분리하는가
+관찰 가능한 근거:
 
-## 3. Storage
+- 클래스 suffix: `Controller`, `Request`, `Response`, `UseCase`, `Service`, `Flow`, `Policy`, `Validator`, `Entity`, `Repository`, `Adapter`, `Client`, `Config`
+- annotation: `@RestController`, `@Service`, `@Component`, `@Transactional`, `@Entity`, `@Configuration`
+- interface와 implementation의 위치
+- DTO, Command, Result, Event, Exception, ErrorCode의 위치와 변환 흐름
 
-우선적으로 볼 대상:
+주의:
 
-- 로컬 레이어 맵에서 `storage`에 대응된 모듈 또는 디렉토리
-- `Entity`, `Repository`, `RepositoryImpl`, `Adapter`
-- JPA, Querydsl, jOOQ, MyBatis 관련 클래스
-- persistence mapper 또는 entity converter
+- 이름이 `core`여도 실제로 domain만 담는지, application service까지 포함하는지 확인한다.
+- 이름이 `infrastructure`여도 persistence와 external client가 섞여 있으면 하위 책임 단위로 다시 나눈다.
+- 이름이 `api`여도 controller만 있는지, service orchestration까지 포함하는지 확인한다.
 
-확인할 패턴:
+## 3. Dependency Boundary Analysis
 
-- 저장소 adapter 구조가 있는가
-- ORM 또는 쿼리 도구를 무엇으로 통일하는가
-- Entity와 Domain 모델 변환 책임이 어디에 있는가
-- 커스텀 조회 구현 패턴이 있는가
+문서 구조는 책임뿐 아니라 의존 방향을 반영해야 한다.
 
-## 4. External
+확인할 항목:
 
-우선적으로 볼 대상:
+- 모듈 또는 패키지 간 import 방향
+- framework annotation이 어느 단위까지 침투하는가
+- domain model이 persistence entity나 web DTO를 참조하는가
+- application/usecase가 infrastructure implementation을 직접 참조하는가
+- adapter implementation이 port interface를 구현하는가
+- 테스트가 어떤 단위의 public contract를 기준으로 작성되는가
 
-- 로컬 레이어 맵에서 `external`에 대응된 모듈 또는 디렉토리
-- 외부 API client
-- adapter, dto, config, exception, error code
-- HTTP client 설정
+출력해야 할 판단:
 
-확인할 패턴:
+- 허용되는 의존 방향
+- 현재 코드에서 반복되는 의존 경계
+- 경계가 흐릿한 영역과 문서화 시 주의점
+- 문서 구조를 모듈 기준으로 할지 책임 기준으로 할지
 
-- 외부 연동을 adapter로 감싸는가
-- DTO 네이밍과 계층 분리가 어떻게 되는가
-- 예외 매핑과 로깅 규칙이 있는가
-- 사용하는 HTTP client가 무엇인가
+## 4. Pattern Extraction By Local Unit
 
-## 5. App
+각 실제 아키텍처 단위별로 반복 패턴을 추출한다.
 
-우선적으로 볼 대상:
+공통으로 확인할 패턴:
 
-- 로컬 레이어 맵에서 `app`에 대응된 모듈 또는 디렉토리
-- controller
-- request/response DTO
-- exception handler
-- API path와 버전 규칙
+- 파일 및 패키지 구조
+- public API 또는 public interface 배치
+- 입력·출력 DTO와 내부 command/result 변환
+- 예외와 error code 구조
+- 트랜잭션 경계
+- validation 위치
+- mapper/converter 책임
+- 테스트 fixture와 테스트 스타일
+- 로깅, 설정, profile, bean wiring 방식
 
-확인할 패턴:
+반복 패턴으로 인정할 기준:
 
-- controller가 command/query 변환만 담당하는가
-- request DTO에 validation annotation이 어떻게 붙는가
-- 공통 응답 포맷이 있는가
-- 예외 처리를 글로벌하게 통합하는가
+- 여러 클래스나 여러 기능에서 반복된다.
+- 새로운 기능을 추가할 때 따라야 할 구현 전략으로 볼 수 있다.
+- 단발성 구현이나 우연한 예외가 아니다.
+- 코드 근거를 2개 이상 제시할 수 있거나, 1개뿐이어도 central abstraction으로 쓰인다.
 
-## 6. Infrastructure 또는 기타 상위 레이어
+문서화하지 말아야 할 것:
 
-어떤 프로젝트는 `storage`, `external`이 독립 레이어가 아니라 `infra` 또는 `infrastructure` 하위에 함께 존재한다.
-이 경우 상위 레이어를 한 번에 문서화하지 말고, 하위 책임 단위로 다시 나눈다.
+- 코드에서 확인되지 않은 이상적 구조
+- 플레이북 예시 문서 목록에만 있는 패턴
+- 한 파일에만 우연히 있는 구현
+- 리팩토링 희망사항
 
-우선적으로 볼 대상:
+## 5. Documentation Structure Decision
 
-- `infra`, `infrastructure`, `adapter`, `driven`
-- 하위의 `storage`, `external`, `client`, `persistence`, `messaging`, `security`
+분석 후 문서 구조를 먼저 제안한다. 기존 구조와 충돌하면 바로 쓰지 말고 이전 계획을 제시한다.
 
-확인할 패턴:
+권장 구조:
 
-- 상위 infrastructure 레이어가 어떤 하위 책임으로 쪼개지는가
-- persistence와 external integration이 분리되는가
-- 공통 설정과 구현체가 어떻게 배치되는가
-- 하위 전략 문서를 플레이북의 어느 레이어에 대응시킬지
+```text
+docs/backend/architecture/
+├── README.md
+├── architecture-map.md
+├── {actual-unit}/
+│   ├── README.md
+│   └── strategies/
+│       ├── README.md
+│       └── {observed-pattern}.md
+└── {another-actual-unit}/
+    └── ...
+```
 
-문서화 규칙:
+결정 기준:
 
-- `infra`가 상위 묶음이면 README에서 먼저 구조를 설명한다.
-- 그 다음 실제 내용은 `storage`, `external` 또는 다른 하위 전략 단위로 나눠 설명한다.
-- 플레이북 표준 구조와 1:1로 맞지 않을 경우, "이 프로젝트의 infrastructure 레이어는 플레이북의 storage/external을 함께 포함한다" 같은 매핑 설명을 적는다.
+- 실제 모듈이 명확하고 책임이 응집되어 있으면 모듈명을 문서 단위로 사용한다.
+- 하나의 모듈에 여러 책임이 섞여 있으면 패키지 또는 책임 단위로 문서 단위를 나눈다.
+- 실제 이름이 너무 기술 세부적이면 사용자에게 문서명 후보를 확인한다.
+- 기존 플레이북 구조가 코드와 맞지 않으면 `migrate` 계획을 먼저 제시한다.
+
+반드시 갱신할 수 있는 문서:
+
+- `docs/backend/architecture/README.md`: 전체 아키텍처 단위 진입점
+- `docs/backend/architecture/architecture-map.md`: 실제 단위, 위치, 책임, 의존 방향 요약
+- 각 `{actual-unit}/README.md`: 단위별 책임과 하위 전략 링크
+- 각 `{actual-unit}/strategies/README.md`: 관찰된 전략 목록
+- `docs/backend/README.md`: backend 문서 홈의 architecture 링크
+- `AGENTS.md`: Backend 문서 맵이 구조 변경과 어긋나면 갱신
+
+## 6. Optional Playbook Compatibility Notes
+
+플레이북 개념 레이어와의 대응은 필요할 때만 보조 정보로 남긴다.
+
+사용할 때:
+
+- 기존 문서가 플레이북 구조로 되어 있어 이전 근거가 필요할 때
+- 사용자가 플레이북 기준과 실제 구조의 차이를 알고 싶어 할 때
+- 특정 실제 단위가 여러 플레이북 개념을 함께 포함해 주의가 필요할 때
+
+쓰는 방식:
+
+```text
+Playbook compatibility:
+- 이 프로젝트의 `core`는 domain model과 application usecase를 함께 포함한다.
+- 따라서 문서 구조는 `core`를 유지하되, strategies 하위에서 `domain-model`, `usecase-flow` 전략을 분리한다.
+```
+
+하지 말아야 할 것:
+
+- 실제 코드 단위명을 숨기고 플레이북 개념 레이어명만 노출하기
+- 플레이북 개념 레이어에 맞추기 위해 실제 구조와 다른 디렉토리 만들기
+- 코드에서 섞여 있는 책임을 문서에서만 억지로 분리하기
 
 ## 분석 메모 형식
 
-레이어별 분석 결과는 최소 아래 형태로 메모한다.
+분석 중에는 최소 아래 형태로 메모한다.
 
 ```text
-[LAYER] 분석 결과
-전략: {핵심 전략명}
-로컬 레이어명: {프로젝트에서 실제로 쓰는 이름}
-개념 레이어 매핑: {domain/application/storage/external/app/infrastructure 중 대응}
-근거:
-- {관찰 1}
-- {관찰 2}
-컴포넌트:
+[ARCHITECTURE UNIT] {실제 단위명}
+코드 위치:
+- {모듈 또는 패키지 경로}
+
+책임:
+- {실제 코드에서 확인한 책임}
+
+의존 방향:
+- depends on: {단위 목록}
+- used by: {단위 목록}
+
+주요 컴포넌트:
 - {역할}: {예시 클래스}
-- {역할}: {예시 클래스}
+
+관찰된 전략:
+- {전략명}: {근거 클래스/패키지/어노테이션}
+
+문서 구조 제안:
+- docs/backend/architecture/{actual-unit}/README.md
+- docs/backend/architecture/{actual-unit}/strategies/{pattern}.md
+
+Playbook compatibility:
+- {필요할 때만 작성. 없으면 "없음"}
+
 불확실한 부분:
 - {있다면 기록, 없으면 없음}
 ```

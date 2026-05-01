@@ -1,15 +1,91 @@
-# Strategies Doc Templates
+# Architecture Strategy Doc Templates
 
-생성할 문서의 최소 구조와 작성 규칙.
+실제 코드베이스 기반으로 `docs/backend/architecture` 하위 문서를 생성할 때 사용하는 최소 템플릿과 작성 규칙.
 
-## 1. 레이어 README 템플릿
+## 목차
 
-각 레이어의 `strategies/README.md`는 아래 구조를 따른다.
+- [1. Architecture Map](#1-architecture-map)
+- [2. Architecture Unit README](#2-architecture-unit-readme)
+- [3. Strategies README](#3-strategies-readme)
+- [4. Strategy Detail](#4-strategy-detail)
+- [5. 문서 생성 조건](#5-문서-생성-조건)
+- [6. 작성 원칙](#6-작성-원칙)
+
+## 1. Architecture Map
+
+`docs/backend/architecture/architecture-map.md`는 실제 코드 구조의 전체 지도를 제공한다.
+
+````md
+# Backend Architecture Map
+
+이 문서는 현재 코드베이스에서 확인한 실제 아키텍처 단위, 코드 위치, 책임, 의존 방향을 요약한다.
+
+## 아키텍처 단위
+
+| 단위 | 코드 위치 | 주요 책임 | 의존 대상 | 사용 주체 |
+|------|-----------|-----------|-----------|-----------|
+| `{actual-unit}` | `{module/package}` | {책임 요약} | {depends on} | {used by} |
+
+## 의존 방향
+
+```text
+{actual-unit-a} -> {actual-unit-b}
+```
+
+## 문서 구조
+
+- [{actual-unit}](./{actual-unit}/README.md) - {언제 읽는지}
+
+## Playbook compatibility
+
+- {필요할 때만 실제 구조와 플레이북 개념의 차이를 설명. 없으면 "없음"}
+````
+
+## 2. Architecture Unit README
+
+각 실제 아키텍처 단위의 `README.md`는 아래 구조를 따른다.
 
 ```md
-# {Layer} Strategies
+# {Actual Unit Name}
 
-이 프로젝트에서 {layer} 레이어에 실제로 사용 중인 전략 요약.
+이 문서는 `{actual-unit}` 단위의 실제 코드 위치, 책임, 의존 경계, 구현 전략을 정리한다.
+
+## 코드 위치
+
+- `{module/package path}` - {역할}
+
+## 책임
+
+- {책임 1}
+- {책임 2}
+
+## 의존 경계
+
+- depends on: {단위 목록}
+- used by: {단위 목록}
+- 금지되는 방향: {확인된 경우 작성}
+
+## 주요 컴포넌트
+
+- {역할}: `{예시 클래스 또는 패키지}`
+
+## 전략 문서
+
+- [Strategies](./strategies/README.md)
+
+## Playbook compatibility
+
+- {필요할 때만 작성. 없으면 "없음"}
+```
+
+## 3. Strategies README
+
+각 실제 아키텍처 단위의 `strategies/README.md`는 아래 구조를 따른다.
+
+```md
+# {Actual Unit Name} Strategies
+
+이 프로젝트에서 `{actual-unit}` 단위에 실제로 사용 중인 구현 전략 요약.
 
 ## 핵심 전략
 
@@ -18,26 +94,29 @@
 
 ## 근거가 된 코드 패턴
 
-- {클래스/패키지/어노테이션 근거 1}
-- {클래스/패키지/어노테이션 근거 2}
+- `{클래스/패키지/어노테이션 근거}` - {관찰 내용}
 
 ## 세부 문서
 
 - [{문서명}]({파일명}.md) - {언제 이 문서를 참고해야 하는지}
 ```
 
-## 2. 세부 컨벤션 문서 템플릿
+## 4. Strategy Detail
 
-세부 문서는 아래 구조를 기본으로 한다.
+반복 구현 패턴이 확인된 경우에만 세부 전략 문서를 만든다.
 
 ```md
-# {Convention Title}
+# {Strategy Title}
 
-이 프로젝트에서 {컴포넌트/패턴}를 구현하는 실제 방식 정리.
+이 문서는 `{actual-unit}` 단위에서 `{컴포넌트/패턴}`을 구현하는 실제 방식을 정리한다.
 
 ## 언제 사용하는가
 
 - {사용 시점}
+
+## 코드 위치
+
+- `{경로}` - {역할}
 
 ## 구조
 
@@ -50,6 +129,11 @@
 2. {규칙 2}
 3. {규칙 3}
 
+## 의존 및 책임 경계
+
+- {허용되는 의존}
+- {금지되거나 주의할 의존}
+
 ## 금지 사항 / 안티패턴
 
 - {금지 사항 1}
@@ -60,48 +144,48 @@
 - [ ] {검증 항목 1}
 - [ ] {검증 항목 2}
 
-## 예시 클래스
+## 예시 코드
 
-- `{절대 또는 저장소 상대 경로}` - {역할 설명}
-- `{절대 또는 저장소 상대 경로}` - {역할 설명}
+- `{저장소 상대 경로}` - {역할 설명}
 ```
 
-## 3. 세부 문서를 만들 조건
+## 5. 문서 생성 조건
 
 기본 원칙:
 
-- 아래 예시 문서들은 코드에서 해당 패턴이 실제로 보일 때만 만든다.
-- 아래 목록에 없는 패턴이라도, 기존 코드베이스에서 **반복적으로 사용되는 새로운 구현 패턴**이 확인되면 그 패턴에 맞는 새 전략 문서를 추가로 만든다.
-- 즉, 문서 생성 기준은 **플레이북 예시 목록**이 아니라 **실제 코드에서 관찰된 구현 전략**이다.
+- 문서 단위와 디렉토리명은 실제 코드의 아키텍처 단위명을 우선한다.
+- 세부 전략 문서는 코드에서 해당 패턴이 실제로 보일 때만 만든다.
+- 플레이북 예시 목록에 있다는 이유만으로 문서를 만들지 않는다.
+- 기존 문서가 실제 코드 구조와 맞지 않으면 `migrate` 계획을 먼저 제시한다.
+- 아래 목록에 없는 패턴이라도, 기존 코드베이스에서 반복적으로 사용되는 새로운 구현 패턴이 확인되면 그 패턴에 맞는 전략 문서를 추가한다.
 
-예시 문서 목록:
+세부 문서로 만들 수 있는 패턴 예시:
 
-- `app/strategies/api-convention.md`
-- `app/strategies/rest-design-convention.md`
-- `app/strategies/exception-handling-convention.md`
-- `application/strategies/use-case-convention.md`
-- `application/strategies/flow-convention.md`
-- `application/strategies/validator-convention.md`
-- `application/strategies/handler-convention.md`
-- `application/strategies/policy-convention.md`
-- `application/strategies/mapper-convention.md`
-- `domain/strategies/domain-model-convention.md`
-- `domain/strategies/exception-convention.md`
-- `storage/strategies/storage-adapter-convention.md`
-- `storage/strategies/querydsl-convention.md`
-- `external/strategies/api-client-http-client.md`
-- `external/strategies/api-client-logging.md`
+- API endpoint/request/response 전략
+- UseCase 또는 service orchestration 전략
+- domain model/state transition 전략
+- persistence adapter/repository 전략
+- query builder 또는 custom query 전략
+- external client/adapter 전략
+- event handler/messaging 전략
+- batch/scheduler 전략
+- security/authentication 전략
+- error code/exception mapping 전략
+- transaction boundary 전략
+- test fixture/test style 전략
 
 새 패턴 문서화 규칙:
 
 - 새 문서 이름은 해당 패턴의 책임이 드러나게 짓는다.
-- README에는 예시 문서와 새로 발견한 문서를 함께 연결한다.
+- README에는 새로 발견한 문서를 연결한다.
 - 단발성 구현이나 한두 클래스에만 우연히 보이는 패턴은 새 문서로 만들지 않는다.
 - 여러 클래스/모듈에서 반복되고, 팀의 구현 전략으로 볼 수 있을 때만 새 문서를 만든다.
 
-## 4. 작성 원칙
+## 6. 작성 원칙
 
 - 일반적인 아키텍처 교과서 설명을 쓰지 않는다.
 - 실제 클래스명, 패키지 구조, 어노테이션, 구현 방식 같은 관찰 결과를 중심으로 쓴다.
 - 근거가 약한 내용은 문서에서 제외한다.
 - 코드에서 더 이상 보이지 않는 패턴 문서는 병합 모드에서도 제거 후보로 본다.
+- 플레이북 개념 레이어는 필요할 때만 `Playbook compatibility` 섹션에 보조 정보로 기록한다.
+- 새 디렉토리 추가·삭제·개편이 있으면 `docs/backend/README.md`와 `AGENTS.md` 문서 맵 갱신 여부를 확인한다.
