@@ -9,7 +9,7 @@
 ```
 docs/backend/
 ├── getting-started.md # 오리엔테이션 (기술 스택, 로컬 실행)
-├── architecture/      # 레이어별 가이드라인 및 컨벤션
+├── architecture/      # 백엔드 아키텍처 지식 시스템
 ├── policies/          # 레이어를 관통하는 규칙·전략 (멀티테넌트, 보안, 로깅, DDL)
 └── design/            # 기술 설계 문서 (TDD)
 ```
@@ -18,51 +18,42 @@ docs/backend/
 
 | 작업 | 출발점 |
 |------|-------|
-| 특정 레이어에 코드 작성 | [`architecture/`](architecture/) |
-| 테넌트/보안/로깅/DDL 등 전역 규칙 확인 | [`policies/`](policies/) |
-| 새 기능/서브시스템 설계 | [`design/`](design/) |
+| 아키텍처 단위·의존 경계·구현 전략 확인 | [architecture/README.md](architecture/README.md) |
+| 테넌트/보안/로깅/DDL 등 전역 규칙 확인 | [policies/README.md](policies/README.md) |
+| 새 기능/서브시스템 설계 | [design/README.md](design/README.md) |
 | 로컬 환경 세팅 | [getting-started.md](getting-started.md) |
 
 ---
 
-## 시작하기
+## 문서 맵
 
-- [Getting Started](getting-started.md) — 기술 스택, 로컬 실행, 프로필
+| 영역 | 진입점 | 설명 |
+|------|--------|------|
+| 시작하기 | [getting-started.md](getting-started.md) | 기술 스택, 로컬 실행, 프로필 |
+| 아키텍처 | [architecture/README.md](architecture/README.md) | 백엔드 아키텍처 단위, 의존 경계, 구현 전략 |
+| 정책 | [policies/README.md](policies/README.md) | 모든 레이어에 걸쳐 적용되는 기술 정책 |
+| 설계 문서 | [design/README.md](design/README.md) | 기술설계문서 작성 규칙과 예시 |
 
 ---
 
 ## 아키텍처
 
-Clean Architecture + DDD 기반 멀티모듈. 의존 방향: `app → application → domain ← infra`.
-
-### 레이어별 가이드라인 및 컨벤션 ([`architecture/`](architecture/))
-
-| 레이어 | 가이드라인 |
-|--------|-----------|
-| 표현 계층 (Controller, DTO, 예외 처리) | [app-layer-guidelines](architecture/app/app-layer-guidelines.md) |
-| 응용 계층 (UseCase, Flow, Validator) | [application-layer-guidelines](architecture/application/application-layer-guidelines.md) |
-| 도메인 계층 (Entity, Value Object, 도메인 규칙) | [domain-layer-guidelines](architecture/domain/domain-layer-guidelines.md) |
-| 저장소 계층 (DB 어댑터, Repository) | [storage-layer-guidelines](architecture/storage/storage-layer-guidelines.md) |
-| 외부 연동 계층 (외부 API 어댑터, ApiClient) | [external-layer-guidelines](architecture/external/external-layer-guidelines.md) |
+아키텍처 문서의 단일 진입점은 [architecture/README.md](architecture/README.md)다. 세부 아키텍처 단위, 전략 문서, migration 상태는 해당 README가 소유한다.
 
 ---
 
-## 크로스커팅 정책 ([`policies/`](policies/))
+## 크로스커팅 정책
 
-프로젝트 도메인·아키텍처 선택과 무관하게, 모든 레이어에 걸쳐 일반적으로 적용되는 기술 정책.
-
-| 문서 | 설명 |
-|------|------|
-| [security](policies/security.md) | 비밀번호 취급, 인증 컨텍스트 분리, 민감 정보 커밋 금지 |
-| [logging](policies/logging.md) | 로그 레벨 기준, MDC 키, 민감 데이터 차단 |
-| [transaction-and-consistency](policies/transaction-and-consistency.md) | 트랜잭션 경계 설정, 정합성 수준 선택, 이벤트 기반 최종 일관성, 분산 락 |
-| [concurrency-and-performance](policies/concurrency-and-performance.md) | 동시성 제어 방식 선택, N+1 해결 패턴, 캐시 전략, 확장 가능성 문서화 |
+프로젝트 도메인·아키텍처 선택과 무관하게, 모든 레이어에 걸쳐 일반적으로 적용되는 기술 정책은 [policies/README.md](policies/README.md)에서 관리한다.
 
 ---
 
-## 설계 문서 ([`design/`](design/))
+## 설계 문서
 
-기능·서브시스템의 기술 설계 문서(Technical Design Document). 아키텍처 판단 근거, 계층 분리, 트랜잭션 경계, 동시성 등 코드만으로 읽히지 않는 설계 의도를 담는다.
+기능·서브시스템의 기술 설계 문서(Technical Design Document)는 [design/README.md](design/README.md)에서 관리한다.
 
-- 작성 규칙·표준 섹션 → [design/README.md](design/README.md)
-- 작성 예시 → [design/sample-tdd.md](design/sample-tdd.md)
+## 운영 원칙
+
+- `docs/backend` 바로 아래 새 영역이 생기면 이 README의 문서 맵을 갱신한다.
+- 하위 영역의 세부 문서 목록은 각 하위 디렉토리의 `README.md`가 소유한다.
+- `AGENTS.md`는 개별 백엔드 문서가 아니라 이 README를 참조한다.

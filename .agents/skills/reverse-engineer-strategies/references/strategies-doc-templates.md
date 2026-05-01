@@ -195,4 +195,4 @@
 - 근거가 약한 내용은 문서에서 제외한다.
 - 코드에서 더 이상 보이지 않는 패턴 문서는 병합 모드에서도 제거 후보로 본다.
 - 플레이북 개념 레이어는 필요할 때만 `Playbook compatibility` 섹션에 보조 정보로 기록한다.
-- 새 디렉토리 추가·삭제·개편이 있으면 `docs/backend/README.md`와 `AGENTS.md` 문서 맵 갱신 여부를 확인한다.
+- architecture 하위 디렉토리 추가·삭제·개편이 있으면 `docs/backend/architecture/README.md`를 갱신한다. `docs/backend/README.md`와 `AGENTS.md`는 각각 architecture 진입점 또는 최상위 Backend 문서 홈 경로가 바뀔 때만 갱신한다.

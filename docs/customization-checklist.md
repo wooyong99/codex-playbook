@@ -15,7 +15,8 @@
 - [ ] `docs/frontend`를 실제 프론트엔드 구조에 맞게 유지
 - [ ] `docs/backend/policies/README.md` 링크 최신화
 - [ ] `docs/backend/design/README.md` 링크 최신화
-- [ ] 새 디렉토리가 생기면 `AGENTS.md` 문서 맵 갱신
+- [ ] 새 디렉토리가 생기면 해당 영역의 가장 가까운 `README.md` 문서 맵 갱신
+- [ ] `AGENTS.md`는 `docs/backend/README.md`, `docs/frontend/README.md` 같은 최상위 진입점 경로가 바뀔 때만 갱신
 
 ## 스킬
 

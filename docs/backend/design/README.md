@@ -12,4 +12,4 @@
 ## 운영 원칙
 
 - TDD 파일 추가 시 이 README의 문서 목록을 함께 갱신한다.
-- 상위 문서(예: `CLAUDE.md`)는 개별 설계 파일이 아닌 이 README를 참조한다.
+- 상위 문서(예: `docs/backend/README.md`)는 개별 설계 파일이 아닌 이 README를 참조한다.

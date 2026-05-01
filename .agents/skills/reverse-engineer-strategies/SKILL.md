@@ -100,7 +100,7 @@ docs/backend/architecture/
     └── ...
 ```
 
-세부 전략 문서는 코드에서 반복 패턴이 확인된 경우에만 만든다. 새 디렉토리를 추가·삭제·개편하면 `docs/backend/README.md`와 `AGENTS.md`의 Backend 문서 맵도 함께 갱신한다.
+세부 전략 문서는 코드에서 반복 패턴이 확인된 경우에만 만든다. architecture 하위 디렉토리를 추가·삭제·개편하면 먼저 `docs/backend/architecture/README.md`를 갱신한다. `docs/backend/README.md`는 architecture 진입점 경로가 바뀔 때만 갱신하고, `AGENTS.md`는 최상위 Backend 문서 홈 경로가 바뀔 때만 갱신한다.
 
 ### 5. 완료 전 검증
 
@@ -127,4 +127,4 @@ docs/backend/architecture/
 - 실제 코드 단위명이 문서 디렉토리명으로 쓰기에 너무 구현 세부적이거나 임시적일 때
 - 기존 `docs/backend/architecture` 구조를 유지할지 실제 코드 구조로 이전할지 선택이 필요할 때
 - 기존 문서에 사람이 손으로 써둔 내용이 많아 병합/이전/삭제 후보 판단이 중요할 때
-- 새 구조 적용으로 `AGENTS.md` 문서 맵이 크게 바뀔 때
+- 새 구조 적용이 최상위 Backend 문서 홈 경로 변경까지 요구할 때

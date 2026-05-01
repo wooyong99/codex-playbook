@@ -35,8 +35,10 @@
 
 ### 5) 문서 맵 일관성을 유지하라
 
-- `docs/backend` 하위에 디렉토리가 추가·삭제·개편되면 `AGENTS.md`의 Backend 문서 맵도 함께 갱신한다.
-- 고수준 문서 맵은 가능한 한 각 하위 디렉토리의 `README.md`를 단일 진입점으로 참조한다.
+- `AGENTS.md`는 프로젝트 최상위 진입점만 가진다.
+- `docs/backend` 하위 문서 맵은 `docs/backend/README.md`가 소유한다.
+- `docs/frontend` 하위 문서 맵은 `docs/frontend/README.md`가 소유한다.
+- 하위 디렉토리가 추가·삭제·개편되면 해당 영역의 `README.md`를 먼저 갱신하고, `AGENTS.md`는 최상위 진입점이 바뀔 때만 갱신한다.
 
 ## 프로젝트 구조
 
@@ -49,33 +51,6 @@
 
 ## 문서 맵
 
-### 최상위
-
 - [PRD](/Users/jeong-uyong/work/codex-playbook/docs/PRD.md)
 - [Backend 문서 홈](/Users/jeong-uyong/work/codex-playbook/docs/backend/README.md)
 - [Frontend 문서 홈](/Users/jeong-uyong/work/codex-playbook/docs/frontend/README.md)
-
-### Backend
-
-- [Getting Started](/Users/jeong-uyong/work/codex-playbook/docs/backend/getting-started.md)
-- [아키텍처 문서 진입점](/Users/jeong-uyong/work/codex-playbook/docs/backend/architecture/documentation-convention.md)
-- [정책 문서 모음](/Users/jeong-uyong/work/codex-playbook/docs/backend/policies/README.md)
-- [기술설계 문서 가이드](/Users/jeong-uyong/work/codex-playbook/docs/backend/design/README.md)
-
-### Frontend
-
-- [Getting Started](/Users/jeong-uyong/work/codex-playbook/docs/frontend/getting-started.md)
-- [아키텍처 개요](/Users/jeong-uyong/work/codex-playbook/docs/frontend/architecture/frontend-architecture.md)
-- [폴더 구조](/Users/jeong-uyong/work/codex-playbook/docs/frontend/architecture/folder-structure.md)
-- [상태 관리](/Users/jeong-uyong/work/codex-playbook/docs/frontend/architecture/state-management.md)
-- [코드 컨벤션](/Users/jeong-uyong/work/codex-playbook/docs/frontend/conventions/code-conventions.md)
-- [네이밍 컨벤션](/Users/jeong-uyong/work/codex-playbook/docs/frontend/conventions/naming-conventions.md)
-- [컴포넌트 컨벤션](/Users/jeong-uyong/work/codex-playbook/docs/frontend/conventions/component-conventions.md)
-- [API 컨벤션](/Users/jeong-uyong/work/codex-playbook/docs/frontend/conventions/api-conventions.md)
-- [렌더링 가이드](/Users/jeong-uyong/work/codex-playbook/docs/frontend/performance/rendering-guidelines.md)
-- [캐싱 전략](/Users/jeong-uyong/work/codex-playbook/docs/frontend/performance/caching-strategy.md)
-- [리스트 최적화](/Users/jeong-uyong/work/codex-playbook/docs/frontend/performance/list-optimization.md)
-- [UI 원칙](/Users/jeong-uyong/work/codex-playbook/docs/frontend/ui-ux/ui-principles.md)
-- [UX 가이드](/Users/jeong-uyong/work/codex-playbook/docs/frontend/ui-ux/ux-guidelines.md)
-- [로딩/피드백](/Users/jeong-uyong/work/codex-playbook/docs/frontend/ui-ux/loading-and-feedback.md)
-- [모달/다이얼로그 가이드](/Users/jeong-uyong/work/codex-playbook/docs/frontend/ui-ux/modal-dialog-guidelines.md)

@@ -181,8 +181,8 @@ docs/backend/architecture/
 - `docs/backend/architecture/architecture-map.md`: 실제 단위, 위치, 책임, 의존 방향 요약
 - 각 `{actual-unit}/README.md`: 단위별 책임과 하위 전략 링크
 - 각 `{actual-unit}/strategies/README.md`: 관찰된 전략 목록
-- `docs/backend/README.md`: backend 문서 홈의 architecture 링크
-- `AGENTS.md`: Backend 문서 맵이 구조 변경과 어긋나면 갱신
+- `docs/backend/README.md`: architecture 단일 진입점 경로가 바뀔 때만 갱신
+- `AGENTS.md`: 최상위 Backend 문서 홈 경로가 바뀔 때만 갱신
 
 ## 6. Optional Playbook Compatibility Notes
 
