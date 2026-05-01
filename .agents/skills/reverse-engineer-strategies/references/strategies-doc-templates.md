@@ -5,7 +5,7 @@
 ## 목차
 
 - [1. Architecture README](#1-architecture-readme)
-- [2. Architecture Unit README](#2-architecture-unit-readme)
+- [2. Architecture Unit Guidelines](#2-architecture-unit-guidelines)
 - [3. Strategies README](#3-strategies-readme)
 - [4. Strategy Detail](#4-strategy-detail)
 - [5. 문서 생성 조건](#5-문서-생성-조건)
@@ -40,7 +40,7 @@
 
 ## 문서 구조
 
-- [{actual-unit}](./{actual-unit}/README.md) - {언제 읽는지}
+- [{actual-unit}](./{actual-unit}/{actual-unit}-guidelines.md) - {언제 읽는지}
 
 ## 운영 원칙
 
@@ -52,12 +52,12 @@
 - {필요할 때만 실제 구조와 플레이북 개념의 차이를 설명. 없으면 "없음"}
 ````
 
-## 2. Architecture Unit README
+## 2. Architecture Unit Guidelines
 
-각 실제 아키텍처 단위의 `README.md`는 아래 구조를 따른다.
+각 실제 아키텍처 단위의 본문 문서는 `{actual-unit}/{actual-unit}-guidelines.md` 구조를 따른다. `{actual-unit}`은 실제 코드 단위명을 문서 파일명에 맞게 kebab-case로 정규화한 값이다. 단위 디렉토리의 `README.md`는 기본 생성하지 않고, 한 단위 안의 문서가 많아져 로컬 인덱스가 필요할 때만 예외적으로 만든다.
 
 ```md
-# {Actual Unit Name}
+# {Actual Unit Name} Guidelines
 
 이 문서는 `{actual-unit}` 단위의 실제 코드 위치, 책임, 의존 경계, 구현 전략을 정리한다.
 

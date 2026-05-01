@@ -144,7 +144,7 @@
 docs/backend/architecture/
 ├── README.md
 ├── {actual-unit}/
-│   ├── README.md
+│   ├── {actual-unit}-guidelines.md
 │   └── strategies/
 │       ├── README.md
 │       └── {observed-pattern}.md
@@ -156,6 +156,8 @@ docs/backend/architecture/
 
 - 실제 모듈이 명확하고 책임이 응집되어 있으면 모듈명을 문서 단위로 사용한다.
 - 하나의 모듈에 여러 책임이 섞여 있으면 패키지 또는 책임 단위로 문서 단위를 나눈다.
+- 아키텍처 단위 본문 파일은 `{actual-unit}-guidelines.md`로 만들고, `{actual-unit}`은 실제 코드 단위명을 kebab-case로 정규화한다.
+- 단위 디렉토리의 `README.md`는 기본 생성하지 않는다. 한 단위 안의 문서가 많아져 로컬 인덱스가 필요할 때만 예외적으로 만든다.
 - 실제 이름이 너무 기술 세부적이면 사용자에게 문서명 후보를 확인한다.
 - 기존 플레이북 구조가 코드와 맞지 않으면 `generate`로 새 문서를 추가하지 말고 `migrate` 계획을 먼저 제시한다.
 
@@ -177,7 +179,7 @@ docs/backend/architecture/
 반드시 갱신할 수 있는 문서:
 
 - `docs/backend/architecture/README.md`: 전체 아키텍처 단위 진입점, 실제 단위 맵, 위치, 책임, 의존 방향 요약
-- 각 `{actual-unit}/README.md`: 단위별 책임과 하위 전략 링크
+- 각 `{actual-unit}/{actual-unit}-guidelines.md`: 단위별 책임, 의존 경계, 하위 전략 링크
 - 각 `{actual-unit}/strategies/README.md`: 관찰된 전략 목록
 - `docs/backend/README.md`: architecture 단일 진입점 경로가 바뀔 때만 갱신
 - `AGENTS.md`: 최상위 Backend 문서 홈 경로가 바뀔 때만 갱신
@@ -229,7 +231,7 @@ Playbook compatibility:
 - {전략명}: {근거 클래스/패키지/어노테이션}
 
 문서 구조 제안:
-- docs/backend/architecture/{actual-unit}/README.md
+- docs/backend/architecture/{actual-unit}/{actual-unit}-guidelines.md
 - docs/backend/architecture/{actual-unit}/strategies/{pattern}.md
 
 Playbook compatibility:
