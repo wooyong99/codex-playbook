@@ -26,6 +26,8 @@ description: Analyze an existing backend codebase, infer its real architecture u
 
 사용자가 경로를 생략하면 현재 작업 디렉토리를 기본값으로 본다. 실행 모드를 생략하면 먼저 `inspect`로 구조와 문서화 계획을 제안한 뒤, 문서 변경이 필요한 경우 사용자의 진행 의사를 확인한다.
 
+모든 실행 모드는 먼저 `inspect` 수준의 사전 판단을 수행한다. 즉, 코드 구조와 기존 `docs/backend/architecture` 상태를 확인하지 않은 채 파일을 생성·수정·삭제하지 않는다.
+
 ### 2. 구조 탐색
 
 - 먼저 대상 코드베이스가 **멀티 모듈인지 단일 모듈인지 식별**한다.
@@ -59,10 +61,29 @@ description: Analyze an existing backend codebase, infer its real architecture u
 
 실행 모드별로 처리한다.
 
-- `inspect`: 코드 구조, 실제 아키텍처 단위 맵, 제안 문서 구조, 이전 리스크만 보고한다. 파일은 수정하지 않는다.
-- `generate`: 기존 구조와 충돌이 없을 때 실제 아키텍처 단위 기준으로 문서를 생성한다.
-- `migrate`: 기존 플레이북 개념 레이어 중심 문서를 실제 코드 구조 중심으로 이전한다. 큰 구조 변경 전에는 계획을 먼저 제시한다.
-- `merge`: 기존 사람이 작성한 설명은 보존하고, 코드 근거가 비어 있거나 일반론인 부분만 보강한다.
+- `inspect`: 파일을 수정하지 않는 분석 모드다. 코드 구조, 실제 아키텍처 단위 맵, 기존 문서 상태, 제안 문서 구조, 보존·이전·삭제 후보, 추천 후속 모드를 보고한다.
+- `generate`: 비어 있거나 충돌 없는 `docs/backend/architecture`에 실제 코드 기반 문서를 안전하게 추가 생성한다. 기존 문서가 실제 코드 구조와 충돌하면 파일을 쓰지 않고 중단한 뒤 `migrate`를 제안한다.
+- `migrate`: 기존 architecture 문서 체계를 실제 코드 기반 체계로 교체한다. 기존 문서를 유지·이전·삭제 후보로 분류하고, 플레이북 개념 레이어 중심 문서가 실제 코드와 맞지 않으면 active architecture tree에서 제거하거나 active path 밖으로 이전한다. 큰 구조 변경 전에는 계획을 먼저 제시한다.
+- `merge`: 기존 문서 체계를 유지하면서 실제 코드 근거를 덧입힌다. 기존 구조가 실제 코드와 크게 충돌하지 않을 때만 사용하고, 사람이 작성한 설명은 보존하며, 비어 있거나 일반론인 부분만 보강한다.
+
+모드 선택 규칙:
+
+```text
+항상 inspect 수준의 사전 판단 수행
+→ docs/backend/architecture 없음/placeholder 수준
+  → generate
+
+→ 기존 문서가 실제 코드 구조와 대체로 일치
+  → merge
+
+→ 기존 문서가 플레이북 개념 레이어 중심이고 실제 코드 구조와 충돌
+  → migrate
+
+→ 판단이 애매하거나 삭제/이전 영향이 큼
+  → 사용자 확인 후 migrate 또는 merge
+```
+
+`generate`는 충돌을 만들지 않는다. 기존 architecture 구조가 새 실제 코드 구조와 충돌하면 no-op으로 멈추고 `migrate`를 제안한다. `migrate`만 active architecture tree의 제거·이전·재구성을 수행한다.
 
 문서 구조는 실제 코드 이름을 우선한다.
 
