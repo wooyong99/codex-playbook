@@ -12,7 +12,6 @@
 
 | 영역 | 진입점 | 설명 |
 |------|--------|------|
-| 문서 작성 규칙 | [documentation-convention.md](documentation-convention.md) | 아키텍처 문서 작성·관리 규칙 |
 | 표현 계층 | [app/app-layer-guidelines.md](app/app-layer-guidelines.md) | Controller, DTO, 예외 처리 |
 | 응용 계층 | [application/application-layer-guidelines.md](application/application-layer-guidelines.md) | UseCase, Flow, Validator |
 | 도메인 계층 | [domain/domain-layer-guidelines.md](domain/domain-layer-guidelines.md) | Entity, Value Object, 도메인 규칙 |
