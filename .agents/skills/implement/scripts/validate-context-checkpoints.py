@@ -18,6 +18,9 @@ AGENTS = {
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
+            "## 핵심 규칙",
+            "## 금지 규칙",
+            "## 안티패턴",
             "## 완료된 작업",
             "## 진행중 작업",
             "## 남은 작업",
@@ -34,6 +37,9 @@ AGENTS = {
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
+            "## 핵심 규칙",
+            "## 금지 규칙",
+            "## 안티패턴",
             "## 완료된 작업",
             "## 진행중 작업",
             "## 남은 작업",
@@ -53,6 +59,9 @@ AGENTS = {
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
+            "## 핵심 규칙",
+            "## 금지 규칙",
+            "## 안티패턴",
             "## 완료된 작업",
             "## 진행중 작업",
             "## 남은 작업",
@@ -89,7 +98,7 @@ def main():
     for needle, reason in [
         ("### 체크포인트 공통 처리", "common checkpoint handling"),
         ("### 마일스톤 분할 기준", "milestone split criteria"),
-        ("역할별 체크포인트 판단 기준은 D/A/B 계약 문서와 서브에이전트 정의가 가진다", "sub-agent-owned checkpoint criteria"),
+        ("역할별 체크포인트 판단 기준은 D/A/B 계약 문서가 단일 출처로 가진다", "contract-owned checkpoint criteria"),
         ("존재하고 비어 있지 않은지 확인한다", "checkpoint existence validation"),
         ("체크포인트 복구를 위해", "orchestrator read exception"),
     ]:
@@ -139,19 +148,49 @@ def main():
         agent = read(spec["agent"])
         contract = read(spec["contract"])
 
-        for path, text in [(spec["agent"], agent), (spec["contract"], contract)]:
-            require(errors, path, text, spec["title"], f"{name} checkpoint title")
-            require(errors, path, text, "CONTEXT_CHECKPOINT:", f"{name} checkpoint signal")
-            require(errors, path, text, "역할별 체크포인트 기준", f"{name} role checkpoint criteria")
-            require(
-                errors,
-                path,
-                text,
-                "신호만 반환하고 파일을 남기지 않는 것은 실패",
-                f"{name} save-before-signal guard",
-            )
-            for section in spec["sections"]:
-                require(errors, path, text, section, f"{name} checkpoint section")
+        require(errors, spec["contract"], contract, spec["title"], f"{name} checkpoint title")
+        require(errors, spec["contract"], contract, "CONTEXT_CHECKPOINT:", f"{name} checkpoint signal")
+        require(errors, spec["contract"], contract, "역할별 체크포인트 기준", f"{name} role checkpoint criteria")
+        require(errors, spec["contract"], contract, "단일 출처", f"{name} contract single source")
+        require(
+            errors,
+            spec["contract"],
+            contract,
+            "신호만 반환하고 파일을 남기지 않는 것은 실패",
+            f"{name} save-before-signal guard",
+        )
+        for section in spec["sections"]:
+            require(errors, spec["contract"], contract, section, f"{name} checkpoint section")
+
+        require(
+            errors,
+            spec["agent"],
+            agent,
+            "계약 문서 단일 출처",
+            f"{name} agent single source reference",
+        )
+        require(errors, spec["agent"], agent, "CONTEXT_CHECKPOINT:", f"{name} checkpoint signal")
+        require(errors, spec["agent"], agent, "역할별 체크포인트 기준", f"{name} role checkpoint criteria reference")
+        require(
+            errors,
+            spec["agent"],
+            agent,
+            "체크포인트 파일 템플릿을 재정의하지 않는다",
+            f"{name} agent must not redefine checkpoint template",
+        )
+        require(
+            errors,
+            spec["agent"],
+            agent,
+            "신호만 반환하고 파일을 남기지 않는 것은 실패",
+            f"{name} save-before-signal guard reference",
+        )
+        if agent is not None and spec["title"] in agent:
+            errors.append(f"{spec['agent']}: checkpoint template title must live only in contract: {spec['title']}")
+        if agent is not None and "체크포인트 파일은 아래 섹션을 포함한다" in agent:
+            errors.append(f"{spec['agent']}: checkpoint file template text must live only in contract")
+        if agent is not None and "```markdown" in agent:
+            errors.append(f"{spec['agent']}: markdown checkpoint template block must live only in contract")
 
         require(
             errors,
