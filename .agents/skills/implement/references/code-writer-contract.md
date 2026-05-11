@@ -36,6 +36,8 @@
 
 [설계 결과 파일]과 `[결과 파일]`은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. A는 정상 완료 시 `[결과 파일]`에 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
 
+[체크포인트 파일]은 오케스트레이터가 할당한 호출별 멱등 복구 snapshot 경로다. 실제 호출 값은 절대 경로여야 한다. 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다. 동일 호출 재시도나 체크포인트 재호출에서 이 파일이 이미 있으면 먼저 읽고, 완료된 작업은 건너뛰며 남은 작업만 이어서 수행한다. 같은 호출의 복구 재시도에서는 동일 경로를 최신 진행 상태로 갱신할 수 있지만 완료된 작업 기록을 삭제하면 안 된다.
+
 ### Case B — 위반 수정
 
 ```
@@ -72,7 +74,7 @@ A는 `[검토 결과 파일]`을 먼저 읽고, `status: violations` 인 경우�
 
 ### Case A: 신규 구현
 
-먼저 `[결과 파일]`에 아래 handoff artifact를 저장한다. 저장이 끝난 뒤 출력 **첫 줄**에 결과 파일 경로만 반환한다:
+먼저 `[결과 파일]`에 아래 handoff artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 **첫 줄**에 결과 파일 경로만 반환한다:
 
 ```text
 IMPLEMENTATION_COMPLETED: {[결과 파일] 절대 경로}
@@ -116,7 +118,7 @@ payload:
 
 ### Case B: 위반 수정
 
-먼저 `[결과 파일]`에 아래 handoff artifact를 저장한다. 저장이 끝난 뒤 출력 **첫 줄**에 결과 파일 경로만 반환한다:
+먼저 `[결과 파일]`에 아래 handoff artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 **첫 줄**에 결과 파일 경로만 반환한다:
 
 ```text
 FIX_APPLIED: {[결과 파일] 절대 경로}
@@ -173,11 +175,11 @@ payload:
 - `created_at`: ISO-8601 타임스탬프
 - 모든 `path`와 `file`: 절대 경로
 
-정상 완료 응답 본문에는 handoff artifact 내용을 복사하지 않는다. 오케스트레이터와 다음 에이전트는 첫 줄의 파일 경로를 통해 필요한 내용을 읽는다.
+정상 완료 응답 본문에는 handoff artifact 내용을 복사하지 않는다. 오케스트레이터와 다음 에이전트는 첫 줄의 파일 경로를 통해 필요한 내용을 읽는다. 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다. 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, `완료된 작업`, `검증 상태`, `관련 파일`, `진행 상태`에는 재호출해도 같은 변경·검증 결론으로 수렴할 수 있을 만큼 구체적으로 남긴다.
 
 ### 역할별 체크포인트 기준
 
-체크포인트 판단은 상대 기준을 먼저 적용하고, 절대 수치는 안전장치로만 사용한다. 남은 작업이 없고 곧 `IMPLEMENTATION_COMPLETED:` 또는 `FIX_APPLIED:`를 반환할 수 있으면 체크포인트하지 말고 정상 완료한다.
+체크포인트 판단은 상대 기준을 먼저 적용하고, 절대 수치는 안전장치로만 사용한다. 남은 작업이 없고 곧 `IMPLEMENTATION_COMPLETED:` 또는 `FIX_APPLIED:`를 반환할 수 있으면 `CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다. 단, 정상 완료 전에도 `[체크포인트 파일]`에는 완료 snapshot을 반드시 저장한다.
 
 아래 항목 중 하나라도 `조건`과 `관측 신호`를 함께 만족하면 선제적으로 체크포인트한다. `관측 신호`가 애매하지만 `fallback`에 걸리면 체크포인트한다:
 
@@ -213,7 +215,7 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 
 이후에는 정상 완료 포맷(`IMPLEMENTATION_COMPLETED`, `FIX_APPLIED`)을 섞지 말고 최소 진행 상태만 작성한다.
 
-체크포인트는 이 계약에서 **유일하게 보장되는 복구 메커니즘** 이다. 체크포인트 저장과 위 신호 반환은 반드시 수행한다.
+체크포인트는 이 계약에서 **유일하게 보장되는 복구 메커니즘** 이다. `CONTEXT_CHECKPOINT:` 경로에서는 체크포인트 저장과 위 신호 반환을 반드시 수행한다. 정상 완료 경로에서는 위 신호를 반환하지 않지만, 같은 템플릿의 완료 snapshot을 `[체크포인트 파일]`에 반드시 저장한다.
 
 체크포인트 파일은 아래 섹션을 포함한다:
 
@@ -221,7 +223,7 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 # Code Writer Checkpoint
 
 ## 체크포인트 사유
-{changed_file_batch | implementation_batch_done | violation_batch_done | verification_failure | read_batch_done | requirement_boundary | 기타}
+{normal_completion | changed_file_batch | implementation_batch_done | violation_batch_done | verification_failure | read_batch_done | requirement_boundary | 기타}
 
 ## 현재 목표
 {이번 호출에서 달성해야 할 목표}

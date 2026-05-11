@@ -26,9 +26,9 @@ description: 요구사항을 마일스톤 단위로 분해하여 설계 문서 �
 handoff artifact 경로, 체크포인트 경로, 프롬프트 필드 이름, 출력 신호 포맷, 파일 스키마, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 위 계약 문서가 단일 출처다. 이 문서에는 흐름과 의사결정만 유지하고, 문자열 예시는 가능한 한 계약 문서를 링크로 대체한다.
 
 **서브에이전트 정의 파일**:
-- [design-writer.toml](/Users/jeong-uyong/work/codex-playbook/.codex/agents/design-writer.toml)
-- [code-writer.toml](/Users/jeong-uyong/work/codex-playbook/.codex/agents/code-writer.toml)
-- [architecture-reviewer.toml](/Users/jeong-uyong/work/codex-playbook/.codex/agents/architecture-reviewer.toml)
+- [design-writer.toml](../../../.codex/agents/design-writer.toml)
+- [code-writer.toml](../../../.codex/agents/code-writer.toml)
+- [architecture-reviewer.toml](../../../.codex/agents/architecture-reviewer.toml)
 
 각 `.toml` 파일은 대응 계약 문서를 참조하고 역할·실행 제약만 가진다. 인터페이스 규격이나 체크포인트 파일 템플릿을 `.toml`에 복제하지 않는다.
 
@@ -49,6 +49,7 @@ handoff artifact 경로, 체크포인트 경로, 프롬프트 필드 이름, 출
 - D/A/B 프롬프트의 `[프로젝트 컨텍스트]`는 현재 저장소의 실제 문서 맵에서 추출한 내용을 채운다. 계약 문서의 예시 문구를 하드코딩된 사실처럼 복사하지 않는다.
 - 정상 산출물 전달의 표준 메커니즘은 **handoff artifact 파일 + 결과 신호** 다. 메인은 큰 payload를 프롬프트에 복사하지 않고 파일 경로를 다음 에이전트에게 전달한다.
 - 체크포인트 복구의 표준 메커니즘은 **체크포인트 파일 + `CONTEXT_CHECKPOINT:` 신호** 다.
+- 정상 완료 경로에서도 각 역할은 호출별 `[체크포인트 파일]`을 반드시 남긴다. 이 파일은 중단 후 재시도 시 이미 완료된 작업을 건너뛰기 위한 멱등 복구 snapshot이며, `CONTEXT_CHECKPOINT:` 신호가 없더라도 생성되어야 한다.
 - A의 성공 응답은 사람이 읽기 좋기만 한 요약이 아니라, 메인과 B가 안정적으로 재사용할 수 있는 **구조화된 handoff artifact** 여야 한다.
 
 ### 마일스톤 분할 기준
@@ -80,7 +81,7 @@ handoff artifact 경로, 체크포인트 경로, 프롬프트 필드 이름, 출
 
 ### Handoff artifact 공통 처리
 
-정상 완료 결과는 응답 본문에 길게 싣지 않는다. D/A/B는 오케스트레이터가 미리 할당한 `[결과 파일]`에 YAML payload를 저장하고, 첫 줄에 결과 신호와 파일 경로만 반환한다.
+정상 완료 결과는 응답 본문에 길게 싣지 않는다. D/A/B는 오케스트레이터가 미리 할당한 `[결과 파일]`에 YAML payload를 저장하고, 같은 호출의 `[체크포인트 파일]`에도 완료 snapshot을 저장한 뒤 첫 줄에 결과 신호와 파일 경로만 반환한다.
 
 저장 위치와 파일명은 아래 전략을 따른다.
 
@@ -113,8 +114,10 @@ handoff artifact 경로, 체크포인트 경로, 프롬프트 필드 이름, 출
 2. 정상 결과 신호의 경로가 이번 호출에서 전달한 `[결과 파일]`과 일치하는지 확인한다.
 3. 해당 파일이 존재하고 비어 있지 않은지 확인한다.
 4. `schema_version`, `run_id`, `milestone`, `role`, `kind`, `status`, `payload` 같은 핵심 필드를 검증한다.
-5. 다음 에이전트에게는 필요한 payload 원문을 복사하지 않고, 선행 에이전트가 만든 handoff artifact 경로만 전달한다.
-6. 사용자 업데이트와 루프 종료 판단에 필요한 최소 필드만 메인이 읽는다.
+5. 정상 완료 경로에서도 이번 호출의 `[체크포인트 파일]`이 존재하고 비어 있지 않으며, 계약 문서의 체크포인트 파일 스키마에 있는 제목과 핵심 섹션이 포함됐는지 검증한다.
+6. 정상 결과 파일은 유효하지만 체크포인트 파일 검증이 실패하면 같은 서브에이전트에게 한 번만 재호출하여 동일 `[결과 파일]`과 `[체크포인트 파일]` 저장을 재수행하게 한다. 두 번째도 실패하면 자동 루프를 멈추고 사용자에게 체크포인트 프로토콜 실패를 보고한다.
+7. 다음 에이전트에게는 필요한 payload 원문을 복사하지 않고, 선행 에이전트가 만든 handoff artifact 경로만 전달한다.
+8. 사용자 업데이트와 루프 종료 판단에 필요한 최소 필드만 메인이 읽는다.
 
 ### 체크포인트 공통 처리
 

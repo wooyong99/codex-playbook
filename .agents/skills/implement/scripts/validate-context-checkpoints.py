@@ -5,6 +5,7 @@ This script intentionally uses only Python 3.9 standard-library features.
 """
 
 from pathlib import Path
+import re
 import sys
 
 
@@ -101,6 +102,8 @@ def main():
         ("역할별 체크포인트 판단 기준은 D/A/B 계약 문서가 단일 출처로 가진다", "contract-owned checkpoint criteria"),
         ("존재하고 비어 있지 않은지 확인한다", "checkpoint existence validation"),
         ("체크포인트 복구를 위해", "orchestrator read exception"),
+        ("정상 완료 경로에서도 각 역할은 호출별 `[체크포인트 파일]`을 반드시 남긴다", "normal-completion checkpoint guarantee"),
+        ("정상 완료 경로에서도 이번 호출의 `[체크포인트 파일]`", "orchestrator normal-result checkpoint validation"),
     ]:
         require(errors, implement_path, implement, needle, reason)
 
@@ -159,6 +162,41 @@ def main():
             "신호만 반환하고 파일을 남기지 않는 것은 실패",
             f"{name} save-before-signal guard",
         )
+        require(
+            errors,
+            spec["contract"],
+            contract,
+            "정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다",
+            f"{name} normal completion checkpoint requirement",
+        )
+        require(
+            errors,
+            spec["contract"],
+            contract,
+            "normal_completion",
+            f"{name} normal completion checkpoint reason",
+        )
+        require(
+            errors,
+            spec["contract"],
+            contract,
+            "{normal_completion |",
+            f"{name} normal completion checkpoint reason in template",
+        )
+        require(
+            errors,
+            spec["contract"],
+            contract,
+            "완료 snapshot",
+            f"{name} normal completion checkpoint snapshot",
+        )
+        require(
+            errors,
+            spec["contract"],
+            contract,
+            "`CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다",
+            f"{name} normal completion must not use checkpoint signal",
+        )
         for section in spec["sections"]:
             require(errors, spec["contract"], contract, section, f"{name} checkpoint section")
 
@@ -184,6 +222,34 @@ def main():
             agent,
             "신호만 반환하고 파일을 남기지 않는 것은 실패",
             f"{name} save-before-signal guard reference",
+        )
+        require(
+            errors,
+            spec["agent"],
+            agent,
+            "정상 완료 시 [체크포인트 파일]",
+            f"{name} normal completion checkpoint agent instruction",
+        )
+        require(
+            errors,
+            spec["agent"],
+            agent,
+            "[결과 파일]과 [체크포인트 파일]이 실제로 저장되기 전에는 정상 완료 신호",
+            f"{name} normal completion waits for checkpoint file",
+        )
+        require(
+            errors,
+            spec["agent"],
+            agent,
+            "`CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다",
+            f"{name} normal completion must not use checkpoint signal",
+        )
+        require(
+            errors,
+            spec["agent"],
+            agent,
+            "완료 snapshot",
+            f"{name} normal completion snapshot agent instruction",
         )
         if agent is not None and spec["title"] in agent:
             errors.append(f"{spec['agent']}: checkpoint template title must live only in contract: {spec['title']}")
@@ -232,6 +298,26 @@ def main():
             "[명시적 제외사항]",
             f"{name} contract explicit exclusions field",
         )
+
+    design_agent = read(AGENTS["design-writer"]["agent"])
+    require(
+        errors,
+        AGENTS["design-writer"]["agent"],
+        design_agent,
+        ".agents/skills/write-tech-design-doc/SKILL.md",
+        "design-writer local write-tech-design-doc skill path",
+    )
+    design_skill_match = re.search(r'path\s*=\s*"([^"]*\.agents/skills/write-tech-design-doc/SKILL\.md)"', design_agent or "")
+    if design_skill_match is None:
+        errors.append(f"{AGENTS['design-writer']['agent']}: missing parseable write-tech-design-doc skill path")
+    else:
+        design_skill_path = Path(design_skill_match.group(1))
+        if design_skill_path.is_absolute():
+            errors.append(f"{AGENTS['design-writer']['agent']}: write-tech-design-doc skill path must be relative")
+        if not design_skill_path.is_absolute():
+            design_skill_path = ROOT / design_skill_path
+        if not design_skill_path.exists():
+            errors.append(f"{design_skill_path}: missing write-tech-design-doc skill")
 
     if errors:
         print("FAIL context checkpoint contract validation")
