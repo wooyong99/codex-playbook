@@ -10,10 +10,10 @@
 
 ## 2. 클론 직후 바로 볼 파일
 
-- [README.md](/Users/jeong-uyong/work/codex-playbook/README.md)
-- [AGENTS.md](/Users/jeong-uyong/work/codex-playbook/AGENTS.md)
-- [docs/backend/README.md](/Users/jeong-uyong/work/codex-playbook/docs/backend/README.md)
-- [docs/frontend/README.md](/Users/jeong-uyong/work/codex-playbook/docs/frontend/README.md)
+- [README.md](../README.md)
+- [AGENTS.md](../AGENTS.md)
+- [docs/backend/README.md](backend/README.md)
+- [docs/frontend/README.md](frontend/README.md)
 
 ## 3. 가장 먼저 커스터마이징할 영역
 
@@ -37,7 +37,7 @@
 
 ## 4. 백엔드 문서 적용 순서
 
-1. [docs/backend/README.md](/Users/jeong-uyong/work/codex-playbook/docs/backend/README.md)
+1. [docs/backend/README.md](backend/README.md)
 2. `docs/backend/getting-started.md`
 3. `docs/backend/architecture/*`
 4. `docs/backend/policies/*`
@@ -47,7 +47,7 @@
 
 ## 5. 프론트엔드 문서 적용 순서
 
-1. [docs/frontend/README.md](/Users/jeong-uyong/work/codex-playbook/docs/frontend/README.md)
+1. [docs/frontend/README.md](frontend/README.md)
 2. `docs/frontend/architecture/*`
 3. `docs/frontend/conventions/*`
 4. `docs/frontend/performance/*`

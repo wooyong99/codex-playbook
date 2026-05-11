@@ -51,6 +51,6 @@
 
 ## 문서 맵
 
-- [PRD](/Users/jeong-uyong/work/codex-playbook/docs/PRD.md)
-- [Backend 문서 홈](/Users/jeong-uyong/work/codex-playbook/docs/backend/README.md)
-- [Frontend 문서 홈](/Users/jeong-uyong/work/codex-playbook/docs/frontend/README.md)
+- [PRD](docs/PRD.md)
+- [Backend 문서 홈](docs/backend/README.md)
+- [Frontend 문서 홈](docs/frontend/README.md)

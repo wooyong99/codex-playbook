@@ -25,7 +25,7 @@ Codex와 사람이 함께 사용할 수 있도록 정리한 프로젝트 플레�
 
 ## 먼저 읽으면 좋은 문서
 
-- [AGENTS.md](/Users/jeong-uyong/work/codex-playbook/AGENTS.md)  
+- [AGENTS.md](AGENTS.md)
   Codex가 이 프로젝트에서 따라야 할 공통 작업 지침
 - [적용 가이드](docs/apply-playbook.md)  
   클론 후 무엇부터 손대야 하는지 설명
