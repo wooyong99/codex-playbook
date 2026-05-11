@@ -95,17 +95,65 @@ def main():
     errors = []
 
     implement_path = ROOT / ".agents/skills/implement/SKILL.md"
+    boundaries_path = ROOT / ".agents/skills/implement/references/orchestration-boundaries.md"
+    planning_path = ROOT / ".agents/skills/implement/references/milestone-planning.md"
+    protocol_path = ROOT / ".agents/skills/implement/references/handoff-checkpoint-protocol.md"
+    workflow_path = ROOT / ".agents/skills/implement/references/milestone-execution-workflow.md"
+
     implement = read(implement_path)
     for needle, reason in [
-        ("### 체크포인트 공통 처리", "common checkpoint handling"),
-        ("### 마일스톤 분할 기준", "milestone split criteria"),
-        ("역할별 체크포인트 판단 기준은 D/A/B 계약 문서가 단일 출처로 가진다", "contract-owned checkpoint criteria"),
-        ("존재하고 비어 있지 않은지 확인한다", "checkpoint existence validation"),
-        ("체크포인트 복구를 위해", "orchestrator read exception"),
-        ("정상 완료 경로에서도 각 역할은 호출별 `[체크포인트 파일]`을 반드시 남긴다", "normal-completion checkpoint guarantee"),
-        ("정상 완료 경로에서도 이번 호출의 `[체크포인트 파일]`", "orchestrator normal-result checkpoint validation"),
+        ("## 역할", "top-level role section"),
+        ("## 기본 범위", "top-level scope section"),
+        ("## 참조 문서", "top-level reference section"),
+        ("## 프로세스", "top-level process section"),
+        ("references/orchestration-boundaries.md", "orchestration boundary reference"),
+        ("references/milestone-planning.md", "milestone planning reference"),
+        ("references/handoff-checkpoint-protocol.md", "handoff checkpoint protocol reference"),
+        ("references/milestone-execution-workflow.md", "milestone execution workflow reference"),
     ]:
         require(errors, implement_path, implement, needle, reason)
+
+    for path, expected in [
+        (
+            planning_path,
+            [
+                ("## 마일스톤 분할 기준", "milestone split criteria"),
+                ("명시적 제외사항", "explicit exclusions planning"),
+                ("예상 변경 파일 3~8개 권장", "recommended changed file range"),
+            ],
+        ),
+        (
+            protocol_path,
+            [
+                ("## Handoff Artifact 공통 처리", "common handoff handling"),
+                ("## 체크포인트 공통 처리", "common checkpoint handling"),
+                ("역할별 체크포인트 판단 기준은 D/A/B 계약 문서가 단일 출처로 가진다", "contract-owned checkpoint criteria"),
+                ("존재하고 비어 있지 않은지 확인한다", "checkpoint existence validation"),
+                ("정상 완료 경로에서도 이번 호출의 `[체크포인트 파일]`", "orchestrator normal-result checkpoint validation"),
+                ("python3 .agents/skills/implement/scripts/validate-context-checkpoints.py", "validation command"),
+            ],
+        ),
+        (
+            boundaries_path,
+            [
+                ("체크포인트 복구를 위해", "orchestrator read exception"),
+                ("정상 완료 경로에서도 각 역할은 호출별 `[체크포인트 파일]`을 반드시 남긴다", "normal-completion checkpoint guarantee"),
+                ("D/A/B는 서로 호출하지 않는다", "subagent communication boundary"),
+            ],
+        ),
+        (
+            workflow_path,
+            [
+                ("## Step 2. Agent D 위임", "D workflow step"),
+                ("## Step 3. Agent A 위임", "A workflow step"),
+                ("## Step 4. Agent B 위임", "B workflow step"),
+                ("## Escalation", "escalation workflow"),
+            ],
+        ),
+    ]:
+        text = read(path)
+        for needle, reason in expected:
+            require(errors, path, text, needle, reason)
 
     banned = [
         "65%",
@@ -134,7 +182,7 @@ def main():
         "제외 대상:",
     ]
 
-    all_paths = [implement_path]
+    all_paths = [implement_path, boundaries_path, planning_path, protocol_path, workflow_path]
     all_paths.extend(spec["agent"] for spec in AGENTS.values())
     all_paths.extend(spec["contract"] for spec in AGENTS.values())
 
