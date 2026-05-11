@@ -1,33 +1,33 @@
 # Backend Doc Templates
 
-실제 코드베이스 기반으로 `docs/backend` 하위 문서를 생성·갱신할 때 사용하는 최소 템플릿과 작성 규칙.
+이 문서는 실제 코드베이스 기반으로 `docs/backend` 하위 문서를 생성·갱신할 때 사용하는 파일별 템플릿과 완료 전 검증 기준이다. 문서 위치 판단은 [backend-document-routing.md](backend-document-routing.md)가 소유하고, 이 문서는 파일을 실제로 작성할 때의 구조를 소유한다.
 
-## 핵심 원칙
+## 파일 작성 기준
 
-- 템플릿은 실제 코드에서 관찰한 사실을 담는 최소 구조로 사용한다.
-- 각 문서는 하나의 소유권과 추상화 수준을 유지한다.
-- 상위 문서는 안정적인 진입점만 연결하고, 세부 문서 목록은 가장 가까운 소유 문서가 관리한다.
-- 같은 개념이 정책, 구현 아키텍처, 구현 전략, 설계 의도로 분리되면 각 관심사에 맞는 템플릿을 사용하고 링크로 연결한다.
-- 규칙 원문은 한 문서에만 작성하고, 다른 문서는 링크와 해당 문맥에서의 적용 방식만 작성한다.
-- 새 파일로 분리할 기준이 약하면 기존 소유 문서의 섹션으로 작성한다.
+템플릿은 실제 코드에서 관찰한 사실을 담는 최소 구조로 사용한다. 문서 위치와 소유권 판단은 [backend-document-routing.md](backend-document-routing.md)를 먼저 따르고, 이 문서에서는 선택된 파일에 어떤 섹션을 둘지만 결정한다.
 
-## 금지 규칙
+공통 작성 방식:
 
-- 코드에서 확인되지 않은 내용을 템플릿 placeholder에 채우지 않는다.
-- 상위 README 템플릿에 하위 디렉토리의 세부 구현 문서나 전략 문서 목록을 직접 나열하지 않는다.
-- `금지 규칙`과 `안티패턴`을 하나의 섹션으로 합쳐 작성하지 않는다.
-- 정책 문서에 클래스 목록, 패키지 구조, 구현 절차, 모듈 의존 구조를 쓰지 않는다.
-- architecture guideline이나 strategy 문서에 정책 원문을 재기술하지 않는다.
-- 플레이북 개념 레이어명을 실제 코드 근거 없이 출력 디렉토리명이나 문서 단위명으로 사용하지 않는다.
+- 확인되지 않은 내용은 placeholder에 채우지 않고 "확인 필요" 또는 "없음"으로 명시한다.
+- 코드 근거가 필요한 섹션에는 파일, 패키지, 클래스, 설정 경로 중 하나 이상을 남긴다.
+- 템플릿 섹션이 현재 코드에 맞지 않으면 억지로 채우지 않고 생략하거나 "없음"으로 둔다.
+- `금지 규칙`과 `안티패턴`은 필요한 경우 별도 섹션으로 둔다.
+- 새 문서를 추가하거나 이름을 바꾸면 가장 가까운 `README.md`의 문서 목록도 함께 갱신한다.
 
-## 안티패턴
+## 템플릿 목록
 
-- 문서 맵 과노출: 상위 README가 하위 세부 링크를 계속 직접 들고 있다.
-- 이름만 분리된 중복 문서: 같은 규칙을 policy, guideline, strategy에 거의 같은 문장으로 반복한다.
-- 추상화 수준 혼합: 전체 지도 문서에 클래스 수준 구현 근거를 쓰거나, strategy 문서에 전역 정책 원칙을 길게 쓴다.
-- 전략 덤핑: `{actual-unit}-guidelines.md`에 반복 구현 방식과 체크리스트를 모두 넣고 `strategies/`를 비워둔다.
-- 과도한 파일 분리: 소유자, 변경 주기, 독자, 추상화 수준이 같은 내용을 여러 파일로 쪼갠다.
-- 낡은 내비게이션: 문서를 이동·삭제했지만 가장 가까운 `README.md` 문서 맵을 갱신하지 않는다.
+| 문서 | 위치 | 사용 시점 |
+|------|------|-----------|
+| Backend README | `docs/backend/README.md` | backend 문서 홈을 만들거나 영역 진입점이 바뀔 때 |
+| Getting Started | `docs/backend/getting-started.md` | 실행·빌드·테스트 정보를 코드와 설정에서 확인했을 때 |
+| Policy README | `docs/backend/policies/README.md` | 정책 문서 목록이 추가·삭제·변경될 때 |
+| Policy Detail | `docs/backend/policies/{policy}.md` | 여러 아키텍처 단위에 적용되는 전역 정책을 문서화할 때 |
+| Architecture README | `docs/backend/architecture/README.md` | 실제 아키텍처 단위 맵을 만들거나 갱신할 때 |
+| Architecture Unit Guidelines | `docs/backend/architecture/{actual-unit}/{actual-unit}-guidelines.md` | 특정 실제 코드 단위의 책임과 의존 경계를 정리할 때 |
+| Strategies README | `docs/backend/architecture/{actual-unit}/strategies/README.md` | 해당 단위의 전략 문서 목록을 관리할 때 |
+| Strategy Detail | `docs/backend/architecture/{actual-unit}/strategies/{pattern}.md` | 반복 구현 패턴이 확인되었을 때 |
+| Design README | `docs/backend/design/README.md` | 기술설계문서 목록을 관리할 때 |
+| TDD Document | `docs/backend/design/tdd-{feature}.md` | 사용자가 기존 기능의 설계 의도 문서화를 요청했을 때 |
 
 ## Backend README
 
@@ -503,3 +503,16 @@ HTTP -> DTO -> Command -> Domain -> Entity -> DB
 - `architecture-reviewer`는 `docs/backend/design`을 Source of Truth에서 제외한다.
 - 설계 의도는 참고하되 준수 규칙으로 강제하지 않는다.
 - 강제할 규칙은 `architecture/*` 또는 `policies/*`에 규정으로 승격한다.
+
+## 완료 전 검증
+
+문서 작성 후에는 아래 항목을 확인한다.
+
+- 생성·수정한 문서가 실제 코드 패턴과 연결되는지 샘플 클래스 기준으로 확인했다.
+- 코드에서 발견되지 않은 패턴, 정책, 실행 방법을 새로 만들지 않았다.
+- `docs/backend/README.md`가 backend 하위 영역의 단일 진입점만 참조한다.
+- `docs/backend/architecture/README.md`의 아키텍처 맵이 실제 모듈·패키지·의존 방향과 어긋나지 않는다.
+- `docs/backend/architecture/README.md`가 단위 guideline 링크까지만 소유하고, 단위 내부 전략 목록을 직접 나열하지 않는다.
+- 정책, 구현 아키텍처, 구현 전략 사이에 같은 규칙이 중복 서술되지 않고 링크로 연결된다.
+- 각 문서가 하나의 추상화 수준과 관심사를 유지한다.
+- 하위 디렉토리의 문서가 추가·삭제·개편되면 가장 가까운 `README.md` 문서 맵이 갱신되었다.
