@@ -30,7 +30,7 @@
 |------|------|-----------|
 | 정책 | `docs/backend/policies/{concept}.md` | 여러 아키텍처 단위가 공통으로 지켜야 하는 원칙, 금지 규칙, 민감 정보·정합성·운영 기준 |
 | 구현 아키텍처 | `docs/backend/architecture/{actual-unit}/{actual-unit}-guidelines.md` | 실제 코드 단위의 책임, 컴포넌트, 의존 경계, 정책을 만족하는 구조 |
-| 구현 전략 | `docs/backend/architecture/{actual-unit}/strategies/{observed-pattern}.md` | 특정 단위 안에서 반복되는 구현 방식, 패턴, 체크리스트, 코드 근거 |
+| 구현 전략 | `docs/backend/architecture/{actual-unit}/strategies/{observed-pattern}.md` | 특정 단위 안에서 반복되는 구현 방식, 패턴, 적용 범위, 변형, 레거시 공존 구간, 분석 범위, confidence, 체크리스트, 코드 근거 |
 | 설계 의도 | `docs/backend/design/{topic}.md` | 사용자가 요청한 기능·서브시스템의 설계 의도와 의사결정 맥락 |
 
 같은 개념도 관심사에 따라 여러 위치에 걸쳐 나타날 수 있다. 예를 들어 인증/인가는 `policies/security.md`에 전역 보안 원칙을 두고, 실제 인증 코드가 독립 단위이면 `architecture/security/security-guidelines.md`에 구조를 쓴다. JWT 검증이나 필터 체인처럼 반복 구현 방식이 확인되면 해당 단위의 `strategies/` 하위에 전략 문서를 둔다.
@@ -39,7 +39,7 @@
 
 - 정책 문서에는 코드 배치, 클래스 목록, 모듈 의존 구조를 쓰지 않는다.
 - architecture guideline에는 정책 원문을 재기술하지 않고 관련 정책을 링크한다.
-- strategy 문서에는 상위 guideline과 정책을 링크하고, 반복 구현 패턴과 코드 근거만 쓴다.
+- strategy 문서에는 상위 guideline과 정책을 링크하고, 반복 구현 패턴, 적용 범위, 변형, 예외, 레거시 주의점, 분석 범위, confidence, 코드 근거만 쓴다.
 - design 문서에 강제 규칙을 숨기지 않는다. 강제할 규칙은 `architecture` 또는 `policies`로 승격한다.
 
 ## 3. Architecture 구조 결정
@@ -68,19 +68,23 @@ docs/backend/architecture/
 
 ## 4. 실행 모드 선택
 
-모든 모드는 먼저 `inspect` 수준의 사전 판단을 수행한다. 코드 구조와 기존 `docs/backend` 상태를 확인하지 않은 채 파일을 생성·수정·삭제하지 않는다.
+모든 모드는 먼저 `inspect` 수준의 사전 판단을 수행한다. 코드 구조와 기존 `docs/backend` 상태를 확인하지 않은 채 파일을 생성·수정·삭제하지 않는다. 특히 10만 라인 이상, 모듈 수가 많은 저장소, 문서 삭제·이동 영향이 큰 저장소는 사용자가 `migrate`를 명시해도 먼저 `inspect` 계획서를 보고하고 확인을 받은 뒤 단계적으로 실행한다.
 
 | 모드 | 처리 방식 |
 |------|-----------|
-| `inspect` | 파일을 수정하지 않는다. 실제 문서 후보, 기존 문서 분류, 제안 구조, 추천 후속 모드를 보고한다. |
-| `generate` | 기존 문서가 없거나 placeholder 수준이거나 새 구조와 충돌하지 않을 때만 문서를 추가한다. 충돌하면 no-op으로 멈추고 `migrate`를 제안한다. |
-| `migrate` | 기존 active backend docs를 실제 코드 기반 구조로 교체한다. 기존 문서는 유지·이전·삭제 후보로 분류하고, 코드와 맞지 않는 플레이북 기반 문서는 active path에서 제거한다. |
-| `merge` | 기존 구조가 실제 코드와 크게 충돌하지 않을 때만 보강한다. 기존 사람이 쓴 설명은 보존하고, 코드 근거가 약한 부분만 채운다. |
+| `inspect` | 파일을 수정하지 않는다. 실제 문서 후보, 기존 문서 분류, 제안 구조, 추천 후속 모드를 보고한다. 대형 코드베이스에서는 단계별 migration 계획서 역할을 한다. |
+| `generate` | 기존 문서가 없거나 placeholder 수준이거나 새 구조와 충돌하지 않을 때만 문서를 추가한다. 충돌하면 no-op으로 멈추고 `migrate`를 제안한다. 대형 코드베이스에서는 High/Medium confidence 후보만 생성한다. |
+| `migrate` | 기존 active backend docs를 실제 코드 기반 구조로 교체한다. 기존 문서는 유지·이전·삭제 후보로 분류하고, 코드와 맞지 않는 플레이북 기반 문서는 active path에서 제거한다. 대형 코드베이스에서는 단계별 migration 계획을 먼저 둔다. |
+| `merge` | 기존 구조가 실제 코드와 크게 충돌하지 않을 때만 보강한다. 기존 사람이 쓴 설명은 보존하고, 코드 근거가 약한 부분만 채운다. Low confidence 후보는 확인 필요로만 남긴다. |
 
 모드 선택 흐름:
 
 ```text
 항상 inspect 수준의 사전 판단 수행
+→ 사용자가 migrate를 직접 요청했지만 10만 라인 이상/모듈 다수/문서 영향 큼
+  → inspect 계획서 보고
+  → 사용자 확인 후 1차 migrate 범위만 실행
+
 → docs/backend 없음/placeholder 수준
   → generate
 
@@ -93,6 +97,14 @@ docs/backend/architecture/
 → 판단이 애매하거나 삭제/이전 영향이 큼
   → 사용자 확인 후 migrate 또는 merge
 ```
+
+대형 코드베이스 inspect 계획서에 포함할 내용:
+
+- 분석 규모: LOC, 파일 수, 모듈 수, 제외한 generated/vendor/build 경로
+- confidence: High/Medium/Low 후보와 각 근거
+- 1차 migrate: 문서 홈, architecture map, high-confidence 핵심 단위와 전략
+- 후속 migrate/backlog: medium/low-confidence 후보, 레거시/혼재 확인 항목, 사용자 확인이 필요한 삭제·이동 후보
+- 실행 질문: "이 1차 migrate 범위로 진행할까요, 아니면 범위를 조정할까요?"
 
 ## 5. 기존 문서 분류
 
@@ -115,6 +127,7 @@ docs/backend/architecture/
 - `docs/backend` 바로 아래 새 영역을 추가·삭제·개편하면 `docs/backend/README.md`를 갱신한다.
 - architecture 하위 단위를 추가·삭제·개편하면 `docs/backend/architecture/README.md`를 갱신한다.
 - architecture 단위 내부 전략 문서를 추가·삭제·개편하면 해당 단위의 `{actual-unit}-guidelines.md` 또는 `strategies/README.md`를 갱신한다.
+- 전략 후보가 늘어났다는 이유만으로 세부 strategy 파일을 모두 만들지 않는다. 먼저 `strategies/README.md` 전략 지도에 기록하고, 승격 기준을 만족할 때만 detail 파일을 추가한다.
 - policy 문서를 추가·삭제·개편하면 `docs/backend/policies/README.md`를 갱신한다.
 - design 문서를 추가·삭제·개편하면 `docs/backend/design/README.md`를 갱신한다.
 - `AGENTS.md`는 최상위 Backend 문서 홈 경로가 바뀔 때만 갱신한다.
@@ -127,6 +140,7 @@ docs/backend/architecture/
 - 플레이북 개념 레이어명을 실제 출력 디렉토리명이나 문서 단위명의 기본값으로 사용하지 않는다.
 - 정책 문서에 클래스 목록, 패키지 구조, 구현 절차, 모듈 의존 구조를 쓰지 않는다.
 - strategy 문서에 정책 원문, 아키텍처 단위의 전체 책임, 상위 문서의 설명을 재기술하지 않는다.
+- Low confidence 후보를 새 코드가 따라야 할 규칙처럼 작성하지 않는다.
 - `migrate` 후에도 실제 코드 구조와 충돌하는 오래된 플레이북식 문서를 active path에 그대로 남기지 않는다.
 
 ## 8. 안티패턴
@@ -134,6 +148,11 @@ docs/backend/architecture/
 - 문서 맵 과노출: `AGENTS.md`, `docs/backend/README.md`, `docs/backend/architecture/README.md`가 하위 세부 링크를 계속 직접 들고 있다.
 - 이름만 분리된 중복 문서: 같은 개념을 policy, guideline, strategy에 거의 같은 문장으로 반복한다.
 - 추상화 수준 혼합: 전체 지도 문서에 클래스 수준 구현 근거를 쓰거나, strategy 문서에 전역 정책 원칙을 길게 쓴다.
+- 대표 예시 편향: 처음 발견한 정상 코드 한두 개만 보고 전체 구현 전략으로 일반화한다.
+- 레거시 은폐: active code에 남아 있는 오래된 패턴, 부분 마이그레이션, 팀별 변형을 문서에서 생략한다.
+- 무제한 정독 시도: 10만 라인 이상 저장소에서 census와 샘플링 예산 없이 전체 파일을 읽으려 한다.
+- generated/vendor 오염: 생성 코드나 외부 의존 코드에서 발견한 구조를 프로젝트 구현 전략으로 오인한다.
+- confidence 누락: 부분 샘플에서 얻은 결론을 신뢰도 없이 확정 규칙처럼 기록한다.
 - 플레이북 레이어 강제 매핑: 실제 모듈·패키지 구조를 무시하고 `app`, `application`, `domain`, `storage`, `external` 같은 개념 레이어에 억지로 맞춘다.
 - 전략 덤핑: `{actual-unit}-guidelines.md`에 반복 구현 방식과 체크리스트를 모두 넣고 `strategies/`를 비워둔다.
 - 정책 오염: `policies` 문서가 전역 원칙 대신 특정 클래스 배치나 구현 순서를 소유한다.
@@ -145,6 +164,8 @@ docs/backend/architecture/
 - 출력 경로 후보가 둘 이상이라 어느 쪽에 써야 할지 불명확할 때
 - 특정 책임이 architecture unit인지 policy인지 판단이 애매할 때
 - 특정 아키텍처 단위가 혼재되어 있어 주 분석 단위를 모듈 기준으로 볼지 패키지 기준으로 볼지 애매할 때
+- 둘 이상의 active 구현 전략이 공존하지만 어떤 방식을 새 코드 기준으로 삼아야 하는지 코드만으로 판단하기 어려울 때
+- 10만 라인 이상 또는 모듈 수가 많은 저장소에서 `migrate`를 요청받아 단계별 실행 확인이 필요한 때
 - 실제 코드 단위명이 문서 디렉토리명으로 쓰기에 너무 구현 세부적이거나 임시적일 때
 - 기존 `docs/backend` 구조를 유지할지 실제 코드 구조로 이전할지 선택이 필요할 때
 - 기존 사람이 쓴 문서를 삭제·이전해야 하는데 보존 가치 판단이 중요한 때
