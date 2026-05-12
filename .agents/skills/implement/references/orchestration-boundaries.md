@@ -11,8 +11,8 @@
 | Agent D `frontend-technical-design-writer` | 프론트엔드 마일스톤별 TDD 작성 또는 스킵 근거 작성 | [frontend-technical-design-writer-contract.md](frontend-technical-design-writer-contract.md) |
 | Agent A `backend-implementation-engineer` | 백엔드 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | [implementation-engineer-contract.md](implementation-engineer-contract.md) |
 | Agent A `frontend-implementation-engineer` | 프론트엔드 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | [implementation-engineer-contract.md](implementation-engineer-contract.md) |
-| Agent B `backend-architecture-reviewer` | `docs/backend/architecture/*`, `docs/backend/policies/*`, 관련 TDD 결정 준수 여부 검토 | [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md) |
-| Agent B `frontend-architecture-reviewer` | `docs/frontend/*`, 관련 TDD 결정 준수 여부 검토 | [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md) |
+| Agent B `backend-architecture-reviewer` | 입력으로 전달된 백엔드 아키텍처 기준과 관련 TDD 결정 준수 여부 검토 | [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md) |
+| Agent B `frontend-architecture-reviewer` | 입력으로 전달된 프론트엔드 아키텍처 기준과 관련 TDD 결정 준수 여부 검토 | [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md) |
 | Supplemental reviewers | 문서, 보안 민감 변경 검토 | [review routing](../../../../docs/review/README.md) |
 
 서브에이전트 정의 파일:
@@ -26,7 +26,7 @@
 - [documentation-governance-reviewer.toml](../../../../.codex/agents/documentation-governance-reviewer.toml)
 - [security-policy-reviewer.toml](../../../../.codex/agents/security-policy-reviewer.toml)
 
-각 `.toml` 파일은 역할과 실행 제약만 가진다. handoff artifact 스키마, 프롬프트 필드 이름, 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 계약 문서가 단일 출처다.
+각 `.toml` 파일은 역할, 판단 철학, 기본 금지사항만 가진다. 어떤 기준 문서를 읽을지, 어떤 출력 규격을 따를지, handoff artifact 스키마, 프롬프트 필드 이름, 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 실행 workflow와 계약 문서가 단일 출처다.
 
 ## 메인 에이전트 제약
 

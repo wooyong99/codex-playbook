@@ -5,7 +5,6 @@ This script intentionally uses only Python 3.9 standard-library features.
 """
 
 from pathlib import Path
-import re
 import sys
 
 
@@ -16,8 +15,6 @@ AGENTS = {
         "agent": ROOT / ".codex/agents/backend-technical-design-writer.toml",
         "contract": ROOT / ".agents/skills/implement/references/backend-technical-design-writer-contract.md",
         "title": "# Backend Technical Design Writer Checkpoint",
-        "skill_path": ".agents/skills/write-backend-tech-design-doc/SKILL.md",
-        "skill_name": "write-backend-tech-design-doc",
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
@@ -37,8 +34,6 @@ AGENTS = {
         "agent": ROOT / ".codex/agents/frontend-technical-design-writer.toml",
         "contract": ROOT / ".agents/skills/implement/references/frontend-technical-design-writer-contract.md",
         "title": "# Frontend Technical Design Writer Checkpoint",
-        "skill_path": ".agents/skills/write-frontend-tech-design-doc/SKILL.md",
-        "skill_name": "write-frontend-tech-design-doc",
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
@@ -247,6 +242,7 @@ def main():
                 ("frontend-technical-design-writer-contract.md", "frontend D workflow contract"),
                 ("## Step 3. Agent A 라우팅 및 위임", "A workflow step"),
                 ("## Step 4. Agent B 라우팅 및 Reviewer 위임", "review workflow step"),
+                ("[Source of Truth]", "B source-of-truth input responsibility"),
                 ("## Escalation", "escalation workflow"),
             ],
         ),
@@ -356,57 +352,6 @@ def main():
         for section in spec["sections"]:
             require(errors, spec["contract"], contract, section, f"{name} checkpoint section")
 
-        require(
-            errors,
-            spec["agent"],
-            agent,
-            "계약 문서 단일 출처",
-            f"{name} agent single source reference",
-        )
-        require(errors, spec["agent"], agent, "CONTEXT_CHECKPOINT:", f"{name} checkpoint signal")
-        require(errors, spec["agent"], agent, "역할별 체크포인트 기준", f"{name} role checkpoint criteria reference")
-        require(
-            errors,
-            spec["agent"],
-            agent,
-            "체크포인트 파일 템플릿을 재정의하지 않는다",
-            f"{name} agent must not redefine checkpoint template",
-        )
-        require(
-            errors,
-            spec["agent"],
-            agent,
-            "신호만 반환하고 파일을 남기지 않는 것은 실패",
-            f"{name} save-before-signal guard reference",
-        )
-        require(
-            errors,
-            spec["agent"],
-            agent,
-            "정상 완료 시 [체크포인트 파일]",
-            f"{name} normal completion checkpoint agent instruction",
-        )
-        require(
-            errors,
-            spec["agent"],
-            agent,
-            "[결과 파일]과 [체크포인트 파일]이 실제로 저장되기 전에는 정상 완료 신호",
-            f"{name} normal completion waits for checkpoint file",
-        )
-        require(
-            errors,
-            spec["agent"],
-            agent,
-            "`CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다",
-            f"{name} normal completion must not use checkpoint signal",
-        )
-        require(
-            errors,
-            spec["agent"],
-            agent,
-            "완료 snapshot",
-            f"{name} normal completion snapshot agent instruction",
-        )
         if agent is not None and spec["title"] in agent:
             errors.append(f"{spec['agent']}: checkpoint template title must live only in contract: {spec['title']}")
         if agent is not None and "체크포인트 파일은 아래 섹션을 포함한다" in agent:
@@ -420,13 +365,6 @@ def main():
             agent,
             "응답을 생략하지 않는다",
             f"{name} must respond to orchestrator",
-        )
-        require(
-            errors,
-            spec["agent"],
-            agent,
-            "현재 진행 상태",
-            f"{name} agent must use progress state",
         )
 
         require(
@@ -460,32 +398,120 @@ def main():
             f"{name} contract explicit exclusions field",
         )
 
-    for name in ["backend-technical-design-writer", "frontend-technical-design-writer"]:
+    source_expectations = [
+        (
+            "backend-technical-design-writer",
+            [
+                ("[Source of Truth]", "backend D source-of-truth input field"),
+                ("docs/PRD.md", "backend D PRD source candidate"),
+                ("docs/backend/README.md", "backend D README source candidate"),
+                ("docs/backend/architecture/**", "backend D architecture source candidates"),
+                ("docs/backend/policies/**", "backend D policy source candidates"),
+                ("docs/backend/design/**", "backend D design source candidates"),
+                ("특정 unit 이름은 이 계약에서 고정하지 않는다", "backend D architecture unit neutrality"),
+            ],
+        ),
+        (
+            "frontend-technical-design-writer",
+            [
+                ("[Source of Truth]", "frontend D source-of-truth input field"),
+                ("docs/PRD.md", "frontend D PRD source candidate"),
+                ("docs/frontend/README.md", "frontend D README source candidate"),
+                ("docs/frontend/architecture/**", "frontend D architecture source candidates"),
+                ("docs/frontend/conventions/**", "frontend D convention source candidates"),
+                ("docs/frontend/performance/**", "frontend D performance source candidates"),
+                ("docs/frontend/ui-ux/**", "frontend D UI/UX source candidates"),
+                ("docs/frontend/design/**", "frontend D design source candidates"),
+            ],
+        ),
+        (
+            "backend-implementation-engineer",
+            [
+                ("[Source of Truth]", "implementation source-of-truth input field"),
+                ("docs/backend/README.md", "backend A README source candidate"),
+                ("docs/backend/architecture/**", "backend A architecture source candidates"),
+                ("docs/backend/policies/**", "backend A policy source candidates"),
+                ("docs/frontend/README.md", "frontend A README source candidate"),
+                ("docs/frontend/architecture/**", "frontend A architecture source candidates"),
+                ("docs/frontend/conventions/**", "frontend A convention source candidates"),
+                ("payload.tdd_path", "implementation TDD source candidate"),
+            ],
+        ),
+        (
+            "frontend-architecture-reviewer",
+            [
+                ("[Source of Truth]", "frontend reviewer source-of-truth input field"),
+                ("오케스트레이터가 입력한 `[Source of Truth]`", "frontend reviewer source-of-truth ownership"),
+                ("docs/frontend/README.md", "frontend reviewer README source candidate"),
+                ("docs/frontend/architecture/**", "frontend reviewer architecture source candidates"),
+                ("docs/frontend/conventions/**", "frontend reviewer convention source candidates"),
+                ("docs/frontend/performance/**", "frontend reviewer performance source candidates"),
+                ("docs/frontend/ui-ux/**", "frontend reviewer UI/UX source candidates"),
+                ("payload.tdd_path", "frontend reviewer TDD source candidate"),
+            ],
+        ),
+    ]
+    for name, expected in source_expectations:
         spec = AGENTS[name]
-        design_agent = read(spec["agent"])
-        skill_path = spec["skill_path"]
-        skill_name = spec["skill_name"]
-        require(
-            errors,
-            spec["agent"],
-            design_agent,
-            skill_path,
-            f"{name} local {skill_name} skill path",
-        )
-        design_skill_match = re.search(
-            rf'path\s*=\s*"([^"]*{re.escape(skill_path)})"',
-            design_agent or "",
-        )
-        if design_skill_match is None:
-            errors.append(f"{spec['agent']}: missing parseable {skill_name} skill path")
-            continue
-        design_skill_path = Path(design_skill_match.group(1))
-        if design_skill_path.is_absolute():
-            errors.append(f"{spec['agent']}: {skill_name} skill path must be relative")
-        if not design_skill_path.is_absolute():
-            design_skill_path = ROOT / design_skill_path
-        if not design_skill_path.exists():
-            errors.append(f"{design_skill_path}: missing {skill_name} skill")
+        contract = read(spec["contract"])
+        for needle, reason in expected:
+            require(errors, spec["contract"], contract, needle, reason)
+
+    backend_review_spec = AGENTS["backend-architecture-reviewer"]
+    backend_review_agent = read(backend_review_spec["agent"])
+    backend_review_contract = read(backend_review_spec["contract"])
+    require(
+        errors,
+        backend_review_spec["contract"],
+        backend_review_contract,
+        "[Source of Truth]",
+        "backend reviewer source-of-truth input field",
+    )
+    require(
+        errors,
+        backend_review_spec["contract"],
+        backend_review_contract,
+        "오케스트레이터가 입력한 `[Source of Truth]`",
+        "backend reviewer source-of-truth ownership",
+    )
+    for needle, reason in [
+        ("docs/backend/README.md", "backend reviewer source-of-truth README candidate"),
+        ("docs/backend/architecture/**", "backend reviewer architecture source candidates"),
+        ("docs/backend/policies/**", "backend reviewer policy source candidates"),
+        ("payload.tdd_path", "backend reviewer TDD source candidate"),
+        ("특정 unit 이름은 이 계약에서 고정하지 않는다", "backend reviewer architecture unit neutrality"),
+        ("변경 파일 경로·A 결과 요약·D 결과의 설계 결정", "backend reviewer source selection basis"),
+    ]:
+        require(errors, backend_review_spec["contract"], backend_review_contract, needle, reason)
+    implement_coupling_banned = [
+        ".agents/skills/implement/references",
+        "backend-architecture-reviewer-contract.md",
+        "frontend-architecture-reviewer-contract.md",
+        "implementation-engineer-contract.md",
+        "backend-technical-design-writer-contract.md",
+        "frontend-technical-design-writer-contract.md",
+        "Context 절약 원칙",
+        "Context Window Management",
+        "계약 문서 단일 출처",
+        "Handoff Artifact:",
+        "CONTEXT_CHECKPOINT:",
+        "[결과 파일]",
+        "[체크포인트 파일]",
+        "정상 완료 시",
+        "Source of Truth:",
+        "application/use case",
+        "write-backend-tech-design-doc",
+        "write-frontend-tech-design-doc",
+        "docs/backend/",
+        "docs/frontend/",
+        "docs/review/",
+        "docs/rules/",
+    ]
+    for path in sorted((ROOT / ".codex/agents").glob("*.toml")):
+        agent_text = read(path)
+        for needle in implement_coupling_banned:
+            if agent_text is not None and needle in agent_text:
+                errors.append(f"{path}: agent TOML should not embed implement-specific, skill-specific, or static source text: {needle}")
 
     if errors:
         print("FAIL context checkpoint contract validation")

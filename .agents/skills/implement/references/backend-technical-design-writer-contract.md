@@ -24,6 +24,10 @@
   - 관련 문서: {docs/backend 하위에서 실제로 필요한 문서}
   - 관련 도메인/기능: {도메인명 또는 backend 기능명}
 
+[Source of Truth]:
+  - {이번 설계에 적용할 backend 기준 문서 또는 섹션}
+  - {이번 설계에 적용할 제품 요구사항 또는 정책}
+
 [결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-D-r00-design-result.v1.yaml
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/D-r00-v001.md
@@ -34,6 +38,18 @@
 [결과 파일]은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. D는 정상 완료 시 해당 파일에 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
 
 [체크포인트 파일]은 오케스트레이터가 할당한 호출별 멱등 복구 snapshot 경로다. 실제 호출 값은 절대 경로여야 한다. 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다. 동일 호출 재시도나 체크포인트 재호출에서 이 파일이 이미 있으면 먼저 읽고, 완료된 작업은 건너뛰며 남은 작업만 이어서 수행한다. 같은 호출의 복구 재시도에서는 동일 경로를 최신 진행 상태로 갱신할 수 있지만 완료된 작업 기록을 삭제하면 안 된다.
+
+### Source of Truth 후보와 선별 규칙
+
+오케스트레이터는 backend D 호출 전에 아래 후보에서 이번 설계 판단에 필요한 문서 또는 섹션을 선별해 `[Source of Truth]`에 넣는다.
+
+- `docs/PRD.md`
+- `docs/backend/README.md`
+- `docs/backend/architecture/**`
+- `docs/backend/policies/**`
+- `docs/backend/design/**`
+
+`docs/backend/architecture` 하위의 특정 unit 이름은 이 계약에서 고정하지 않는다. 프로젝트별 실제 architecture unit과 strategy 문서 전체가 후보이며, 요구사항·명시적 제외사항·관련 도메인/기능을 근거로 필요한 항목만 선별한다. 후보 밖 문서가 필요하면 오케스트레이터가 그 이유를 `[Source of Truth]` 항목에 함께 명시한다.
 
 체크포인트 재호출 시 프롬프트에 아래 필드가 추가된다:
 

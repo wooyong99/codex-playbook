@@ -16,6 +16,11 @@
 
 [설계 결과 파일]: {D가 반환한 design_result handoff artifact 절대 경로. 없으면 생략}
 
+[Source of Truth]:
+  - {이번 검토에 적용할 docs/backend/architecture 하위 기준 문서 또는 섹션}
+  - {이번 검토에 적용할 docs/backend/policies 하위 기준 문서 또는 섹션}
+  - {필요한 경우 마일스톤 TDD의 명시 결정}
+
 [결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-B-r{iter}-review-result.v1.yaml
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/B-r{iter}-v001.md
@@ -23,7 +28,18 @@
 [출력 규격]: 이 문서(.agents/skills/implement/references/backend-architecture-reviewer-contract.md) — Output 섹션 그대로.
 ```
 
-B는 `[구현 결과 파일]`을 먼저 읽고 `payload.changed_files`를 검토 대상 파일로 삼는다. `payload.design_decisions`가 있으면 추가 컨텍스트로만 사용한다. `[설계 결과 파일]`이 전달되고 그 안의 `payload.tdd_path`가 `null`이 아니면, 검토 범위는 `docs/backend/architecture/*`, `docs/backend/policies/*` 뿐 아니라 **해당 마일스톤 TDD의 명시 결정 사항 준수 여부** 까지 포함한다. 단, TDD에 없는 개인적 선호나 대안 제안은 여전히 금지한다.
+B는 `[구현 결과 파일]`을 먼저 읽고 `payload.changed_files`를 검토 대상 파일로 삼는다. `payload.design_decisions`가 있으면 추가 컨텍스트로만 사용한다. 검토 기준은 오케스트레이터가 입력한 `[Source of Truth]`로 한정한다. `[설계 결과 파일]`이 전달되고 그 안의 `payload.tdd_path`가 `null`이 아니면, 오케스트레이터는 해당 TDD의 명시 결정 중 이번 검토에 필요한 항목을 `[Source of Truth]`에 포함해야 한다. B는 입력되지 않은 문서 경로, 숨은 팀 관행, 개인적 선호, 대안 제안을 violation 근거로 삼지 않는다.
+
+### Source of Truth 후보와 선별 규칙
+
+오케스트레이터는 backend B 호출 전에 아래 후보에서 이번 변경 파일과 직접 관련 있는 문서 또는 섹션을 선별해 `[Source of Truth]`에 넣는다.
+
+- `docs/backend/README.md`
+- `docs/backend/architecture/**`
+- `docs/backend/policies/**`
+- `[설계 결과 파일]`의 `payload.tdd_path`가 가리키는 마일스톤 TDD
+
+`docs/backend/architecture` 하위의 특정 unit 이름은 이 계약에서 고정하지 않는다. 프로젝트별 실제 architecture unit과 strategy 문서 전체가 후보이며, 변경 파일 경로·A 결과 요약·D 결과의 설계 결정을 근거로 필요한 항목만 선별한다. 후보 경로에 있더라도 이번 변경과 무관한 문서는 `[Source of Truth]`에 넣지 않는다. 반대로 위 후보 밖 문서를 기준으로 삼아야 한다면 오케스트레이터가 그 이유를 `[Source of Truth]` 항목에 함께 명시해야 한다.
 
 [결과 파일]은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. B는 정상 완료 시 해당 파일에 검토 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
 
@@ -238,27 +254,27 @@ REVIEW_COMPLETED: /path/to/.agents/runs/20260501-120000-12345/handoffs/M1/003-B-
 결과 파일의 `payload.violations`:
 
 ```yaml
-- rule_id: BACKEND-APP-DTO-001
+- rule_id: BACKEND-ARCH-BOUNDARY-001
   severity: major
-  file: /path/to/backend/app/backoffice/src/main/kotlin/com/example/backoffice/product/ProductController.kt
-  rule: app-guidelines.md:Controller 체크리스트 "@Valid가 Request DTO에 적용됐는가"
-  source_path: docs/backend/architecture/app/app-guidelines.md
+  file: /path/to/backend/src/main/kotlin/com/example/product/ProductCommandHandler.kt
+  rule: decision-boundaries.md:책임 경계 규칙 "표현 계층 책임을 핵심 정책으로 전달하지 않는다"
+  source_path: docs/backend/architecture/decision-boundaries.md
   line_range: 52-56
-  reason: Request DTO에 @Valid 누락. docs/backend/architecture/app/app-guidelines.md Post-Work Verification - Controller 섹션.
-- rule_id: BACKEND-POLICY-LOGGING-001
+  reason: 입력 모델의 표현 계층 검증 책임이 핵심 정책 판단 경로로 전달됨. docs/backend/architecture/decision-boundaries.md 책임 경계 섹션.
+- rule_id: BACKEND-POLICY-OBSERVABILITY-001
   severity: major
-  file: /path/to/backend/core/application/src/main/kotlin/com/example/application/product/CreateProductUseCase.kt
-  rule: logging.md:LogExtension 확장 함수 사용 규정
-  source_path: docs/backend/policies/logging.md
+  file: /path/to/backend/src/main/kotlin/com/example/product/ProductWorkflow.kt
+  rule: observability.md:관측성 정책 "상관관계 식별자를 보존한다"
+  source_path: docs/backend/policies/observability.md
   line_range: 14-15
-  reason: raw LoggerFactory 사용 + [SCOPE] 태그 누락. docs/backend/policies/logging.md Kotlin 사용 예시 및 안티 패턴.
+  reason: 실패 경로에서 상관관계 식별자를 새로 생성해 요청 단위 추적성이 끊김. docs/backend/policies/observability.md correlation 섹션.
 ```
 
 ---
 
 ## Self-check (출력 전 확인)
 
-- [ ] 모든 지적이 **문서에 명시된 규칙**에 근거하는가? (추측·선호 배제)
+- [ ] 모든 지적이 입력된 **Source of Truth에 명시된 규칙**에 근거하는가? (추측·선호 배제)
 - [ ] 출력이 `REVIEW_COMPLETED:` 또는 컨텍스트 체크포인트의 `CONTEXT_CHECKPOINT:` 포맷 외의 텍스트를 포함하지 않는가?
 - [ ] 기능 정확성·버그 관련 지적을 포함하지 않았는가?
 - [ ] 설계 대안·선호 기반 제안을 포함하지 않았는가?

@@ -39,7 +39,7 @@ description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 �
 3. run id와 handoff/checkpoint 경로를 할당한다.
 4. 필요한 경우 D를 호출해 backend TDD를 작성하거나 skip 근거를 받는다.
 5. A로 `backend-implementation-engineer`를 호출해 구현 또는 수정을 수행한다.
-6. B로 `backend-architecture-reviewer`를 호출해 backend 문서 준수 여부를 검토한다.
+6. B로 `backend-architecture-reviewer`를 호출해 B 계약의 `[Source of Truth]` 기준 준수 여부를 검토한다.
 7. 위반이 있으면 같은 backend A 인스턴스에 수정 작업을 맡기고 B를 새 인스턴스로 다시 호출한다.
 8. 모든 backend B와 필수 supplemental reviewer가 통과하면 마일스톤을 완료한다.
 

@@ -33,8 +33,10 @@
 - 마일스톤 제목과 요구사항
 - 명시적 제외사항
 - 실제 저장소 기준 프로젝트 컨텍스트
+- 이번 설계에 적용할 `[Source of Truth]`
 - `[결과 파일]`
 - `[체크포인트 파일]`
+- `[출력 규격]`
 
 응답 처리:
 
@@ -52,7 +54,7 @@
 
 ## Step 3. Agent A 라우팅 및 위임
 
-프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case A 형식으로 구성한다. A에게는 설계 요약 원문을 복사하지 않고 D 결과 파일 경로를 전달한다.
+프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case A 형식으로 구성한다. A에게는 설계 요약 원문을 복사하지 않고 D 결과 파일 경로를 전달한다. 이번 구현에 적용할 기준 문서와 설계 결정은 A 계약의 `[Source of Truth]` 필드로 전달한다.
 
 호출 대상:
 
@@ -70,7 +72,9 @@
 
 ## Step 4. Agent B 라우팅 및 Reviewer 위임
 
-백엔드 변경 파일이 있으면 `backend-architecture-reviewer`를 호출하고, 프롬프트는 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다. 프론트엔드 변경 파일이 있으면 `frontend-architecture-reviewer`를 호출하고, 프롬프트는 [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다. B에게는 A 구현 결과 파일, D 설계 결과 파일, B의 `[결과 파일]`, `[체크포인트 파일]`을 전달한다.
+백엔드 변경 파일이 있으면 `backend-architecture-reviewer`를 호출하고, 프롬프트는 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다. 프론트엔드 변경 파일이 있으면 `frontend-architecture-reviewer`를 호출하고, 프롬프트는 [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다.
+
+백엔드 B에게는 A 구현 결과 파일, D 설계 결과 파일, 이번 검토의 `[Source of Truth]`, B의 `[결과 파일]`, `[체크포인트 파일]`, `[출력 규격]`을 전달한다. 어떤 backend 문서와 TDD 결정이 검토 기준인지 선택하는 책임은 `backend-architecture-reviewer` TOML이 아니라 이 실행 workflow와 B 계약이 가진다. 프론트엔드 B도 같은 방식으로 해당 계약의 Input 형식에 따라 기준 문서와 출력 규격을 전달한다.
 
 변경 파일이 문서 또는 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer를 추가로 적용한다. supplemental reviewer 결과도 Rule ID, severity, source_path를 포함해야 하며, `blocker` 또는 `major` 위반은 B 위반과 동일하게 수정 루프로 보낸다.
 
