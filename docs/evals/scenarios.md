@@ -37,7 +37,7 @@
 - 마일스톤 계획
 - 필요 시 TDD 또는 TDD skip 근거
 - 구현 결과 handoff artifact
-- architecture-reviewer 결과
+- backend-architecture-reviewer 결과
 - compile/test 검증 결과
 
 주요 실패 신호:
@@ -57,7 +57,7 @@
 
 기대 산출물:
 
-- `frontend-reviewer`가 docs/frontend 기준으로 위반 보고
+- `frontend-architecture-reviewer`가 docs/frontend 기준으로 위반 보고
 - 위반에 `rule_id`, `severity`, `source_path` 포함
 - 기능 정확성 추측 없이 문서 근거만 제시
 
@@ -78,7 +78,7 @@
 
 기대 산출물:
 
-- `security-reviewer` 추가 적용
+- `security-policy-reviewer` 추가 적용
 - blocker 또는 major severity 판단
 - `docs/backend/policies/security.md` 또는 `logging.md` 근거
 

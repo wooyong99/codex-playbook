@@ -1,7 +1,7 @@
-# Code Writer — Input / Output Contract
+# Implementation Engineer — Input / Output Contract
 
-`implement` 스킬이 `code-writer` 서브에이전트와 주고받는 인터페이스 규격.  
-에이전트 정의 파일(`.codex/agents/code-writer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+`implement` 스킬이 `implementation-engineer` 서브에이전트와 주고받는 인터페이스 규격.  
+에이전트 정의 파일(`.codex/agents/implementation-engineer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
 
 ---
 
@@ -31,7 +31,7 @@
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/A-r00-v001.md
 
-[출력 규격]: 이 문서(.agents/skills/implement/references/code-writer-contract.md) — Output > Case A 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement/references/implementation-engineer-contract.md) — Output > Case A 그대로.
 ```
 
 [설계 결과 파일]과 `[결과 파일]`은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. A는 정상 완료 시 `[결과 파일]`에 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
@@ -54,7 +54,7 @@
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/A-r{iter}-v001.md
 
-[출력 규격]: 이 문서(.agents/skills/implement/references/code-writer-contract.md) — Output > Case B 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement/references/implementation-engineer-contract.md) — Output > Case B 그대로.
 ```
 
 A는 `[검토 결과 파일]`을 먼저 읽고, `status: violations` 인 경우에만 수정 작업을 수행한다. `status: pass` 이거나 `payload.violations`가 비어 있으면 수정하지 말고 `status: failed`, 빈 배열 payload, `verification.*.result: not_run` 으로 결과 파일에 근거를 기록한다.
@@ -87,7 +87,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: code-writer
+role: implementation-engineer
 kind: implementation_result
 iteration: 0
 created_at: <ISO-8601 timestamp>
@@ -131,7 +131,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: code-writer
+role: implementation-engineer
 kind: fix_result
 iteration: <A-B 루프 iter>
 created_at: <ISO-8601 timestamp>
@@ -169,7 +169,7 @@ payload:
 - `run_id`: 오케스트레이터가 생성한 run id
 - `milestone`: `M1`, `M2` 형식
 - `sequence`: 오케스트레이터가 파일명에 부여한 3자리 순번의 정수값
-- `role`: 항상 `code-writer`
+- `role`: 항상 `implementation-engineer`
 - `kind`: `implementation_result` 또는 `fix_result`
 - `iteration`: 신규 구현은 `0`, 위반 수정은 현재 A-B 루프 iter
 - `created_at`: ISO-8601 타임스탬프
@@ -220,7 +220,7 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 체크포인트 파일은 아래 섹션을 포함한다:
 
 ```markdown
-# Code Writer Checkpoint
+# Implementation Engineer Checkpoint
 
 ## 체크포인트 사유
 {normal_completion | changed_file_batch | implementation_batch_done | violation_batch_done | verification_failure | read_batch_done | requirement_boundary | 기타}

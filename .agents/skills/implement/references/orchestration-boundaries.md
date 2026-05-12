@@ -7,19 +7,19 @@
 | 주체 | 책임 | 계약 문서 |
 |------|------|-----------|
 | 메인 에이전트 | 요구사항 분석, 마일스톤 분할, D/A/B 호출, handoff 검증, 반복 종료 판단, 사용자 보고 | 이 문서와 `SKILL.md` |
-| Agent D `design-writer` | 마일스톤별 TDD 작성 또는 스킵 근거 작성 | [design-writer-contract.md](design-writer-contract.md) |
-| Agent A `code-writer` | 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | [code-writer-contract.md](code-writer-contract.md) |
-| Agent B `architecture-reviewer` | `docs/backend/architecture/*`, `docs/backend/policies/*`, 관련 TDD 결정 준수 여부 검토 | [architecture-reviewer-contract.md](architecture-reviewer-contract.md) |
+| Agent D `technical-design-writer` | 마일스톤별 TDD 작성 또는 스킵 근거 작성 | [technical-design-writer-contract.md](technical-design-writer-contract.md) |
+| Agent A `implementation-engineer` | 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | [implementation-engineer-contract.md](implementation-engineer-contract.md) |
+| Agent B `backend-architecture-reviewer` | `docs/backend/architecture/*`, `docs/backend/policies/*`, 관련 TDD 결정 준수 여부 검토 | [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md) |
 | Supplemental reviewers | 프론트엔드, 문서, 보안 민감 변경 검토 | [review routing](../../../../docs/review/README.md) |
 
 서브에이전트 정의 파일:
 
-- [design-writer.toml](../../../../.codex/agents/design-writer.toml)
-- [code-writer.toml](../../../../.codex/agents/code-writer.toml)
-- [architecture-reviewer.toml](../../../../.codex/agents/architecture-reviewer.toml)
-- [frontend-reviewer.toml](../../../../.codex/agents/frontend-reviewer.toml)
-- [docs-reviewer.toml](../../../../.codex/agents/docs-reviewer.toml)
-- [security-reviewer.toml](../../../../.codex/agents/security-reviewer.toml)
+- [technical-design-writer.toml](../../../../.codex/agents/technical-design-writer.toml)
+- [implementation-engineer.toml](../../../../.codex/agents/implementation-engineer.toml)
+- [backend-architecture-reviewer.toml](../../../../.codex/agents/backend-architecture-reviewer.toml)
+- [frontend-architecture-reviewer.toml](../../../../.codex/agents/frontend-architecture-reviewer.toml)
+- [documentation-governance-reviewer.toml](../../../../.codex/agents/documentation-governance-reviewer.toml)
+- [security-policy-reviewer.toml](../../../../.codex/agents/security-policy-reviewer.toml)
 
 각 `.toml` 파일은 역할과 실행 제약만 가진다. handoff artifact 스키마, 프롬프트 필드 이름, 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 계약 문서가 단일 출처다.
 

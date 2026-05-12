@@ -550,7 +550,7 @@ HTTP -> DTO -> Command -> Domain -> Entity -> DB
 
 검토 에이전트의 취급:
 
-- `architecture-reviewer`는 `docs/backend/design`을 Source of Truth에서 제외한다.
+- `backend-architecture-reviewer`는 `docs/backend/design`을 Source of Truth에서 제외한다.
 - 설계 의도는 참고하되 준수 규칙으로 강제하지 않는다.
 - 강제할 규칙은 `architecture/*` 또는 `policies/*`에 규정으로 승격한다.
 

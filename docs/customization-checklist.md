@@ -28,12 +28,12 @@
 
 ## 서브에이전트
 
-- [ ] `.codex/agents/design-writer.toml` 검토
-- [ ] `.codex/agents/code-writer.toml` 검토
-- [ ] `.codex/agents/architecture-reviewer.toml` 검토
-- [ ] `.codex/agents/frontend-reviewer.toml` 검토
-- [ ] `.codex/agents/docs-reviewer.toml` 검토
-- [ ] `.codex/agents/security-reviewer.toml` 검토
+- [ ] `.codex/agents/technical-design-writer.toml` 검토
+- [ ] `.codex/agents/implementation-engineer.toml` 검토
+- [ ] `.codex/agents/backend-architecture-reviewer.toml` 검토
+- [ ] `.codex/agents/frontend-architecture-reviewer.toml` 검토
+- [ ] `.codex/agents/documentation-governance-reviewer.toml` 검토
+- [ ] `.codex/agents/security-policy-reviewer.toml` 검토
 - [ ] 계약 문서 경로와 참조 문서 경로가 현재 저장소와 일치하는지 확인
 - [ ] sandbox 설정이 현재 프로젝트 작업 방식과 맞는지 확인
 

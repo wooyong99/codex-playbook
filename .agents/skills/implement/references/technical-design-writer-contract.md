@@ -1,7 +1,7 @@
-# Design Writer — Input / Output Contract
+# Technical Design Writer — Input / Output Contract
 
-`implement` 스킬이 `design-writer` 서브에이전트와 주고받는 인터페이스 규격.  
-에이전트 정의 파일(`.codex/agents/design-writer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+`implement` 스킬이 `technical-design-writer` 서브에이전트와 주고받는 인터페이스 규격.  
+에이전트 정의 파일(`.codex/agents/technical-design-writer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
 
 ---
 
@@ -27,7 +27,7 @@
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/D-r00-v001.md
 
-[출력 규격]: 이 문서(.agents/skills/implement/references/design-writer-contract.md) — Output 섹션 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement/references/technical-design-writer-contract.md) — Output 섹션 그대로.
 ```
 
 [결과 파일]은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. D는 정상 완료 시 해당 파일에 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
@@ -71,7 +71,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: design-writer
+role: technical-design-writer
 kind: design_result
 iteration: 0
 created_at: <ISO-8601 timestamp>
@@ -88,7 +88,7 @@ payload:
     transaction_consistency:
       - <트랜잭션·정합성 전략>
     implementation_notes:
-      - <code-writer에게 전달할 설계 제약·선택>
+      - <implementation-engineer에게 전달할 설계 제약·선택>
   uncertainties:
     - <있다면 기재. 없으면 "없음">
 ```
@@ -99,7 +99,7 @@ payload:
 - `run_id`: 오케스트레이터가 생성한 run id
 - `milestone`: `M1`, `M2` 형식
 - `sequence`: 오케스트레이터가 파일명에 부여한 3자리 순번의 정수값
-- `role`: 항상 `design-writer`
+- `role`: 항상 `technical-design-writer`
 - `kind`: 항상 `design_result`
 - `iteration`: 설계 단계는 항상 `0`
 - `created_at`: ISO-8601 타임스탬프
@@ -146,7 +146,7 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 체크포인트 파일은 아래 섹션을 포함한다:
 
 ```markdown
-# Design Writer Checkpoint
+# Technical Design Writer Checkpoint
 
 ## 체크포인트 사유
 {normal_completion | design_decision_batch | section_batch_done | evidence_batch_done | layer_switch | requirement_boundary | 기타}

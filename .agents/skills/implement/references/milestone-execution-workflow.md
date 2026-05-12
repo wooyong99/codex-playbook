@@ -21,7 +21,7 @@
 
 ## Step 2. Agent D 위임
 
-프롬프트는 [design-writer-contract.md](design-writer-contract.md)의 Input 형식으로 구성한다.
+프롬프트는 [technical-design-writer-contract.md](technical-design-writer-contract.md)의 Input 형식으로 구성한다.
 
 필수 입력:
 
@@ -47,7 +47,7 @@
 
 ## Step 3. Agent A 위임
 
-프롬프트는 [code-writer-contract.md](code-writer-contract.md)의 Input Case A 형식으로 구성한다. A에게는 설계 요약 원문을 복사하지 않고 D 결과 파일 경로를 전달한다.
+프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case A 형식으로 구성한다. A에게는 설계 요약 원문을 복사하지 않고 D 결과 파일 경로를 전달한다.
 
 응답 처리:
 
@@ -58,7 +58,7 @@
 
 ## Step 4. Agent B 위임
 
-프롬프트는 [architecture-reviewer-contract.md](architecture-reviewer-contract.md)의 Input 형식으로 구성한다. B에게는 A 구현 결과 파일, D 설계 결과 파일, B의 `[결과 파일]`, `[체크포인트 파일]`을 전달한다.
+프롬프트는 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다. B에게는 A 구현 결과 파일, D 설계 결과 파일, B의 `[결과 파일]`, `[체크포인트 파일]`을 전달한다.
 
 변경 파일이 프론트엔드, 문서, 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer를 추가로 적용한다. supplemental reviewer 결과도 Rule ID, severity, source_path를 포함해야 하며, `blocker` 또는 `major` 위반은 B 위반과 동일하게 수정 루프로 보낸다.
 
@@ -73,7 +73,7 @@ B 결과는 사용자에게 짧게 요약한다. 위반이 있으면 파일명�
 
 ## Step 5. 위반 수정
 
-위반 수정은 같은 마일스톤의 A 인스턴스를 이어서 사용한다. 프롬프트는 [code-writer-contract.md](code-writer-contract.md)의 Input Case B 형식으로 구성하고, 위반 항목 원문은 프롬프트에 복사하지 않는다. B 결과 파일 경로만 전달한다.
+위반 수정은 같은 마일스톤의 A 인스턴스를 이어서 사용한다. 프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case B 형식으로 구성하고, 위반 항목 원문은 프롬프트에 복사하지 않는다. B 결과 파일 경로만 전달한다.
 
 응답 처리:
 

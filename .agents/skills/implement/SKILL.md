@@ -25,9 +25,9 @@ description: 요구사항을 마일스톤 단위로 분해하여 설계 문서 �
 - 요구사항 분석과 마일스톤 분할 기준: [references/milestone-planning.md](references/milestone-planning.md)
 - handoff artifact와 체크포인트 처리 규약: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
 - 마일스톤별 D/A/B 실행 루프: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
-- D 계약: [references/design-writer-contract.md](references/design-writer-contract.md)
-- A 계약: [references/code-writer-contract.md](references/code-writer-contract.md)
-- B 계약: [references/architecture-reviewer-contract.md](references/architecture-reviewer-contract.md)
+- D 계약: [references/technical-design-writer-contract.md](references/technical-design-writer-contract.md)
+- A 계약: [references/implementation-engineer-contract.md](references/implementation-engineer-contract.md)
+- B 계약: [references/backend-architecture-reviewer-contract.md](references/backend-architecture-reviewer-contract.md)
 
 ## 프로세스
 

@@ -1,7 +1,7 @@
-# Architecture Reviewer — Input / Output Contract
+# Backend Architecture Reviewer — Input / Output Contract
 
-`implement` 스킬이 `architecture-reviewer` 서브에이전트와 주고받는 인터페이스 규격.  
-에이전트 정의 파일(`.codex/agents/architecture-reviewer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+`implement` 스킬이 `backend-architecture-reviewer` 서브에이전트와 주고받는 인터페이스 규격.  
+에이전트 정의 파일(`.codex/agents/backend-architecture-reviewer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
 
 ---
 
@@ -20,7 +20,7 @@
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/B-r{iter}-v001.md
 
-[출력 규격]: 이 문서(.agents/skills/implement/references/architecture-reviewer-contract.md) — Output 섹션 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement/references/backend-architecture-reviewer-contract.md) — Output 섹션 그대로.
 ```
 
 B는 `[구현 결과 파일]`을 먼저 읽고 `payload.changed_files`를 검토 대상 파일로 삼는다. `payload.design_decisions`가 있으면 추가 컨텍스트로만 사용한다. `[설계 결과 파일]`이 전달되고 그 안의 `payload.tdd_path`가 `null`이 아니면, 검토 범위는 `docs/backend/architecture/*`, `docs/backend/policies/*` 뿐 아니라 **해당 마일스톤 TDD의 명시 결정 사항 준수 여부** 까지 포함한다. 단, TDD에 없는 개인적 선호나 대안 제안은 여전히 금지한다.
@@ -57,7 +57,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: architecture-reviewer
+role: backend-architecture-reviewer
 kind: review_result
 iteration: <A-B 루프 iter>
 created_at: <ISO-8601 timestamp>
@@ -85,7 +85,7 @@ payload:
 - `run_id`: 오케스트레이터가 생성한 run id
 - `milestone`: `M1`, `M2` 형식
 - `sequence`: 오케스트레이터가 파일명에 부여한 3자리 순번의 정수값
-- `role`: 항상 `architecture-reviewer`
+- `role`: 항상 `backend-architecture-reviewer`
 - `kind`: 항상 `review_result`
 - `iteration`: 현재 A-B 루프 iter
 - `created_at`: ISO-8601 타임스탬프
@@ -142,7 +142,7 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 체크포인트 파일은 아래 섹션을 포함한다:
 
 ```markdown
-# Architecture Reviewer Checkpoint
+# Backend Architecture Reviewer Checkpoint
 
 ## 체크포인트 사유
 {normal_completion | review_file_batch | layer_batch_done | violation_batch_done | rule_read_batch_done | requirement_boundary | 기타}
@@ -214,7 +214,7 @@ schema_version: implement-handoff/v1
 run_id: 20260501-120000-12345
 milestone: M1
 sequence: 3
-role: architecture-reviewer
+role: backend-architecture-reviewer
 kind: review_result
 iteration: 1
 created_at: 2026-05-01T12:00:00+09:00

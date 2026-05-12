@@ -12,10 +12,10 @@ import sys
 ROOT = Path(__file__).resolve().parents[4]
 
 AGENTS = {
-    "design-writer": {
-        "agent": ROOT / ".codex/agents/design-writer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/design-writer-contract.md",
-        "title": "# Design Writer Checkpoint",
+    "technical-design-writer": {
+        "agent": ROOT / ".codex/agents/technical-design-writer.toml",
+        "contract": ROOT / ".agents/skills/implement/references/technical-design-writer-contract.md",
+        "title": "# Technical Design Writer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
@@ -31,10 +31,10 @@ AGENTS = {
             "## 진행 상태",
         ],
     },
-    "code-writer": {
-        "agent": ROOT / ".codex/agents/code-writer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/code-writer-contract.md",
-        "title": "# Code Writer Checkpoint",
+    "implementation-engineer": {
+        "agent": ROOT / ".codex/agents/implementation-engineer.toml",
+        "contract": ROOT / ".agents/skills/implement/references/implementation-engineer-contract.md",
+        "title": "# Implementation Engineer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
@@ -53,10 +53,10 @@ AGENTS = {
             "## 진행 상태",
         ],
     },
-    "architecture-reviewer": {
-        "agent": ROOT / ".codex/agents/architecture-reviewer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/architecture-reviewer-contract.md",
-        "title": "# Architecture Reviewer Checkpoint",
+    "backend-architecture-reviewer": {
+        "agent": ROOT / ".codex/agents/backend-architecture-reviewer.toml",
+        "contract": ROOT / ".agents/skills/implement/references/backend-architecture-reviewer-contract.md",
+        "title": "# Backend Architecture Reviewer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
@@ -336,7 +336,7 @@ def main():
             f"{name} checkpoint output must not masquerade as completion",
         )
 
-    for name in ["design-writer", "code-writer"]:
+    for name in ["technical-design-writer", "implementation-engineer"]:
         spec = AGENTS[name]
         contract = read(spec["contract"])
         require(
@@ -347,21 +347,21 @@ def main():
             f"{name} contract explicit exclusions field",
         )
 
-    design_agent = read(AGENTS["design-writer"]["agent"])
+    design_agent = read(AGENTS["technical-design-writer"]["agent"])
     require(
         errors,
-        AGENTS["design-writer"]["agent"],
+        AGENTS["technical-design-writer"]["agent"],
         design_agent,
         ".agents/skills/write-tech-design-doc/SKILL.md",
-        "design-writer local write-tech-design-doc skill path",
+        "technical-design-writer local write-tech-design-doc skill path",
     )
     design_skill_match = re.search(r'path\s*=\s*"([^"]*\.agents/skills/write-tech-design-doc/SKILL\.md)"', design_agent or "")
     if design_skill_match is None:
-        errors.append(f"{AGENTS['design-writer']['agent']}: missing parseable write-tech-design-doc skill path")
+        errors.append(f"{AGENTS['technical-design-writer']['agent']}: missing parseable write-tech-design-doc skill path")
     else:
         design_skill_path = Path(design_skill_match.group(1))
         if design_skill_path.is_absolute():
-            errors.append(f"{AGENTS['design-writer']['agent']}: write-tech-design-doc skill path must be relative")
+            errors.append(f"{AGENTS['technical-design-writer']['agent']}: write-tech-design-doc skill path must be relative")
         if not design_skill_path.is_absolute():
             design_skill_path = ROOT / design_skill_path
         if not design_skill_path.exists():
