@@ -17,6 +17,7 @@
 - [ ] `docs/backend/design/README.md` 링크 최신화
 - [ ] 새 디렉토리가 생기면 해당 영역의 가장 가까운 `README.md` 문서 맵 갱신
 - [ ] `AGENTS.md`는 `docs/backend/README.md`, `docs/frontend/README.md` 같은 최상위 진입점 경로가 바뀔 때만 갱신
+- [ ] `python3 .agents/skills/implement/scripts/check-playbook.py` 통과
 
 ## 스킬
 
@@ -30,6 +31,9 @@
 - [ ] `.codex/agents/design-writer.toml` 검토
 - [ ] `.codex/agents/code-writer.toml` 검토
 - [ ] `.codex/agents/architecture-reviewer.toml` 검토
+- [ ] `.codex/agents/frontend-reviewer.toml` 검토
+- [ ] `.codex/agents/docs-reviewer.toml` 검토
+- [ ] `.codex/agents/security-reviewer.toml` 검토
 - [ ] 계약 문서 경로와 참조 문서 경로가 현재 저장소와 일치하는지 확인
 - [ ] sandbox 설정이 현재 프로젝트 작업 방식과 맞는지 확인
 

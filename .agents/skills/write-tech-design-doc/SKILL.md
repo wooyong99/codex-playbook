@@ -65,8 +65,8 @@ description: 기술설계문서(TDD, Technical Design Document)를 작성하는 
 이 단계의 탐색은 **병렬로** 수행하여 효율을 높인다.
 
 ### 수행 작업
-1. **CLAUDE.md 참조**: 프로젝트 아키텍처, 모듈 구조, 네이밍 규칙, 코딩 패턴 파악
-2. **DDL 탐색**: `sql/{관련 도메인}/` 디렉토리에서 기존 테이블 구조 확인 ([DDL-First 원칙](../../../docs/backend/architecture/storage/ddl-management.md))
+1. **프로젝트 지식 시스템 참조**: `AGENTS.md`, `docs/backend/README.md`에서 프로젝트 아키텍처, 모듈 구조, 네이밍 규칙, 코딩 패턴 파악
+2. **DDL 탐색**: `sql/{관련 도메인}/` 디렉토리에서 기존 테이블 구조 확인 ([DDL-First 원칙](../../../docs/backend/architecture/storage/strategies/ddl-management.md))
 3. **도메인 모델 탐색**: 관련 도메인의 모델, 엔티티, 서비스 코드 탐색
 4. **유사 도메인 참조**: 이미 구현 완료된 유사 도메인의 패턴을 참조하여 일관성 확보
 5. **기존 설계 문서 확인**: `docs/backend/design/` 디렉토리의 관련 문서 확인
@@ -150,8 +150,8 @@ Controller → UseCase → Service → Port → Adapter → Repository
 이 단계가 TDD의 핵심이다. 각 계층이 어떤 책임을 가지며, 왜 그렇게 나눴는지를 문서화한다.
 
 > 참조 문서
-> - 계층별 책임: [domain-layer-guidelines](../../../docs/backend/architecture/domain/domain-layer-guidelines.md) · [application-layer-guidelines](../../../docs/backend/architecture/application/application-layer-guidelines.md) · [storage-layer-guidelines](../../../docs/backend/architecture/storage/storage-layer-guidelines.md) · [external-layer-guidelines](../../../docs/backend/architecture/external/external-layer-guidelines.md) · [app-layer-guidelines](../../../docs/backend/architecture/app/app-layer-guidelines.md)
-> - Command/Query 분리: [use-case-convention](../../../docs/backend/architecture/application/use-case-convention.md) · [flow-convention](../../../docs/backend/architecture/application/flow-convention.md)
+> - 계층별 책임: [domain-guidelines](../../../docs/backend/architecture/domain/domain-guidelines.md) · [application-guidelines](../../../docs/backend/architecture/application/application-guidelines.md) · [storage-guidelines](../../../docs/backend/architecture/storage/storage-guidelines.md) · [external-guidelines](../../../docs/backend/architecture/external/external-guidelines.md) · [app-guidelines](../../../docs/backend/architecture/app/app-guidelines.md)
+> - Command/Query 분리: [use-case-convention](../../../docs/backend/architecture/application/strategies/use-case-convention.md) · [flow-convention](../../../docs/backend/architecture/application/strategies/flow-convention.md)
 > - 설계 대안 분석 형식: [design/README.md](../../../docs/backend/design/README.md)
 
 ### 산출물 형식
@@ -192,9 +192,9 @@ Controller → UseCase → Service → Port → Adapter → Repository
 도메인 모델의 구조, 애그리거트 경계, DB 스키마를 설계한다.
 
 > 참조 문서
-> - 도메인 모델 규칙 (Entity/VO/팩토리/불변식/Tell Don't Ask): [domain-model-convention](../../../docs/backend/architecture/domain/domain-model-convention.md)
-> - 레이어 구성·애그리거트 경계·ID 참조 패턴: [domain-layer-guidelines](../../../docs/backend/architecture/domain/domain-layer-guidelines.md)
-> - DDL-First 원칙·파일 위치·버전 관리: [ddl-management](../../../docs/backend/architecture/storage/ddl-management.md)
+> - 도메인 모델 규칙 (Entity/VO/팩토리/불변식/Tell Don't Ask): [domain-model-convention](../../../docs/backend/architecture/domain/strategies/domain-model-convention.md)
+> - 레이어 구성·애그리거트 경계·ID 참조 패턴: [domain-guidelines](../../../docs/backend/architecture/domain/domain-guidelines.md)
+> - DDL-First 원칙·파일 위치·버전 관리: [ddl-management](../../../docs/backend/architecture/storage/strategies/ddl-management.md)
 
 ### 산출물 형식
 
@@ -274,8 +274,8 @@ Controller → UseCase → Service → Port → Adapter → Repository
 예상 가능한 실패 시나리오를 나열하고, 각 시나리오별 대응 전략을 설계한다.
 
 > 참조 문서
-> - 도메인 예외 계층 구조 (`CoreException` / `ErrorCode` / `CoreErrorType` / `require` · `check` 사용 기준): [exception-convention (domain)](../../../docs/backend/architecture/domain/exception-convention.md)
-> - API 예외 응답 형식·GlobalExceptionHandler: [exception-handling-convention (app)](../../../docs/backend/architecture/app/exception-handling-convention.md)
+> - 도메인 예외 계층 구조 (`CoreException` / `ErrorCode` / `CoreErrorType` / `require` · `check` 사용 기준): [exception-convention (domain)](../../../docs/backend/architecture/domain/strategies/exception-convention.md)
+> - API 예외 응답 형식·GlobalExceptionHandler: [exception-handling-convention (app)](../../../docs/backend/architecture/app/strategies/exception-handling-convention.md)
 
 ### 산출물 형식
 
@@ -316,7 +316,7 @@ Controller → UseCase → Service → Port → Adapter → Repository
 > - 동시성 제어 방식 선택 기준 (분산 락 / 낙관적 잠금 / 비관적 잠금 / 큐 기반 선택 플로우)
 > - 분산 락 설계 (`@DistributedLock` 키 설계·waitTime/leaseTime 가이드)
 > - 낙관적 잠금 패턴 (`@Version` + `@Retryable`)
-> - N+1 문제 해결 패턴: [querydsl-convention](../../../docs/backend/architecture/storage/querydsl-convention.md) (단일 쿼리 + 인메모리 그룹핑 / 다단계 조합)
+> - N+1 문제 해결 패턴: [querydsl-convention](../../../docs/backend/architecture/storage/strategies/querydsl-convention.md) (단일 쿼리 + 인메모리 그룹핑 / 다단계 조합)
 > - 캐싱 전략 설계 (TTL·무효화 정책·`@Cacheable`·`@CacheEvict`)
 > - 확장 가능성 문서화 형식 (열린 확장 포인트 / 의도적 제약)
 

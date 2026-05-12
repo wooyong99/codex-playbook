@@ -66,8 +66,11 @@ payload:
   reviewed_files:
     - <검토한 파일 절대 경로>
   violations:
-    - file: <절대 경로>
+    - rule_id: <규칙 ID. 없으면 UNREGISTERED>
+      severity: blocker | major | minor | info
+      file: <절대 경로>
       rule: <문서명>:<규칙 또는 체크리스트 항목>
+      source_path: <규칙 원문 문서의 저장소 상대 경로>
       line_range: <start-end>
       reason: <1줄 근거 + 참조 문서 경로>
   referenced_artifacts:
@@ -89,13 +92,16 @@ payload:
 - `status`: 위반이 없으면 `pass`, 1건 이상 있으면 `violations`
 - `payload.reviewed_files`: 실제 검토한 파일의 절대 경로 목록
 - `payload.violations`: 위반이 없으면 빈 배열 `[]`
+- `payload.violations[].rule_id`: [Rule ID and metadata](../../../../docs/rules/README.md) 형식을 따른다. 아직 등록되지 않은 규칙은 `UNREGISTERED`로 둔다.
+- `payload.violations[].severity`: `blocker`, `major`, `minor`, `info` 중 하나
 - `payload.violations[].file`: 절대 경로 (상대 경로 금지)
+- `payload.violations[].source_path`: 규칙 원문 문서의 저장소 상대 경로
 - `payload.referenced_artifacts.code_result`: 이번 검토 입력으로 사용한 `[구현 결과 파일]` 절대 경로
 - `rule`: 형식 `<문서명>:<항목>`
-  - 예: `app-layer-guidelines.md:Controller 체크리스트 "@Valid가 Request DTO에 적용됐는가"`
+  - 예: `app-guidelines.md:Controller 체크리스트 "@Valid가 Request DTO에 적용됐는가"`
   - 예: `logging.md:LogExtension 확장 함수 사용 규정`
 - `line_range`: 시작-끝 라인 (예: `45-52`)
-- `reason`: 1줄 근거 + 참조 문서 경로 (예: `reason: Request DTO에 toCommand() 로직 포함. app-layer-guidelines.md Coding Rules 2번.`)
+- `reason`: 1줄 근거 + 참조 문서 경로 (예: `reason: Request DTO에 toCommand() 로직 포함. app-guidelines.md Coding Rules 2번.`)
 
 정상 완료 응답 본문에는 handoff artifact 내용을 복사하지 않는다. 오케스트레이터와 다음 에이전트는 첫 줄의 파일 경로를 통해 필요한 내용을 읽는다. 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다. 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, `완료된 작업`, `완료된 결과`, `관련 파일`, `진행 상태`에는 재호출해도 같은 검토 결론으로 수렴할 수 있을 만큼 구체적으로 남긴다.
 
@@ -232,12 +238,18 @@ REVIEW_COMPLETED: /path/to/.agents/runs/20260501-120000-12345/handoffs/M1/003-B-
 결과 파일의 `payload.violations`:
 
 ```yaml
-- file: /path/to/backend/app/backoffice/src/main/kotlin/com/example/backoffice/product/ProductController.kt
-  rule: app-layer-guidelines.md:Controller 체크리스트 "@Valid가 Request DTO에 적용됐는가"
+- rule_id: BACKEND-APP-DTO-001
+  severity: major
+  file: /path/to/backend/app/backoffice/src/main/kotlin/com/example/backoffice/product/ProductController.kt
+  rule: app-guidelines.md:Controller 체크리스트 "@Valid가 Request DTO에 적용됐는가"
+  source_path: docs/backend/architecture/app/app-guidelines.md
   line_range: 52-56
-  reason: Request DTO에 @Valid 누락. docs/backend/architecture/app/app-layer-guidelines.md Post-Work Verification - Controller 섹션.
-- file: /path/to/backend/core/application/src/main/kotlin/com/example/application/product/CreateProductUseCase.kt
+  reason: Request DTO에 @Valid 누락. docs/backend/architecture/app/app-guidelines.md Post-Work Verification - Controller 섹션.
+- rule_id: BACKEND-POLICY-LOGGING-001
+  severity: major
+  file: /path/to/backend/core/application/src/main/kotlin/com/example/application/product/CreateProductUseCase.kt
   rule: logging.md:LogExtension 확장 함수 사용 규정
+  source_path: docs/backend/policies/logging.md
   line_range: 14-15
   reason: raw LoggerFactory 사용 + [SCOPE] 태그 누락. docs/backend/policies/logging.md Kotlin 사용 예시 및 안티 패턴.
 ```

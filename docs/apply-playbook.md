@@ -59,3 +59,9 @@
 - 문서 맵 링크가 현재 구조와 맞는가
 - AI 에이전트가 읽는 문서 경로가 실제 저장소 구조와 맞는가
 - 프로젝트에 없는 전략을 문서에 일반론으로 남겨두지 않았는가
+
+아래 명령으로 기본 검증을 실행한다.
+
+```bash
+python3 .agents/skills/implement/scripts/check-playbook.py
+```

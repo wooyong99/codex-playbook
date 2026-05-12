@@ -1,4 +1,6 @@
-# 테넌트 온보딩 기술설계문서 (TDD)
+# 테넌트 온보딩 기술설계문서 예시 (TDD)
+
+> 이 문서는 codex-playbook의 TDD 산출물 예시다. 특정 SaaS 도메인과 모듈명을 사용하지만, codex-playbook 자체의 active backend 설계 결정은 아니다.
 
 > 작성일: 2026-04-12
 > 상태: Draft
@@ -26,7 +28,7 @@
 2. **비인증 공개 엔드포인트**: 테넌트-리스 환경에서 호출 가능해야 하며, `X-Tenant-ID` 헤더 없이도 동작.
 3. **법적 증빙 보장**: 약관 동의 기록은 **동의 시점에 활성이던 버전(스냅샷)** 을 참조하고, 이후 버전 변경에 영향 받지 않는다.
 4. **도메인 순수성 유지**: 온보딩 과정의 오케스트레이션은 Application 계층이 담당하고, 도메인 계층에는 "Registration" 같은 통합 애그리거트를 두지 않는다.
-5. **멀티테넌트 규칙 준수**: CLAUDE.md의 데이터 분류(테넌트/플랫폼/동의 스냅샷) 및 예약 slug 정책을 위반하지 않는다.
+5. **멀티테넌트 규칙 준수**: 프로젝트 지식 시스템의 데이터 분류(테넌트/플랫폼/동의 스냅샷) 및 예약 slug 정책을 위반하지 않는다.
 
 ### 1.3 설계 비목표
 
@@ -94,7 +96,7 @@ TermsAgreement ──→ Account, TermsVersion  [accountId, termsVersionId]
 
 ### 2.3 현행 스키마 분석
 
-본 TDD에서 도입되는 7개 테이블 + 플랫폼 관리자 분리 모델(`system_admin`)은 이전 CLAUDE.md 결정을 따른다.
+본 TDD에서 도입되는 7개 테이블 + 플랫폼 관리자 분리 모델(`system_admin`)은 이전 아키텍처 결정을 따른다.
 `system_admin`은 온보딩에 직접 개입하지 않으므로 본 TDD에서는 스키마만 참조한다.
 
 ---
@@ -106,7 +108,7 @@ TermsAgreement ──→ Account, TermsVersion  [accountId, termsVersionId]
 | 계층 | 구성 요소 | 책임 | 설계 근거 |
 |------|----------|------|----------|
 | Domain | `Tenant`, `Shop`, `Account`, `Membership`, `Terms`, `TermsVersion`, `TermsAgreement`, 각 VO (`TenantSlug`, `Email`, `PasswordHash`) | 생성 불변식, 상태 전이 규칙, 값 검증 | 비즈니스 규칙은 프레임워크와 무관해야 함 |
-| Application | `TenantOnboardingUseCase`, `RegisterTenantCommand`, `RegisterTenantResult`, 포트: `TenantRepository`/`ShopRepository`/`AccountRepository`/`MembershipRepository`/`TermsRepository`/`TermsAgreementRepository`, `PasswordHasher`, `SlugReservedPolicy` | 가입 흐름 오케스트레이션, 중복 검증, 필수 약관 검증, 트랜잭션 경계 | 여러 애그리거트 조립은 Application 책임. 도메인 통합 애그리거트 지양 (CLAUDE.md 원칙) |
+| Application | `TenantOnboardingUseCase`, `RegisterTenantCommand`, `RegisterTenantResult`, 포트: `TenantRepository`/`ShopRepository`/`AccountRepository`/`MembershipRepository`/`TermsRepository`/`TermsAgreementRepository`, `PasswordHasher`, `SlugReservedPolicy` | 가입 흐름 오케스트레이션, 중복 검증, 필수 약관 검증, 트랜잭션 경계 | 여러 애그리거트 조립은 Application 책임. 도메인 통합 애그리거트 지양 (프로젝트 아키텍처 원칙) |
 | App (Backoffice) | `TenantOnboardingController`, `RegisterTenantRequest`, `RegisterTenantResponse`, `TenantOnboardingDtoExtension`, 테넌트-리스 화이트리스트 등록 | HTTP 바인딩, 검증 어노테이션, DTO↔Command 변환 | API 계층은 Spring Web 경계만 |
 | Infrastructure | `TenantEntity`/`TenantRepositoryImpl`, `ShopEntity`/`ShopRepositoryImpl`, `AccountEntity`/`AccountRepositoryImpl`, `MembershipEntity`/`MembershipRepositoryImpl`, `TermsEntity`/`TermsVersionEntity`/`TermsRepositoryImpl`, `TermsAgreementEntity`/`TermsAgreementRepositoryImpl`, `BcryptPasswordHasher` | JPA 영속, 도메인↔엔티티 변환 | 도메인 밖으로 JPA 누출 방지 |
 
@@ -150,8 +152,8 @@ TermsAgreement ──→ Account, TermsVersion  [accountId, termsVersionId]
 
 | 대안 | 장점 | 단점 | 채택 여부 | 사유 |
 |------|------|------|----------|------|
-| A. Application 유스케이스가 순차 오케스트레이션 (단일 트랜잭션) | 원자성 쉬움. 도메인 계층 순수 유지. 디버깅 단순. | 서비스가 길어질 수 있음 | ✅ 채택 | CLAUDE.md "애그리거트 조립은 Application 책임" 원칙과 부합 |
-| B. 도메인에 `TenantRegistration` 통합 애그리거트 도입 | 규칙을 도메인에 집중 | 서로 다른 영속 단위를 한 애그리거트에 묶어 실질적 애그리거트 경계 붕괴. CLAUDE.md 원칙 위반 | ❌ 기각 | 규칙을 어김 |
+| A. Application 유스케이스가 순차 오케스트레이션 (단일 트랜잭션) | 원자성 쉬움. 도메인 계층 순수 유지. 디버깅 단순. | 서비스가 길어질 수 있음 | ✅ 채택 | "애그리거트 조립은 Application 책임" 원칙과 부합 |
+| B. 도메인에 `TenantRegistration` 통합 애그리거트 도입 | 규칙을 도메인에 집중 | 서로 다른 영속 단위를 한 애그리거트에 묶어 실질적 애그리거트 경계 붕괴. 프로젝트 아키텍처 원칙 위반 | ❌ 기각 | 규칙을 어김 |
 | C. 이벤트 기반 Saga로 각 단계 비동기 처리 | 확장성 | 온보딩은 외부 의존이 없고 즉시 완료되어야 하므로 과설계. 보상 트랜잭션 복잡도 증가 | ❌ 기각 | 범위 대비 오버엔지니어링 |
 | D. 엔드포인트 위치: `:app:backoffice` | 가입자는 "미래의 테넌트 운영자". backoffice의 사전 인증 구간(가입·로그인·비밀번호 재설정)에 자연스럽게 소속. 가입 완료 후 이어지는 운영자 여정이 동일 모듈에 존재 | backoffice에 사전 인증 화이트리스트 규칙을 도입해야 함 | ✅ 채택 | 액터(역할)가 모듈 분리 기준. 온보딩 신청자는 쇼핑객이 아닌 운영자 |
 | E. 엔드포인트 위치: `:app:storefront` | 비인증 공개 엔드포인트 성격만 보면 부합 | storefront는 본질적으로 테넌트 스코프(서브도메인/`X-Tenant-ID`). 온보딩만 예외가 되면 모듈 정체성·인터셉터 정책 훼손. 액터(쇼핑객) 불일치 | ❌ 기각 | "비인증=storefront"는 인증 상태 기준일 뿐 액터 기준이 아님 |
@@ -187,7 +189,7 @@ TermsAgreement ──→ Account, TermsVersion  [accountId, termsVersionId]
    →   [ACTIVE]   ⇄   [SUSPENDED]   ──────────→   [WITHDRAWN]
 ```
 
-> 참고: CLAUDE.md 결정상 가입 시 초기 상태는 `ACTIVE` (이메일 인증 미도입).
+> 참고: 기존 아키텍처 결정상 가입 시 초기 상태는 `ACTIVE` (이메일 인증 미도입).
 > `PENDING`은 상태 머신에 존재하지만 현 단계에서는 진입 경로 없음.
 
 #### Shop

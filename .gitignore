@@ -1,0 +1,20 @@
+.DS_Store
+.idea/
+.vscode/
+
+# Agent run artifacts
+.agents/runs/
+
+# Local caches and logs
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+
+# Build outputs and dependencies
+build/
+dist/
+out/
+target/
+node_modules/
+

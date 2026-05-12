@@ -2,7 +2,7 @@
 
 이 스킬은 아래 핵심 프로젝트 컨텍스트 문서만 수정한다.
 
-## 1. [AGENTS.md](../../../AGENTS.md)
+## 1. [AGENTS.md](../../../../AGENTS.md)
 
 현재 이 파일에서 채워야 하는 프로젝트 전용 플레이스홀더:
 
@@ -17,7 +17,7 @@
 - 공통 AI 작업 지침과 문서 맵 구조는 유지한다.
 - 비즈니스 목표는 짧은 bullet point로 유지한다.
 
-## 2. [docs/backend/README.md](../../../docs/backend/README.md)
+## 2. [docs/backend/README.md](../../../../docs/backend/README.md)
 
 현재 이 파일에서 채워야 하는 프로젝트 전용 플레이스홀더:
 
@@ -28,7 +28,7 @@
 - 프로젝트명 플레이스홀더만 교체한다.
 - 기존 백엔드 탐색 구조, 아키텍처 링크, 정책/설계 문서 참조는 유지한다.
 
-## 3. [docs/frontend/README.md](../../../docs/frontend/README.md)
+## 3. [docs/frontend/README.md](../../../../docs/frontend/README.md)
 
 현재 이 파일에서 채워야 하는 프로젝트 전용 플레이스홀더:
 

@@ -2,13 +2,13 @@
 
 ## 프로젝트 명
 
-- {프로젝트명}
+- codex-playbook
 
 ## 비즈니스 목표
 
-- {비즈니스 목표 1}
-- {비즈니스 목표 2}
-- {비즈니스 목표 3}
+- AI 에이전트가 도구, 규칙, 지식, 검증을 같은 기준으로 사용하도록 작업 환경을 표준화한다.
+- 20만~100만 라인 규모의 엔터프라이즈 코드베이스에서도 계획, 구현, 검토, 복구 흐름을 재현 가능하게 만든다.
+- 사람과 AI가 공유하는 프로젝트 지식 시스템을 유지해 작업 품질 편차와 재작업 비용을 줄인다.
 
 ## AI 에이전트 공통 작업 지침
 
@@ -52,5 +52,9 @@
 ## 문서 맵
 
 - [PRD](docs/PRD.md)
+- [Rule ID and metadata](docs/rules/README.md)
+- [Review routing](docs/review/README.md)
+- [Examples](docs/examples/README.md)
+- [Agent evaluation suite](docs/evals/README.md)
 - [Backend 문서 홈](docs/backend/README.md)
 - [Frontend 문서 홈](docs/frontend/README.md)

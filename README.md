@@ -22,6 +22,11 @@ Codex와 사람이 함께 사용할 수 있도록 정리한 프로젝트 플레�
 2. [적용 가이드](docs/apply-playbook.md)를 읽고 어떤 파일부터 채울지 결정한다.
 3. [커스터마이징 체크리스트](docs/customization-checklist.md)를 따라 프로젝트 전용 값과 문서를 채운다.
 4. 백엔드/프론트엔드 문서 홈으로 이동해 필요한 영역부터 확장한다.
+5. 아래 명령으로 플레이북 자체 검증을 실행한다.
+
+```bash
+python3 .agents/skills/implement/scripts/check-playbook.py
+```
 
 ## 먼저 읽으면 좋은 문서
 
@@ -31,6 +36,10 @@ Codex와 사람이 함께 사용할 수 있도록 정리한 프로젝트 플레�
   클론 후 무엇부터 손대야 하는지 설명
 - [커스터마이징 체크리스트](docs/customization-checklist.md)  
   프로젝트명, 목표, 문서, 스킬, 서브에이전트 점검 목록
+- [Rule ID and metadata](docs/rules/README.md)
+- [Review routing](docs/review/README.md)
+- [Examples](docs/examples/README.md)
+- [Agent evaluation suite](docs/evals/README.md)
 - [Backend 문서 홈](docs/backend/README.md)
 - [Frontend 문서 홈](docs/frontend/README.md)
 
@@ -55,3 +64,4 @@ Codex와 사람이 함께 사용할 수 있도록 정리한 프로젝트 플레�
 
 - 이 저장소는 템플릿이다. 그대로 복사한 뒤 프로젝트 전용 플레이스홀더와 전략 문서를 반드시 채워야 한다.
 - `docs/` 하위 문서는 일반론이 아니라 각 프로젝트의 실제 전략과 규칙으로 계속 커스터마이징하는 것을 전제로 한다.
+- `.agents/runs/` 아래 handoff와 checkpoint 산출물은 실행 중 복구 자료이며 git에 커밋하지 않는다.

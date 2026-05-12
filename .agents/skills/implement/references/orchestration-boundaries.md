@@ -10,12 +10,16 @@
 | Agent D `design-writer` | 마일스톤별 TDD 작성 또는 스킵 근거 작성 | [design-writer-contract.md](design-writer-contract.md) |
 | Agent A `code-writer` | 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | [code-writer-contract.md](code-writer-contract.md) |
 | Agent B `architecture-reviewer` | `docs/backend/architecture/*`, `docs/backend/policies/*`, 관련 TDD 결정 준수 여부 검토 | [architecture-reviewer-contract.md](architecture-reviewer-contract.md) |
+| Supplemental reviewers | 프론트엔드, 문서, 보안 민감 변경 검토 | [review routing](../../../../docs/review/README.md) |
 
 서브에이전트 정의 파일:
 
 - [design-writer.toml](../../../../.codex/agents/design-writer.toml)
 - [code-writer.toml](../../../../.codex/agents/code-writer.toml)
 - [architecture-reviewer.toml](../../../../.codex/agents/architecture-reviewer.toml)
+- [frontend-reviewer.toml](../../../../.codex/agents/frontend-reviewer.toml)
+- [docs-reviewer.toml](../../../../.codex/agents/docs-reviewer.toml)
+- [security-reviewer.toml](../../../../.codex/agents/security-reviewer.toml)
 
 각 `.toml` 파일은 역할과 실행 제약만 가진다. handoff artifact 스키마, 프롬프트 필드 이름, 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 계약 문서가 단일 출처다.
 
@@ -26,6 +30,7 @@
 - 요구사항 이해에 필요한 경우 `docs/backend/README.md` 같은 맵 문서 하나 정도는 읽을 수 있다.
 - 정상 산출물 전달과 체크포인트 복구를 위해 `[결과 파일]`과 `[체크포인트 파일]`을 읽고 존재 여부와 스키마를 검증할 수 있다.
 - 검토를 직접 수행하지 않는다. B의 결과를 읽어 반복 종료 여부만 판단한다.
+- 변경 파일이 프론트엔드, 문서, 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer 결과도 함께 확인한다.
 - D/A/B는 서로 호출하지 않는다. 모든 통신은 메인 에이전트를 경유한다.
 
 ## 인스턴스 생명주기
