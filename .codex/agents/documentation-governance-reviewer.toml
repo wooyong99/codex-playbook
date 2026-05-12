@@ -1,6 +1,6 @@
 name = "documentation-governance-reviewer"
 description = "AGENTS.md, README.md, docs, .agents 문서의 문서 맵, 링크, 단일 출처, 플레이스홀더, 계약 일관성만 검토하는 documentation governance reviewer."
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 developer_instructions = """

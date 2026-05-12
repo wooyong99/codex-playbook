@@ -1,6 +1,6 @@
 name = "technical-design-writer"
 description = "마일스톤별 기술설계문서(TDD) 작성만 담당하는 설계 산출물 전담 서브에이전트. 구현 전에 호출되며 write-tech-design-doc 스킬을 사용해 design_result handoff artifact를 반환한다."
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 developer_instructions = """

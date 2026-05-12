@@ -1,6 +1,6 @@
 name = "security-policy-reviewer"
 description = "보안 민감 변경을 security/logging 정책 기준으로 검토하는 security policy reviewer. secret, 인증/인가, 민감 정보 로그, 외부 연동 설정을 확인한다."
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 developer_instructions = """
