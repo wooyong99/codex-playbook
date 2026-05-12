@@ -12,10 +12,12 @@ import sys
 ROOT = Path(__file__).resolve().parents[4]
 
 AGENTS = {
-    "technical-design-writer": {
-        "agent": ROOT / ".codex/agents/technical-design-writer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/technical-design-writer-contract.md",
-        "title": "# Technical Design Writer Checkpoint",
+    "backend-technical-design-writer": {
+        "agent": ROOT / ".codex/agents/backend-technical-design-writer.toml",
+        "contract": ROOT / ".agents/skills/implement/references/backend-technical-design-writer-contract.md",
+        "title": "# Backend Technical Design Writer Checkpoint",
+        "skill_path": ".agents/skills/write-backend-tech-design-doc/SKILL.md",
+        "skill_name": "write-backend-tech-design-doc",
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
@@ -31,8 +33,51 @@ AGENTS = {
             "## 진행 상태",
         ],
     },
-    "implementation-engineer": {
-        "agent": ROOT / ".codex/agents/implementation-engineer.toml",
+    "frontend-technical-design-writer": {
+        "agent": ROOT / ".codex/agents/frontend-technical-design-writer.toml",
+        "contract": ROOT / ".agents/skills/implement/references/frontend-technical-design-writer-contract.md",
+        "title": "# Frontend Technical Design Writer Checkpoint",
+        "skill_path": ".agents/skills/write-frontend-tech-design-doc/SKILL.md",
+        "skill_name": "write-frontend-tech-design-doc",
+        "sections": [
+            "## 체크포인트 사유",
+            "## 현재 목표",
+            "## 핵심 규칙",
+            "## 금지 규칙",
+            "## 안티패턴",
+            "## 완료된 작업",
+            "## 진행중 작업",
+            "## 남은 작업",
+            "## 주의사항",
+            "## 실패 패턴",
+            "## 최근 결정",
+            "## 진행 상태",
+        ],
+    },
+    "backend-implementation-engineer": {
+        "agent": ROOT / ".codex/agents/backend-implementation-engineer.toml",
+        "contract": ROOT / ".agents/skills/implement/references/implementation-engineer-contract.md",
+        "title": "# Implementation Engineer Checkpoint",
+        "sections": [
+            "## 체크포인트 사유",
+            "## 현재 목표",
+            "## 핵심 규칙",
+            "## 금지 규칙",
+            "## 안티패턴",
+            "## 완료된 작업",
+            "## 진행중 작업",
+            "## 남은 작업",
+            "## 발견한 버그",
+            "## 주의사항",
+            "## 실패 패턴",
+            "## 최근 결정",
+            "## 검증 상태",
+            "## 관련 파일",
+            "## 진행 상태",
+        ],
+    },
+    "frontend-implementation-engineer": {
+        "agent": ROOT / ".codex/agents/frontend-implementation-engineer.toml",
         "contract": ROOT / ".agents/skills/implement/references/implementation-engineer-contract.md",
         "title": "# Implementation Engineer Checkpoint",
         "sections": [
@@ -75,6 +120,28 @@ AGENTS = {
             "## 진행 상태",
         ],
     },
+    "frontend-architecture-reviewer": {
+        "agent": ROOT / ".codex/agents/frontend-architecture-reviewer.toml",
+        "contract": ROOT / ".agents/skills/implement/references/frontend-architecture-reviewer-contract.md",
+        "title": "# Frontend Architecture Reviewer Checkpoint",
+        "sections": [
+            "## 체크포인트 사유",
+            "## 현재 목표",
+            "## 핵심 규칙",
+            "## 금지 규칙",
+            "## 안티패턴",
+            "## 완료된 작업",
+            "## 진행중 작업",
+            "## 남은 작업",
+            "## 발견한 버그",
+            "## 주의사항",
+            "## 실패 패턴",
+            "## 최근 결정",
+            "## 완료된 결과",
+            "## 관련 파일",
+            "## 진행 상태",
+        ],
+    },
 }
 
 
@@ -95,6 +162,8 @@ def main():
     errors = []
 
     implement_path = ROOT / ".agents/skills/implement/SKILL.md"
+    backend_skill_path = ROOT / ".agents/skills/implement-backend/SKILL.md"
+    frontend_skill_path = ROOT / ".agents/skills/implement-frontend/SKILL.md"
     boundaries_path = ROOT / ".agents/skills/implement/references/orchestration-boundaries.md"
     planning_path = ROOT / ".agents/skills/implement/references/milestone-planning.md"
     protocol_path = ROOT / ".agents/skills/implement/references/handoff-checkpoint-protocol.md"
@@ -105,13 +174,42 @@ def main():
         ("## 역할", "top-level role section"),
         ("## 기본 범위", "top-level scope section"),
         ("## 참조 문서", "top-level reference section"),
+        ("## 라우팅 기준", "router classification section"),
         ("## 프로세스", "top-level process section"),
+        ("implement-backend", "backend execution skill reference"),
+        ("implement-frontend", "frontend execution skill reference"),
         ("references/orchestration-boundaries.md", "orchestration boundary reference"),
         ("references/milestone-planning.md", "milestone planning reference"),
         ("references/handoff-checkpoint-protocol.md", "handoff checkpoint protocol reference"),
         ("references/milestone-execution-workflow.md", "milestone execution workflow reference"),
     ]:
         require(errors, implement_path, implement, needle, reason)
+
+    backend_skill = read(backend_skill_path)
+    for needle, reason in [
+        ("name: implement-backend", "backend skill name"),
+        ("backend-technical-design-writer", "backend design agent"),
+        ("backend-implementation-engineer", "backend implementation agent"),
+        ("backend-architecture-reviewer", "backend review agent"),
+        ("../implement/references/handoff-checkpoint-protocol.md", "shared handoff reference"),
+        ("../implement/references/backend-technical-design-writer-contract.md", "backend design contract"),
+        ("../implement/references/implementation-engineer-contract.md", "shared implementation contract"),
+        ("../implement/references/backend-architecture-reviewer-contract.md", "backend reviewer contract"),
+    ]:
+        require(errors, backend_skill_path, backend_skill, needle, reason)
+
+    frontend_skill = read(frontend_skill_path)
+    for needle, reason in [
+        ("name: implement-frontend", "frontend skill name"),
+        ("frontend-technical-design-writer", "frontend design agent"),
+        ("frontend-implementation-engineer", "frontend implementation agent"),
+        ("frontend-architecture-reviewer", "frontend review agent"),
+        ("../implement/references/handoff-checkpoint-protocol.md", "shared handoff reference"),
+        ("../implement/references/frontend-technical-design-writer-contract.md", "frontend design contract"),
+        ("../implement/references/implementation-engineer-contract.md", "shared implementation contract"),
+        ("../implement/references/frontend-architecture-reviewer-contract.md", "frontend reviewer contract"),
+    ]:
+        require(errors, frontend_skill_path, frontend_skill, needle, reason)
 
     for path, expected in [
         (
@@ -145,8 +243,10 @@ def main():
             workflow_path,
             [
                 ("## Step 2. Agent D 위임", "D workflow step"),
-                ("## Step 3. Agent A 위임", "A workflow step"),
-                ("## Step 4. Agent B 위임", "B workflow step"),
+                ("backend-technical-design-writer-contract.md", "backend D workflow contract"),
+                ("frontend-technical-design-writer-contract.md", "frontend D workflow contract"),
+                ("## Step 3. Agent A 라우팅 및 위임", "A workflow step"),
+                ("## Step 4. Agent B 라우팅 및 Reviewer 위임", "review workflow step"),
                 ("## Escalation", "escalation workflow"),
             ],
         ),
@@ -182,7 +282,15 @@ def main():
         "제외 대상:",
     ]
 
-    all_paths = [implement_path, boundaries_path, planning_path, protocol_path, workflow_path]
+    all_paths = [
+        implement_path,
+        backend_skill_path,
+        frontend_skill_path,
+        boundaries_path,
+        planning_path,
+        protocol_path,
+        workflow_path,
+    ]
     all_paths.extend(spec["agent"] for spec in AGENTS.values())
     all_paths.extend(spec["contract"] for spec in AGENTS.values())
 
@@ -336,7 +444,12 @@ def main():
             f"{name} checkpoint output must not masquerade as completion",
         )
 
-    for name in ["technical-design-writer", "implementation-engineer"]:
+    for name in [
+        "backend-technical-design-writer",
+        "frontend-technical-design-writer",
+        "backend-implementation-engineer",
+        "frontend-implementation-engineer",
+    ]:
         spec = AGENTS[name]
         contract = read(spec["contract"])
         require(
@@ -347,25 +460,32 @@ def main():
             f"{name} contract explicit exclusions field",
         )
 
-    design_agent = read(AGENTS["technical-design-writer"]["agent"])
-    require(
-        errors,
-        AGENTS["technical-design-writer"]["agent"],
-        design_agent,
-        ".agents/skills/write-tech-design-doc/SKILL.md",
-        "technical-design-writer local write-tech-design-doc skill path",
-    )
-    design_skill_match = re.search(r'path\s*=\s*"([^"]*\.agents/skills/write-tech-design-doc/SKILL\.md)"', design_agent or "")
-    if design_skill_match is None:
-        errors.append(f"{AGENTS['technical-design-writer']['agent']}: missing parseable write-tech-design-doc skill path")
-    else:
+    for name in ["backend-technical-design-writer", "frontend-technical-design-writer"]:
+        spec = AGENTS[name]
+        design_agent = read(spec["agent"])
+        skill_path = spec["skill_path"]
+        skill_name = spec["skill_name"]
+        require(
+            errors,
+            spec["agent"],
+            design_agent,
+            skill_path,
+            f"{name} local {skill_name} skill path",
+        )
+        design_skill_match = re.search(
+            rf'path\s*=\s*"([^"]*{re.escape(skill_path)})"',
+            design_agent or "",
+        )
+        if design_skill_match is None:
+            errors.append(f"{spec['agent']}: missing parseable {skill_name} skill path")
+            continue
         design_skill_path = Path(design_skill_match.group(1))
         if design_skill_path.is_absolute():
-            errors.append(f"{AGENTS['technical-design-writer']['agent']}: write-tech-design-doc skill path must be relative")
+            errors.append(f"{spec['agent']}: {skill_name} skill path must be relative")
         if not design_skill_path.is_absolute():
             design_skill_path = ROOT / design_skill_path
         if not design_skill_path.exists():
-            errors.append(f"{design_skill_path}: missing write-tech-design-doc skill")
+            errors.append(f"{design_skill_path}: missing {skill_name} skill")
 
     if errors:
         print("FAIL context checkpoint contract validation")

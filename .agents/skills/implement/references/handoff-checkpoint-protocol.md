@@ -1,6 +1,6 @@
 # Handoff And Checkpoint Protocol
 
-이 문서는 `implement` 스킬의 handoff artifact, 체크포인트 파일, 결과 신호, 메인 에이전트 검증 절차를 소유한다. 역할별 payload 스키마와 체크포인트 템플릿은 D/A/B 계약 문서가 단일 출처다.
+이 문서는 `implement` 스킬 패밀리의 handoff artifact, 체크포인트 파일, 결과 신호, 메인 에이전트 검증 절차를 소유한다. 역할별 payload 스키마와 체크포인트 템플릿은 D/A/B 계약 문서가 단일 출처다.
 
 ## 저장 위치
 

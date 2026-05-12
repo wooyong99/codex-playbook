@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Frontend Tech Design Doc"
+  short_description: "Draft frontend technical design docs"
+  default_prompt: "Use $write-frontend-tech-design-doc to draft a frontend technical design document covering state, API integration, components, routing, caching, errors, and folder structure."

@@ -22,14 +22,21 @@
 ## 스킬
 
 - [ ] `.agents/skills/setup-project-context`가 현재 프로젝트에도 맞는지 확인
-- [ ] `.agents/skills/implement`의 계약 문서와 지시가 현재 프로젝트 규칙에 맞는지 확인
+- [ ] `.agents/skills/implement` 라우터가 현재 프로젝트 영역 분류와 맞는지 확인
+- [ ] `.agents/skills/implement-backend`의 backend 실행 지시가 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/implement-frontend`의 frontend 실행 지시가 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/implement/references`의 공통 계약 문서가 현재 프로젝트 규칙에 맞는지 확인
+- [ ] `.agents/skills/write-backend-tech-design-doc`의 backend TDD 템플릿이 현재 프로젝트 규칙에 맞는지 확인
+- [ ] `.agents/skills/write-frontend-tech-design-doc`의 frontend TDD 템플릿이 현재 프로젝트 규칙에 맞는지 확인
 - [ ] 기존 코드베이스가 있다면 `reverse-engineer-backend-docs` 적용 여부 결정
 - [ ] 프로젝트에 필요 없는 스킬은 제거 또는 수정
 
 ## 서브에이전트
 
-- [ ] `.codex/agents/technical-design-writer.toml` 검토
-- [ ] `.codex/agents/implementation-engineer.toml` 검토
+- [ ] `.codex/agents/backend-technical-design-writer.toml` 검토
+- [ ] `.codex/agents/frontend-technical-design-writer.toml` 검토
+- [ ] `.codex/agents/backend-implementation-engineer.toml` 검토
+- [ ] `.codex/agents/frontend-implementation-engineer.toml` 검토
 - [ ] `.codex/agents/backend-architecture-reviewer.toml` 검토
 - [ ] `.codex/agents/frontend-architecture-reviewer.toml` 검토
 - [ ] `.codex/agents/documentation-governance-reviewer.toml` 검토
@@ -48,3 +55,4 @@
 - [ ] 아키텍처 문서가 실제 폴더 구조와 맞는지 확인
 - [ ] 컨벤션 문서가 실제 기술 스택과 맞는지 확인
 - [ ] 성능/UI-UX 가이드가 실제 제품 성격과 맞는지 확인
+- [ ] `docs/frontend/design/README.md` 링크 최신화

@@ -11,6 +11,7 @@ docs/frontend/
 ├── getting-started.md  # 오리엔테이션 (기술 스택, 프로젝트 구성, 로컬 실행)
 ├── architecture/       # FSD 아키텍처, 폴더 구조, 상태 관리
 ├── conventions/        # 코드/네이밍/컴포넌트/API 컨벤션
+├── design/             # 프론트엔드 기술설계문서(TDD)
 ├── performance/        # 렌더링/캐싱/리스트 최적화
 └── ui-ux/              # UI 원칙, UX 가이드라인, 로딩·피드백, 모달
 ```
@@ -24,6 +25,7 @@ docs/frontend/
 | 시작하기 | [getting-started.md](getting-started.md) | 기술 스택, 프로젝트 구성, 로컬 실행 |
 | 아키텍처 | [architecture/README.md](architecture/README.md) | FSD 아키텍처, 폴더 구조, 상태 관리 |
 | 컨벤션 | [conventions/README.md](conventions/README.md) | 코드, 네이밍, 컴포넌트, API 컨벤션 |
+| 설계 | [design/README.md](design/README.md) | 프론트엔드 기술설계문서(TDD) |
 | 성능 | [performance/README.md](performance/README.md) | 렌더링, 캐싱, 리스트 최적화 |
 | UI / UX | [ui-ux/README.md](ui-ux/README.md) | UI 원칙, UX 가이드라인, 로딩·피드백, 모달 |
 

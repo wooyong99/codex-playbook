@@ -1,6 +1,6 @@
 # Milestone Planning
 
-이 문서는 `implement` 스킬의 요구사항 분석과 마일스톤 분할 기준을 소유한다. 실행 중 D/A/B 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유한다.
+이 문서는 `implement` 스킬 패밀리의 요구사항 분석과 마일스톤 분할 기준을 소유한다. 실행 중 D/A/B 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유한다.
 
 ## 요구사항 분석
 

@@ -1,16 +1,16 @@
 # Milestone Execution Workflow
 
-이 문서는 `implement` 스킬의 마일스톤별 실행 루프를 소유한다. 역할별 프롬프트 필드와 출력 스키마는 각 계약 문서가 단일 출처이며, 파일 검증 절차는 [handoff-checkpoint-protocol.md](handoff-checkpoint-protocol.md)를 따른다.
+이 문서는 `implement` 스킬 패밀리의 마일스톤별 실행 루프를 소유한다. 역할별 프롬프트 필드와 출력 스키마는 각 계약 문서가 단일 출처이며, 파일 검증 절차는 [handoff-checkpoint-protocol.md](handoff-checkpoint-protocol.md)를 따른다.
 
 ## 전체 흐름
 
 각 마일스톤은 아래 순서로 실행한다.
 
 1. D를 호출해 TDD를 작성하거나 스킵 근거를 받는다.
-2. A를 호출해 구현 결과를 받는다.
-3. B를 호출해 변경 파일의 문서 준수 여부를 검토한다.
-4. 위반이 있으면 A에게 수정 작업을 맡기고 B를 다시 호출한다.
-5. B가 `pass`를 반환하면 다음 마일스톤으로 넘어간다.
+2. 마일스톤 영역에 맞는 A를 호출해 구현 결과를 받는다.
+3. 변경 영역에 맞는 B와 필요한 supplemental reviewer를 호출해 변경 파일의 문서 준수 여부를 검토한다.
+4. 위반이 있으면 해당 영역의 A에게 수정 작업을 맡기고 reviewer를 다시 호출한다.
+5. 호출된 모든 B와 필수 supplemental reviewer가 `pass`를 반환하면 다음 마일스톤으로 넘어간다.
 6. A-B 루프가 제한 횟수를 넘으면 사용자에게 escalation 선택지를 제시한다.
 
 ## Step 1. 마일스톤 시작
@@ -21,7 +21,12 @@
 
 ## Step 2. Agent D 위임
 
-프롬프트는 [technical-design-writer-contract.md](technical-design-writer-contract.md)의 Input 형식으로 구성한다.
+마일스톤 영역에 맞는 D와 계약 문서를 먼저 고른다.
+
+- 백엔드 마일스톤은 `backend-technical-design-writer`를 호출하고, 프롬프트는 [backend-technical-design-writer-contract.md](backend-technical-design-writer-contract.md)의 Input 형식으로 구성한다.
+- 프론트엔드 마일스톤은 `frontend-technical-design-writer`를 호출하고, 프롬프트는 [frontend-technical-design-writer-contract.md](frontend-technical-design-writer-contract.md)의 Input 형식으로 구성한다.
+- 백엔드와 프론트엔드가 모두 필요한 요청은 마일스톤을 가능한 한 영역별로 분리한다.
+- 단일 마일스톤 안에서 분리할 수 없으면 backend D와 frontend D를 별도 `[결과 파일]`, `[체크포인트 파일]`로 각각 호출하고, 영역별 D 결과 파일을 A 단계로 넘긴다.
 
 필수 입력:
 
@@ -45,9 +50,16 @@
 
 재확인 후에도 D가 `TDD_SKIPPED`를 유지하면 그 이유를 사용자 업데이트에 짧게 노출한 뒤 A 단계로 진행한다.
 
-## Step 3. Agent A 위임
+## Step 3. Agent A 라우팅 및 위임
 
 프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case A 형식으로 구성한다. A에게는 설계 요약 원문을 복사하지 않고 D 결과 파일 경로를 전달한다.
+
+호출 대상:
+
+- 백엔드 코드, backend 문서, DB/schema, 서버 설정 변경은 `backend-implementation-engineer`를 호출한다.
+- 프론트엔드 코드, frontend 문서, UI/상태/API client/cache/rendering 변경은 `frontend-implementation-engineer`를 호출한다.
+- 백엔드와 프론트엔드가 모두 필요한 요청은 마일스톤을 가능한 한 영역별로 분리한다.
+- 단일 마일스톤 안에서 분리할 수 없으면 backend A와 frontend A를 별도 `[결과 파일]`, `[체크포인트 파일]`로 각각 호출하고, `payload.changed_files`와 `payload.verification`을 합쳐 검토 단계로 넘긴다.
 
 응답 처리:
 
@@ -56,24 +68,28 @@
 - `verification.compile.exit_code`, `verification.tests.exit_code`가 누락됐거나 실패면 마일스톤을 성공으로 간주하지 않는다.
 - 검증 실패는 A 재호출 또는 사용자 보고로 처리하고 B 검토로 넘기지 않는다.
 
-## Step 4. Agent B 위임
+## Step 4. Agent B 라우팅 및 Reviewer 위임
 
-프롬프트는 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다. B에게는 A 구현 결과 파일, D 설계 결과 파일, B의 `[결과 파일]`, `[체크포인트 파일]`을 전달한다.
+백엔드 변경 파일이 있으면 `backend-architecture-reviewer`를 호출하고, 프롬프트는 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다. 프론트엔드 변경 파일이 있으면 `frontend-architecture-reviewer`를 호출하고, 프롬프트는 [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다. B에게는 A 구현 결과 파일, D 설계 결과 파일, B의 `[결과 파일]`, `[체크포인트 파일]`을 전달한다.
 
-변경 파일이 프론트엔드, 문서, 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer를 추가로 적용한다. supplemental reviewer 결과도 Rule ID, severity, source_path를 포함해야 하며, `blocker` 또는 `major` 위반은 B 위반과 동일하게 수정 루프로 보낸다.
+변경 파일이 문서 또는 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer를 추가로 적용한다. supplemental reviewer 결과도 Rule ID, severity, source_path를 포함해야 하며, `blocker` 또는 `major` 위반은 B 위반과 동일하게 수정 루프로 보낸다.
 
 응답 처리:
 
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 공통 처리로 새 B 인스턴스를 재호출한다. 완료된 파일의 위반 결과는 체크포인트 파일의 `완료된 결과` 섹션에서 복원한다.
 - `REVIEW_COMPLETED:`이면 B 결과 파일을 검증하고 `status`와 `payload.violations`를 읽는다.
-- `status: pass`이면 마일스톤을 완료한다.
+- 호출된 모든 B와 필수 supplemental reviewer의 `status: pass`가 확인되면 마일스톤을 완료한다.
 - `status: violations`이면 위반 수정 단계로 진행한다.
 
 B 결과는 사용자에게 짧게 요약한다. 위반이 있으면 파일명과 위반 규칙 요약만 한 줄씩 노출한다.
 
 ## Step 5. 위반 수정
 
-위반 수정은 같은 마일스톤의 A 인스턴스를 이어서 사용한다. 프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case B 형식으로 구성하고, 위반 항목 원문은 프롬프트에 복사하지 않는다. B 결과 파일 경로만 전달한다.
+위반 수정은 같은 마일스톤의 해당 영역 A 인스턴스를 이어서 사용한다. 프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case B 형식으로 구성하고, 위반 항목 원문은 프롬프트에 복사하지 않는다. reviewer 결과 파일 경로만 전달한다.
+
+- `backend-architecture-reviewer`가 보고한 backend 위반은 `backend-implementation-engineer`가 수정한다.
+- `frontend-architecture-reviewer`가 보고한 frontend 위반은 `frontend-implementation-engineer`가 수정한다.
+- 문서 전용 위반은 메인 에이전트가 직접 수정하지 않고 사용자에게 별도 문서 작업으로 보고하거나, 문서 작업이 명시된 경우에만 문서 전담 흐름으로 처리한다.
 
 응답 처리:
 
@@ -83,11 +99,11 @@ B 결과는 사용자에게 짧게 요약한다. 위반이 있으면 파일명�
 - compile 또는 tests 검증이 누락·실패하면 재검토로 진행하지 않는다.
 - `verification.tests.result`가 `not_run`이면 이유를 사용자에게 노출하고, 허용 가능한 빠른 수정인지 확인된 경우에만 재검토로 진행한다.
 
-수정 후에는 B를 새 인스턴스로 다시 호출한다.
+수정 후에는 해당 reviewer를 새 인스턴스로 다시 호출한다.
 
 ## Step 6. 반복 종료
 
-- B가 `status: pass`를 반환하면 마일스톤을 완료한다.
+- 호출된 모든 B와 필수 supplemental reviewer가 `status: pass`를 반환하면 마일스톤을 완료한다.
 - B가 `status: violations`를 반환하면 위반 수정 단계로 돌아간다.
 - A-B 반복은 최대 5회까지만 자동 수행한다.
 - 5회를 넘으면 escalation 단계로 넘어간다.

@@ -1,7 +1,7 @@
-# Implementation Engineer — Input / Output Contract
+# Implementation Engineers — Input / Output Contract
 
-`implement` 스킬이 `implementation-engineer` 서브에이전트와 주고받는 인터페이스 규격.  
-에이전트 정의 파일(`.codex/agents/implementation-engineer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+`implement` 스킬이 `backend-implementation-engineer`, `frontend-implementation-engineer` 서브에이전트와 주고받는 공통 인터페이스 규격.
+에이전트 정의 파일(`.codex/agents/backend-implementation-engineer.toml`, `.codex/agents/frontend-implementation-engineer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
 
 ---
 
@@ -22,8 +22,9 @@
 [프로젝트 컨텍스트]:
   - {실제 저장소 문서에서 추출한 스택/모듈 구조}
   - {실제 저장소 문서에서 추출한 의존 방향/레이어 규칙}
-  - 관련 레이어: {app/application/domain/storage 중 해당}
-  - 관련 도메인: {도메인명}
+  - 구현 영역: {backend | frontend}
+  - 관련 문서: {docs/backend 또는 docs/frontend 하위에서 실제로 필요한 문서}
+  - 관련 도메인/기능: {도메인명 또는 기능명}
 
 [설계 결과 파일]: {D가 반환한 design_result handoff artifact 절대 경로}. 먼저 이 파일을 읽고, `payload.tdd_path`가 있으면 해당 TDD를 읽은 뒤 설계 의도에 따라 구현.
 
@@ -87,7 +88,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: implementation-engineer
+role: <backend-implementation-engineer | frontend-implementation-engineer>
 kind: implementation_result
 iteration: 0
 created_at: <ISO-8601 timestamp>
@@ -131,7 +132,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: implementation-engineer
+role: <backend-implementation-engineer | frontend-implementation-engineer>
 kind: fix_result
 iteration: <A-B 루프 iter>
 created_at: <ISO-8601 timestamp>
@@ -169,7 +170,7 @@ payload:
 - `run_id`: 오케스트레이터가 생성한 run id
 - `milestone`: `M1`, `M2` 형식
 - `sequence`: 오케스트레이터가 파일명에 부여한 3자리 순번의 정수값
-- `role`: 항상 `implementation-engineer`
+- `role`: 호출된 구현 에이전트 이름. `backend-implementation-engineer` 또는 `frontend-implementation-engineer`
 - `kind`: `implementation_result` 또는 `fix_result`
 - `iteration`: 신규 구현은 `0`, 위반 수정은 현재 A-B 루프 iter
 - `created_at`: ISO-8601 타임스탬프
