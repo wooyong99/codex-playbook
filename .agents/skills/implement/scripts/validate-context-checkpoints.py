@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[4]
 AGENTS = {
     "backend-technical-design-writer": {
         "agent": ROOT / ".codex/agents/backend-technical-design-writer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/backend-technical-design-writer-contract.md",
+        "contract": ROOT / ".agents/skills/implement-backend/references/backend-technical-design-writer-contract.md",
         "title": "# Backend Technical Design Writer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
@@ -32,7 +32,7 @@ AGENTS = {
     },
     "frontend-technical-design-writer": {
         "agent": ROOT / ".codex/agents/frontend-technical-design-writer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/frontend-technical-design-writer-contract.md",
+        "contract": ROOT / ".agents/skills/implement-frontend/references/frontend-technical-design-writer-contract.md",
         "title": "# Frontend Technical Design Writer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
@@ -51,8 +51,8 @@ AGENTS = {
     },
     "backend-implementation-engineer": {
         "agent": ROOT / ".codex/agents/backend-implementation-engineer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/implementation-engineer-contract.md",
-        "title": "# Implementation Engineer Checkpoint",
+        "contract": ROOT / ".agents/skills/implement-backend/references/backend-implementation-engineer-contract.md",
+        "title": "# Backend Implementation Engineer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
@@ -73,8 +73,8 @@ AGENTS = {
     },
     "frontend-implementation-engineer": {
         "agent": ROOT / ".codex/agents/frontend-implementation-engineer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/implementation-engineer-contract.md",
-        "title": "# Implementation Engineer Checkpoint",
+        "contract": ROOT / ".agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md",
+        "title": "# Frontend Implementation Engineer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
             "## 현재 목표",
@@ -95,7 +95,7 @@ AGENTS = {
     },
     "backend-architecture-reviewer": {
         "agent": ROOT / ".codex/agents/backend-architecture-reviewer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/backend-architecture-reviewer-contract.md",
+        "contract": ROOT / ".agents/skills/implement-backend/references/backend-architecture-reviewer-contract.md",
         "title": "# Backend Architecture Reviewer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
@@ -117,7 +117,7 @@ AGENTS = {
     },
     "frontend-architecture-reviewer": {
         "agent": ROOT / ".codex/agents/frontend-architecture-reviewer.toml",
-        "contract": ROOT / ".agents/skills/implement/references/frontend-architecture-reviewer-contract.md",
+        "contract": ROOT / ".agents/skills/implement-frontend/references/frontend-architecture-reviewer-contract.md",
         "title": "# Frontend Architecture Reviewer Checkpoint",
         "sections": [
             "## 체크포인트 사유",
@@ -187,9 +187,9 @@ def main():
         ("backend-implementation-engineer", "backend implementation agent"),
         ("backend-architecture-reviewer", "backend review agent"),
         ("../implement/references/handoff-checkpoint-protocol.md", "shared handoff reference"),
-        ("../implement/references/backend-technical-design-writer-contract.md", "backend design contract"),
-        ("../implement/references/implementation-engineer-contract.md", "shared implementation contract"),
-        ("../implement/references/backend-architecture-reviewer-contract.md", "backend reviewer contract"),
+        ("references/backend-technical-design-writer-contract.md", "backend design contract"),
+        ("references/backend-implementation-engineer-contract.md", "backend implementation contract"),
+        ("references/backend-architecture-reviewer-contract.md", "backend reviewer contract"),
     ]:
         require(errors, backend_skill_path, backend_skill, needle, reason)
 
@@ -200,9 +200,9 @@ def main():
         ("frontend-implementation-engineer", "frontend implementation agent"),
         ("frontend-architecture-reviewer", "frontend review agent"),
         ("../implement/references/handoff-checkpoint-protocol.md", "shared handoff reference"),
-        ("../implement/references/frontend-technical-design-writer-contract.md", "frontend design contract"),
-        ("../implement/references/implementation-engineer-contract.md", "shared implementation contract"),
-        ("../implement/references/frontend-architecture-reviewer-contract.md", "frontend reviewer contract"),
+        ("references/frontend-technical-design-writer-contract.md", "frontend design contract"),
+        ("references/frontend-implementation-engineer-contract.md", "frontend implementation contract"),
+        ("references/frontend-architecture-reviewer-contract.md", "frontend reviewer contract"),
     ]:
         require(errors, frontend_skill_path, frontend_skill, needle, reason)
 
@@ -238,10 +238,14 @@ def main():
             workflow_path,
             [
                 ("## Step 2. Agent D 위임", "D workflow step"),
-                ("backend-technical-design-writer-contract.md", "backend D workflow contract"),
-                ("frontend-technical-design-writer-contract.md", "frontend D workflow contract"),
+                ("구체 계약 경로는 `implement-backend` 또는 `implement-frontend` 실행 스킬", "area skill contract ownership"),
+                ("`implement-backend`의 D 계약 Input 형식", "backend D workflow contract ownership"),
+                ("`implement-frontend`의 D 계약 Input 형식", "frontend D workflow contract ownership"),
+                ("자기 A 계약 문서", "area-owned A workflow contract"),
                 ("## Step 3. Agent A 라우팅 및 위임", "A workflow step"),
                 ("## Step 4. Agent B 라우팅 및 Reviewer 위임", "review workflow step"),
+                ("`implement-backend`의 B 계약 Input 형식", "backend B workflow contract ownership"),
+                ("`implement-frontend`의 B 계약 Input 형식", "frontend B workflow contract ownership"),
                 ("[Source of Truth]", "B source-of-truth input responsibility"),
                 ("## Escalation", "escalation workflow"),
             ],
@@ -427,14 +431,23 @@ def main():
         (
             "backend-implementation-engineer",
             [
-                ("[Source of Truth]", "implementation source-of-truth input field"),
+                ("[Source of Truth]", "backend implementation source-of-truth input field"),
                 ("docs/backend/README.md", "backend A README source candidate"),
                 ("docs/backend/architecture/**", "backend A architecture source candidates"),
                 ("docs/backend/policies/**", "backend A policy source candidates"),
+                ("payload.tdd_path", "backend implementation TDD source candidate"),
+            ],
+        ),
+        (
+            "frontend-implementation-engineer",
+            [
+                ("[Source of Truth]", "frontend implementation source-of-truth input field"),
                 ("docs/frontend/README.md", "frontend A README source candidate"),
                 ("docs/frontend/architecture/**", "frontend A architecture source candidates"),
                 ("docs/frontend/conventions/**", "frontend A convention source candidates"),
-                ("payload.tdd_path", "implementation TDD source candidate"),
+                ("docs/frontend/performance/**", "frontend A performance source candidates"),
+                ("docs/frontend/ui-ux/**", "frontend A UI/UX source candidates"),
+                ("payload.tdd_path", "frontend implementation TDD source candidate"),
             ],
         ),
         (
@@ -488,6 +501,8 @@ def main():
         "backend-architecture-reviewer-contract.md",
         "frontend-architecture-reviewer-contract.md",
         "implementation-engineer-contract.md",
+        "backend-implementation-engineer-contract.md",
+        "frontend-implementation-engineer-contract.md",
         "backend-technical-design-writer-contract.md",
         "frontend-technical-design-writer-contract.md",
         "Context 절약 원칙",

@@ -26,11 +26,7 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 - 공통 요구사항 분석과 마일스톤 분할 기준: [references/milestone-planning.md](references/milestone-planning.md)
 - 공통 handoff artifact와 체크포인트 처리 규약: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
 - 공통 마일스톤별 D/A/B 실행 루프: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
-- D 백엔드 계약: [references/backend-technical-design-writer-contract.md](references/backend-technical-design-writer-contract.md)
-- D 프론트엔드 계약: [references/frontend-technical-design-writer-contract.md](references/frontend-technical-design-writer-contract.md)
-- A 공통 계약: [references/implementation-engineer-contract.md](references/implementation-engineer-contract.md)
-- B 백엔드 계약: [references/backend-architecture-reviewer-contract.md](references/backend-architecture-reviewer-contract.md)
-- B 프론트엔드 계약: [references/frontend-architecture-reviewer-contract.md](references/frontend-architecture-reviewer-contract.md)
+- 영역별 D/A/B 실행 계약은 이 스킬에서 열거하지 않고 `implement-backend`와 `implement-frontend`의 `references/`가 소유한다.
 
 ## 라우팅 기준
 

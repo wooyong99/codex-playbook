@@ -1,7 +1,7 @@
-# Implementation Engineers — Input / Output Contract
+# Backend Implementation Engineer — Input / Output Contract
 
-`implement` 스킬이 `backend-implementation-engineer`, `frontend-implementation-engineer` 서브에이전트와 주고받는 공통 인터페이스 규격.
-에이전트 정의 파일(`.codex/agents/backend-implementation-engineer.toml`, `.codex/agents/frontend-implementation-engineer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+`implement-backend` 스킬이 `backend-implementation-engineer` 서브에이전트와 주고받는 인터페이스 규격.
+에이전트 정의 파일(`.codex/agents/backend-implementation-engineer.toml`)이 아닌 이 문서가 backend 구현 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
 
 ---
 
@@ -22,8 +22,8 @@
 [프로젝트 컨텍스트]:
   - {실제 저장소 문서에서 추출한 스택/모듈 구조}
   - {실제 저장소 문서에서 추출한 의존 방향/레이어 규칙}
-  - 구현 영역: {backend | frontend}
-  - 관련 문서: {docs/backend 또는 docs/frontend 하위에서 실제로 필요한 문서}
+  - 구현 영역: backend
+  - 관련 문서: {docs/backend 하위에서 실제로 필요한 문서}
   - 관련 도메인/기능: {도메인명 또는 기능명}
 
 [Source of Truth]:
@@ -36,7 +36,7 @@
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/A-r00-v001.md
 
-[출력 규격]: 이 문서(.agents/skills/implement/references/implementation-engineer-contract.md) — Output > Case A 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement-backend/references/backend-implementation-engineer-contract.md) — Output > Case A 그대로.
 ```
 
 [설계 결과 파일]과 `[결과 파일]`은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. A는 정상 완료 시 `[결과 파일]`에 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
@@ -45,7 +45,7 @@
 
 ### Source of Truth 후보와 선별 규칙
 
-오케스트레이터는 A 호출 전에 구현 영역과 변경 파일 후보에 맞는 문서 또는 섹션을 선별해 `[Source of Truth]`에 넣는다.
+오케스트레이터는 A 호출 전에 backend 변경 파일 후보에 맞는 문서 또는 섹션을 선별해 `[Source of Truth]`에 넣는다.
 
 backend 후보:
 
@@ -54,16 +54,7 @@ backend 후보:
 - `docs/backend/policies/**`
 - `[설계 결과 파일]`의 `payload.tdd_path`가 가리키는 마일스톤 TDD
 
-frontend 후보:
-
-- `docs/frontend/README.md`
-- `docs/frontend/architecture/**`
-- `docs/frontend/conventions/**`
-- `docs/frontend/performance/**`
-- `docs/frontend/ui-ux/**`
-- `[설계 결과 파일]`의 `payload.tdd_path`가 가리키는 마일스톤 TDD
-
-구현 에이전트는 입력된 `[Source of Truth]`와 `[설계 결과 파일]`만 기준으로 구현 판단을 보강한다. 후보 경로에 있더라도 이번 변경과 무관한 문서는 넣지 않는다. 후보 밖 문서가 필요하면 오케스트레이터가 그 이유를 `[Source of Truth]` 항목에 함께 명시한다.
+`backend-implementation-engineer`는 입력된 `[Source of Truth]`와 `[설계 결과 파일]`만 기준으로 구현 판단을 보강한다. 후보 경로에 있더라도 이번 backend 변경과 무관한 문서는 넣지 않는다. 후보 밖 문서가 필요하면 오케스트레이터가 그 이유를 `[Source of Truth]` 항목에 함께 명시한다.
 
 ### Case B — 위반 수정
 
@@ -81,7 +72,7 @@ frontend 후보:
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/A-r{iter}-v001.md
 
-[출력 규격]: 이 문서(.agents/skills/implement/references/implementation-engineer-contract.md) — Output > Case B 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement-backend/references/backend-implementation-engineer-contract.md) — Output > Case B 그대로.
 ```
 
 A는 `[검토 결과 파일]`을 먼저 읽고, `status: violations` 인 경우에만 수정 작업을 수행한다. `status: pass` 이거나 `payload.violations`가 비어 있으면 수정하지 말고 `status: failed`, 빈 배열 payload, `verification.*.result: not_run` 으로 결과 파일에 근거를 기록한다.
@@ -116,7 +107,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: <backend-implementation-engineer | frontend-implementation-engineer>
+role: backend-implementation-engineer
 kind: implementation_result
 iteration: 0
 created_at: <ISO-8601 timestamp>
@@ -160,7 +151,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: <backend-implementation-engineer | frontend-implementation-engineer>
+role: backend-implementation-engineer
 kind: fix_result
 iteration: <A-B 루프 iter>
 created_at: <ISO-8601 timestamp>
@@ -198,7 +189,7 @@ payload:
 - `run_id`: 오케스트레이터가 생성한 run id
 - `milestone`: `M1`, `M2` 형식
 - `sequence`: 오케스트레이터가 파일명에 부여한 3자리 순번의 정수값
-- `role`: 호출된 구현 에이전트 이름. `backend-implementation-engineer` 또는 `frontend-implementation-engineer`
+- `role`: 호출된 구현 에이전트 이름. 항상 `backend-implementation-engineer`
 - `kind`: `implementation_result` 또는 `fix_result`
 - `iteration`: 신규 구현은 `0`, 위반 수정은 현재 A-B 루프 iter
 - `created_at`: ISO-8601 타임스탬프
@@ -249,7 +240,7 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 체크포인트 파일은 아래 섹션을 포함한다:
 
 ```markdown
-# Implementation Engineer Checkpoint
+# Backend Implementation Engineer Checkpoint
 
 ## 체크포인트 사유
 {normal_completion | changed_file_batch | implementation_batch_done | violation_batch_done | verification_failure | read_batch_done | requirement_boundary | 기타}

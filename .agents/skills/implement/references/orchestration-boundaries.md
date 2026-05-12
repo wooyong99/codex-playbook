@@ -7,12 +7,12 @@
 | 주체 | 책임 | 계약 문서 |
 |------|------|-----------|
 | 메인 에이전트 | 요구사항 분석, 마일스톤 분할, D/A/B 호출, handoff 검증, 반복 종료 판단, 사용자 보고 | 이 문서와 `SKILL.md` |
-| Agent D `backend-technical-design-writer` | 백엔드 마일스톤별 TDD 작성 또는 스킵 근거 작성 | [backend-technical-design-writer-contract.md](backend-technical-design-writer-contract.md) |
-| Agent D `frontend-technical-design-writer` | 프론트엔드 마일스톤별 TDD 작성 또는 스킵 근거 작성 | [frontend-technical-design-writer-contract.md](frontend-technical-design-writer-contract.md) |
-| Agent A `backend-implementation-engineer` | 백엔드 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | [implementation-engineer-contract.md](implementation-engineer-contract.md) |
-| Agent A `frontend-implementation-engineer` | 프론트엔드 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | [implementation-engineer-contract.md](implementation-engineer-contract.md) |
-| Agent B `backend-architecture-reviewer` | 입력으로 전달된 백엔드 아키텍처 기준과 관련 TDD 결정 준수 여부 검토 | [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md) |
-| Agent B `frontend-architecture-reviewer` | 입력으로 전달된 프론트엔드 아키텍처 기준과 관련 TDD 결정 준수 여부 검토 | [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md) |
+| Agent D `backend-technical-design-writer` | 백엔드 마일스톤별 TDD 작성 또는 스킵 근거 작성 | `implement-backend/references`의 D 계약 |
+| Agent D `frontend-technical-design-writer` | 프론트엔드 마일스톤별 TDD 작성 또는 스킵 근거 작성 | `implement-frontend/references`의 D 계약 |
+| Agent A `backend-implementation-engineer` | 백엔드 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | `implement-backend/references`의 A 계약 |
+| Agent A `frontend-implementation-engineer` | 프론트엔드 코드 작성·수정, 테스트, 빌드 확인, 구현 결과 파일 작성 | `implement-frontend/references`의 A 계약 |
+| Agent B `backend-architecture-reviewer` | 입력으로 전달된 백엔드 아키텍처 기준과 관련 TDD 결정 준수 여부 검토 | `implement-backend/references`의 B 계약 |
+| Agent B `frontend-architecture-reviewer` | 입력으로 전달된 프론트엔드 아키텍처 기준과 관련 TDD 결정 준수 여부 검토 | `implement-frontend/references`의 B 계약 |
 | Supplemental reviewers | 문서, 보안 민감 변경 검토 | [review routing](../../../../docs/review/README.md) |
 
 서브에이전트 정의 파일:

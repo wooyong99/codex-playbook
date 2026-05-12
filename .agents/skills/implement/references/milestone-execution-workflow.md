@@ -21,10 +21,10 @@
 
 ## Step 2. Agent D 위임
 
-마일스톤 영역에 맞는 D와 계약 문서를 먼저 고른다.
+마일스톤 영역에 맞는 D와 계약 문서를 먼저 고른다. 구체 계약 경로는 `implement-backend` 또는 `implement-frontend` 실행 스킬이 자기 `references/`에서 소유한다.
 
-- 백엔드 마일스톤은 `backend-technical-design-writer`를 호출하고, 프롬프트는 [backend-technical-design-writer-contract.md](backend-technical-design-writer-contract.md)의 Input 형식으로 구성한다.
-- 프론트엔드 마일스톤은 `frontend-technical-design-writer`를 호출하고, 프롬프트는 [frontend-technical-design-writer-contract.md](frontend-technical-design-writer-contract.md)의 Input 형식으로 구성한다.
+- 백엔드 마일스톤은 `backend-technical-design-writer`를 호출하고, 프롬프트는 `implement-backend`의 D 계약 Input 형식으로 구성한다.
+- 프론트엔드 마일스톤은 `frontend-technical-design-writer`를 호출하고, 프롬프트는 `implement-frontend`의 D 계약 Input 형식으로 구성한다.
 - 백엔드와 프론트엔드가 모두 필요한 요청은 마일스톤을 가능한 한 영역별로 분리한다.
 - 단일 마일스톤 안에서 분리할 수 없으면 backend D와 frontend D를 별도 `[결과 파일]`, `[체크포인트 파일]`로 각각 호출하고, 영역별 D 결과 파일을 A 단계로 넘긴다.
 
@@ -54,7 +54,7 @@
 
 ## Step 3. Agent A 라우팅 및 위임
 
-프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case A 형식으로 구성한다. A에게는 설계 요약 원문을 복사하지 않고 D 결과 파일 경로를 전달한다. 이번 구현에 적용할 기준 문서와 설계 결정은 A 계약의 `[Source of Truth]` 필드로 전달한다.
+마일스톤 영역에 맞는 실행 스킬이 자기 A 계약 문서를 고르고 Input Case A 형식으로 프롬프트를 구성한다. A에게는 설계 요약 원문을 복사하지 않고 D 결과 파일 경로를 전달한다. 이번 구현에 적용할 기준 문서와 설계 결정은 A 계약의 `[Source of Truth]` 필드로 전달한다.
 
 호출 대상:
 
@@ -72,7 +72,7 @@
 
 ## Step 4. Agent B 라우팅 및 Reviewer 위임
 
-백엔드 변경 파일이 있으면 `backend-architecture-reviewer`를 호출하고, 프롬프트는 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다. 프론트엔드 변경 파일이 있으면 `frontend-architecture-reviewer`를 호출하고, 프롬프트는 [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다.
+백엔드 변경 파일이 있으면 `backend-architecture-reviewer`를 호출하고, 프롬프트는 `implement-backend`의 B 계약 Input 형식으로 구성한다. 프론트엔드 변경 파일이 있으면 `frontend-architecture-reviewer`를 호출하고, 프롬프트는 `implement-frontend`의 B 계약 Input 형식으로 구성한다.
 
 백엔드 B에게는 A 구현 결과 파일, D 설계 결과 파일, 이번 검토의 `[Source of Truth]`, B의 `[결과 파일]`, `[체크포인트 파일]`, `[출력 규격]`을 전달한다. 어떤 backend 문서와 TDD 결정이 검토 기준인지 선택하는 책임은 `backend-architecture-reviewer` TOML이 아니라 이 실행 workflow와 B 계약이 가진다. 프론트엔드 B도 같은 방식으로 해당 계약의 Input 형식에 따라 기준 문서와 출력 규격을 전달한다.
 
@@ -89,7 +89,7 @@ B 결과는 사용자에게 짧게 요약한다. 위반이 있으면 파일명�
 
 ## Step 5. 위반 수정
 
-위반 수정은 같은 마일스톤의 해당 영역 A 인스턴스를 이어서 사용한다. 프롬프트는 [implementation-engineer-contract.md](implementation-engineer-contract.md)의 Input Case B 형식으로 구성하고, 위반 항목 원문은 프롬프트에 복사하지 않는다. reviewer 결과 파일 경로만 전달한다.
+위반 수정은 같은 마일스톤의 해당 영역 A 인스턴스를 이어서 사용한다. 프롬프트는 해당 영역 A 계약의 Input Case B 형식으로 구성하고, 위반 항목 원문은 프롬프트에 복사하지 않는다. reviewer 결과 파일 경로만 전달한다.
 
 - `backend-architecture-reviewer`가 보고한 backend 위반은 `backend-implementation-engineer`가 수정한다.
 - `frontend-architecture-reviewer`가 보고한 frontend 위반은 `frontend-implementation-engineer`가 수정한다.

@@ -1,7 +1,7 @@
-# Backend Technical Design Writer — Input / Output Contract
+# Frontend Technical Design Writer — Input / Output Contract
 
-`implement-backend` 스킬이 `backend-technical-design-writer` 서브에이전트와 주고받는 인터페이스 규격.
-에이전트 정의 파일(`.codex/agents/backend-technical-design-writer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+`implement-frontend` 스킬이 `frontend-technical-design-writer` 서브에이전트와 주고받는 인터페이스 규격.
+에이전트 정의 파일(`.codex/agents/frontend-technical-design-writer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
 
 ---
 
@@ -18,21 +18,21 @@
 {사용자 요청 또는 마일스톤 분할상 제외된 항목. 없으면 "없음"}
 
 [프로젝트 컨텍스트]:
-  - {실제 저장소 문서에서 추출한 backend 스택/모듈 구조}
-  - {실제 저장소 문서에서 추출한 backend 의존 방향/레이어 규칙}
-  - 구현 영역: backend
-  - 관련 문서: {docs/backend 하위에서 실제로 필요한 문서}
-  - 관련 도메인/기능: {도메인명 또는 backend 기능명}
+  - {실제 저장소 문서에서 추출한 frontend 스택/모듈 구조}
+  - {실제 저장소 문서에서 추출한 frontend 의존 방향/레이어 규칙}
+  - 구현 영역: frontend
+  - 관련 문서: {docs/frontend 하위에서 실제로 필요한 문서}
+  - 관련 도메인/기능: {사용자 흐름, 화면, feature 또는 entity}
 
 [Source of Truth]:
-  - {이번 설계에 적용할 backend 기준 문서 또는 섹션}
+  - {이번 설계에 적용할 frontend 기준 문서 또는 섹션}
   - {이번 설계에 적용할 제품 요구사항 또는 정책}
 
 [결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-D-r00-design-result.v1.yaml
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/D-r00-v001.md
 
-[출력 규격]: 이 문서(.agents/skills/implement/references/backend-technical-design-writer-contract.md) — Output 섹션 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement-frontend/references/frontend-technical-design-writer-contract.md) — Output 섹션 그대로.
 ```
 
 [결과 파일]은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. D는 정상 완료 시 해당 파일에 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
@@ -41,15 +41,17 @@
 
 ### Source of Truth 후보와 선별 규칙
 
-오케스트레이터는 backend D 호출 전에 아래 후보에서 이번 설계 판단에 필요한 문서 또는 섹션을 선별해 `[Source of Truth]`에 넣는다.
+오케스트레이터는 frontend D 호출 전에 아래 후보에서 이번 설계 판단에 필요한 문서 또는 섹션을 선별해 `[Source of Truth]`에 넣는다.
 
 - `docs/PRD.md`
-- `docs/backend/README.md`
-- `docs/backend/architecture/**`
-- `docs/backend/policies/**`
-- `docs/backend/design/**`
+- `docs/frontend/README.md`
+- `docs/frontend/architecture/**`
+- `docs/frontend/conventions/**`
+- `docs/frontend/performance/**`
+- `docs/frontend/ui-ux/**`
+- `docs/frontend/design/**`
 
-`docs/backend/architecture` 하위의 특정 unit 이름은 이 계약에서 고정하지 않는다. 프로젝트별 실제 architecture unit과 strategy 문서 전체가 후보이며, 요구사항·명시적 제외사항·관련 도메인/기능을 근거로 필요한 항목만 선별한다. 후보 밖 문서가 필요하면 오케스트레이터가 그 이유를 `[Source of Truth]` 항목에 함께 명시한다.
+후보 경로에 있더라도 이번 사용자 흐름, 화면, 상태, API 연동, 라우팅, 캐싱, 오류 처리와 무관한 문서는 `[Source of Truth]`에 넣지 않는다. 후보 밖 문서가 필요하면 오케스트레이터가 그 이유를 `[Source of Truth]` 항목에 함께 명시한다.
 
 체크포인트 재호출 시 프롬프트에 아래 필드가 추가된다:
 
@@ -88,7 +90,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: backend-technical-design-writer
+role: frontend-technical-design-writer
 kind: design_result
 iteration: 0
 created_at: <ISO-8601 timestamp>
@@ -98,14 +100,23 @@ payload:
   skip_reason: <TDD_SKIPPED일 때 이유, 아니면 null>
   design_summary:
     architecture_decisions:
-      - <핵심 backend 아키텍처 결정>
-    domain_models:
-      - name: <도메인 모델명 또는 backend 책임 단위>
-        role: <역할 요약>
-    transaction_consistency:
-      - <트랜잭션·정합성·동시성 전략>
+      - <핵심 frontend 아키텍처 결정>
+    state_management:
+      - <server/client/form/url/derived state 설계>
+    api_integration:
+      - <API client/hook/loading/error 설계>
+    component_structure:
+      - <컴포넌트 책임과 트리 설계>
+    routing:
+      - <route/layout/guard/url state 설계>
+    caching:
+      - <query key/invalidation/cache lifetime 설계>
+    error_handling:
+      - <사용자 피드백과 복구 전략>
+    folder_structure:
+      - <frontend 파일 배치와 public API 경계>
     implementation_notes:
-      - <backend 구현 에이전트에게 전달할 설계 제약·선택>
+      - <frontend 구현 에이전트에게 전달할 설계 제약·선택>
   uncertainties:
     - <있다면 기재. 없으면 "없음">
 ```
@@ -116,13 +127,13 @@ payload:
 - `run_id`: 오케스트레이터가 생성한 run id
 - `milestone`: `M1`, `M2` 형식
 - `sequence`: 오케스트레이터가 파일명에 부여한 3자리 순번의 정수값
-- `role`: 항상 `backend-technical-design-writer`
+- `role`: 항상 `frontend-technical-design-writer`
 - `kind`: 항상 `design_result`
 - `iteration`: 설계 단계는 항상 `0`
 - `created_at`: ISO-8601 타임스탬프
 - `status`: `tdd_created` 또는 `tdd_skipped`
 - `payload.tdd_path`: TDD를 작성한 경우 절대 경로, 스킵한 경우 `null`
-- `payload.design_summary`: backend A가 파일을 읽어 구현 판단에 재사용할 수 있는 최소 설계 요약
+- `payload.design_summary`: frontend A가 파일을 읽어 구현 판단에 재사용할 수 있는 최소 설계 요약
 
 정상 완료 응답 본문에는 handoff artifact 내용을 복사하지 않는다. 오케스트레이터와 다음 에이전트는 첫 줄의 파일 경로를 통해 필요한 내용을 읽는다. 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다. 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, `완료된 작업`과 `진행 상태`에는 최종 완료 상태를 재호출해도 같은 결론으로 수렴할 수 있을 만큼 구체적으로 남긴다.
 
@@ -133,7 +144,7 @@ payload:
 아래 항목 중 하나라도 `조건`과 `관측 신호`를 함께 만족하면 선제적으로 체크포인트한다. `관측 신호`가 애매하지만 `fallback`에 걸리면 체크포인트한다:
 
 - 조건: 설계 판단 흐름이 한 덩어리 끝났고 다음 판단 덩어리로 넘어가야 한다.
-  관측 신호: 같은 판단에서 도출된 결정들이 서로 의존하고, 다음 작업이 다른 도메인·레이어·정합성 주제로 바뀐다.
+  관측 신호: 같은 판단에서 도출된 결정들이 서로 의존하고, 다음 작업이 다른 상태/API/component/routing/cache 주제로 바뀐다.
   fallback: 설계 결정 3개 이상을 정리했고 TDD 작성이 아직 끝나지 않았다.
 - 조건: 작성한 TDD 일부가 다음 호출에서도 그대로 유지되어야 한다.
   관측 신호: 이미 작성한 섹션의 결정·용어·제약을 이후 섹션에서 반복 참조해야 한다.
@@ -163,13 +174,13 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 체크포인트 파일은 아래 섹션을 포함한다:
 
 ```markdown
-# Backend Technical Design Writer Checkpoint
+# Frontend Technical Design Writer Checkpoint
 
 ## 체크포인트 사유
 {normal_completion | design_decision_batch | section_batch_done | evidence_batch_done | layer_switch | requirement_boundary | 기타}
 
 ## 현재 목표
-{이번 호출에서 작성해야 할 backend TDD의 목표}
+{이번 호출에서 작성해야 할 frontend TDD의 목표}
 
 ## 핵심 규칙
 {반드시 지켜야 할 규칙: 계약 문서의 출력 신호·파일 경로·스키마 준수, 설계 결정과 근거 보존, 명시적 제외사항 준수}

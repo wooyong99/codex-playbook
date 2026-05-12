@@ -1,7 +1,7 @@
-# Backend Architecture Reviewer — Input / Output Contract
+# Frontend Architecture Reviewer — Input / Output Contract
 
-`implement` 스킬이 `backend-architecture-reviewer` 서브에이전트와 주고받는 인터페이스 규격.  
-에이전트 정의 파일(`.codex/agents/backend-architecture-reviewer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+`implement` 스킬이 `frontend-architecture-reviewer` 서브에이전트와 주고받는 인터페이스 규격.
+에이전트 정의 파일(`.codex/agents/frontend-architecture-reviewer.toml`)이 아닌 이 문서가 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
 
 ---
 
@@ -17,29 +17,30 @@
 [설계 결과 파일]: {D가 반환한 design_result handoff artifact 절대 경로. 없으면 생략}
 
 [Source of Truth]:
-  - {이번 검토에 적용할 docs/backend/architecture 하위 기준 문서 또는 섹션}
-  - {이번 검토에 적용할 docs/backend/policies 하위 기준 문서 또는 섹션}
+  - {이번 검토에 적용할 docs/frontend 하위 기준 문서 또는 섹션}
   - {필요한 경우 마일스톤 TDD의 명시 결정}
 
 [결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-B-r{iter}-review-result.v1.yaml
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/B-r{iter}-v001.md
 
-[출력 규격]: 이 문서(.agents/skills/implement/references/backend-architecture-reviewer-contract.md) — Output 섹션 그대로.
+[출력 규격]: 이 문서(.agents/skills/implement-frontend/references/frontend-architecture-reviewer-contract.md) — Output 섹션 그대로.
 ```
 
 B는 `[구현 결과 파일]`을 먼저 읽고 `payload.changed_files`를 검토 대상 파일로 삼는다. `payload.design_decisions`가 있으면 추가 컨텍스트로만 사용한다. 검토 기준은 오케스트레이터가 입력한 `[Source of Truth]`로 한정한다. `[설계 결과 파일]`이 전달되고 그 안의 `payload.tdd_path`가 `null`이 아니면, 오케스트레이터는 해당 TDD의 명시 결정 중 이번 검토에 필요한 항목을 `[Source of Truth]`에 포함해야 한다. B는 입력되지 않은 문서 경로, 숨은 팀 관행, 개인적 선호, 대안 제안을 violation 근거로 삼지 않는다.
 
 ### Source of Truth 후보와 선별 규칙
 
-오케스트레이터는 backend B 호출 전에 아래 후보에서 이번 변경 파일과 직접 관련 있는 문서 또는 섹션을 선별해 `[Source of Truth]`에 넣는다.
+오케스트레이터는 frontend B 호출 전에 아래 후보에서 이번 변경 파일과 직접 관련 있는 문서 또는 섹션을 선별해 `[Source of Truth]`에 넣는다.
 
-- `docs/backend/README.md`
-- `docs/backend/architecture/**`
-- `docs/backend/policies/**`
+- `docs/frontend/README.md`
+- `docs/frontend/architecture/**`
+- `docs/frontend/conventions/**`
+- `docs/frontend/performance/**`
+- `docs/frontend/ui-ux/**`
 - `[설계 결과 파일]`의 `payload.tdd_path`가 가리키는 마일스톤 TDD
 
-`docs/backend/architecture` 하위의 특정 unit 이름은 이 계약에서 고정하지 않는다. 프로젝트별 실제 architecture unit과 strategy 문서 전체가 후보이며, 변경 파일 경로·A 결과 요약·D 결과의 설계 결정을 근거로 필요한 항목만 선별한다. 후보 경로에 있더라도 이번 변경과 무관한 문서는 `[Source of Truth]`에 넣지 않는다. 반대로 위 후보 밖 문서를 기준으로 삼아야 한다면 오케스트레이터가 그 이유를 `[Source of Truth]` 항목에 함께 명시해야 한다.
+후보 경로에 있더라도 이번 변경과 무관한 문서는 `[Source of Truth]`에 넣지 않는다. 후보 밖 문서를 기준으로 삼아야 한다면 오케스트레이터가 그 이유를 `[Source of Truth]` 항목에 함께 명시해야 한다.
 
 [결과 파일]은 오케스트레이터가 할당한 handoff artifact 경로다. 실제 호출 값은 절대 경로여야 한다. B는 정상 완료 시 해당 파일에 검토 결과 payload를 먼저 저장한 뒤, 첫 줄에 결과 신호와 파일 경로만 반환한다. 임의 파일명 생성, 다른 경로 반환, 기존 결과 파일 덮어쓰기는 금지한다. 단, 같은 호출의 저장 실패 복구 재시도에서 동일 경로를 다시 쓰는 것은 허용한다.
 
@@ -73,7 +74,7 @@ schema_version: implement-handoff/v1
 run_id: <run_id>
 milestone: M<n>
 sequence: <오케스트레이터가 파일명에 부여한 순번>
-role: backend-architecture-reviewer
+role: frontend-architecture-reviewer
 kind: review_result
 iteration: <A-B 루프 iter>
 created_at: <ISO-8601 timestamp>
@@ -101,7 +102,7 @@ payload:
 - `run_id`: 오케스트레이터가 생성한 run id
 - `milestone`: `M1`, `M2` 형식
 - `sequence`: 오케스트레이터가 파일명에 부여한 3자리 순번의 정수값
-- `role`: 항상 `backend-architecture-reviewer`
+- `role`: 항상 `frontend-architecture-reviewer`
 - `kind`: 항상 `review_result`
 - `iteration`: 현재 A-B 루프 iter
 - `created_at`: ISO-8601 타임스탬프
@@ -114,10 +115,10 @@ payload:
 - `payload.violations[].source_path`: 규칙 원문 문서의 저장소 상대 경로
 - `payload.referenced_artifacts.code_result`: 이번 검토 입력으로 사용한 `[구현 결과 파일]` 절대 경로
 - `rule`: 형식 `<문서명>:<항목>`
-  - 예: `app-guidelines.md:Controller 체크리스트 "@Valid가 Request DTO에 적용됐는가"`
-  - 예: `logging.md:LogExtension 확장 함수 사용 규정`
+  - 예: `feature-slice.md:Public API import 규칙`
+  - 예: `query-convention.md:Query key invalidation 규칙`
 - `line_range`: 시작-끝 라인 (예: `45-52`)
-- `reason`: 1줄 근거 + 참조 문서 경로 (예: `reason: Request DTO에 toCommand() 로직 포함. app-guidelines.md Coding Rules 2번.`)
+- `reason`: 1줄 근거 + 참조 문서 경로 (예: `reason: feature 내부 구현 파일을 외부 slice에서 직접 import함. feature-slice.md Public API 섹션.`)
 
 정상 완료 응답 본문에는 handoff artifact 내용을 복사하지 않는다. 오케스트레이터와 다음 에이전트는 첫 줄의 파일 경로를 통해 필요한 내용을 읽는다. 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다. 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, `완료된 작업`, `완료된 결과`, `관련 파일`, `진행 상태`에는 재호출해도 같은 검토 결론으로 수렴할 수 있을 만큼 구체적으로 남긴다.
 
@@ -158,7 +159,7 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 체크포인트 파일은 아래 섹션을 포함한다:
 
 ```markdown
-# Backend Architecture Reviewer Checkpoint
+# Frontend Architecture Reviewer Checkpoint
 
 ## 체크포인트 사유
 {normal_completion | review_file_batch | layer_batch_done | violation_batch_done | rule_read_batch_done | requirement_boundary | 기타}
@@ -230,19 +231,19 @@ schema_version: implement-handoff/v1
 run_id: 20260501-120000-12345
 milestone: M1
 sequence: 3
-role: backend-architecture-reviewer
+role: frontend-architecture-reviewer
 kind: review_result
 iteration: 1
 created_at: 2026-05-01T12:00:00+09:00
 status: pass
 payload:
   reviewed_files:
-    - /path/to/backend/app/backoffice/src/main/kotlin/com/example/backoffice/product/ProductController.kt
+    - /path/to/frontend/src/features/product/ui/ProductForm.tsx
   violations: []
   referenced_artifacts:
     code_result: /path/to/.agents/runs/20260501-120000-12345/handoffs/M1/002-A-r00-implementation-result.v1.yaml
     design_result: /path/to/.agents/runs/20260501-120000-12345/handoffs/M1/001-D-r00-design-result.v1.yaml
-    tdd_path: /path/to/docs/backend/design/tdd-product.md
+    tdd_path: /path/to/docs/frontend/design/tdd-product-form.md
 ```
 
 ### 예시 2 — 위반 2건
@@ -254,20 +255,20 @@ REVIEW_COMPLETED: /path/to/.agents/runs/20260501-120000-12345/handoffs/M1/003-B-
 결과 파일의 `payload.violations`:
 
 ```yaml
-- rule_id: BACKEND-ARCH-BOUNDARY-001
+- rule_id: FRONTEND-ARCH-PUBLIC-API-001
   severity: major
-  file: /path/to/backend/src/main/kotlin/com/example/product/ProductCommandHandler.kt
-  rule: decision-boundaries.md:책임 경계 규칙 "표현 계층 책임을 핵심 정책으로 전달하지 않는다"
-  source_path: docs/backend/architecture/decision-boundaries.md
+  file: /path/to/frontend/src/widgets/product-list/ui/ProductList.tsx
+  rule: feature-slice.md:Public API import 규칙
+  source_path: docs/frontend/architecture/feature-slice.md
   line_range: 52-56
-  reason: 입력 모델의 표현 계층 검증 책임이 핵심 정책 판단 경로로 전달됨. docs/backend/architecture/decision-boundaries.md 책임 경계 섹션.
-- rule_id: BACKEND-POLICY-OBSERVABILITY-001
+  reason: feature 내부 구현 파일을 public API가 아닌 경로로 직접 import함. docs/frontend/architecture/feature-slice.md Public API 섹션.
+- rule_id: FRONTEND-CONVENTION-QUERY-001
   severity: major
-  file: /path/to/backend/src/main/kotlin/com/example/product/ProductWorkflow.kt
-  rule: observability.md:관측성 정책 "상관관계 식별자를 보존한다"
-  source_path: docs/backend/policies/observability.md
+  file: /path/to/frontend/src/features/product/api/useCreateProduct.ts
+  rule: query-convention.md:Mutation invalidation 규칙
+  source_path: docs/frontend/conventions/query-convention.md
   line_range: 14-15
-  reason: 실패 경로에서 상관관계 식별자를 새로 생성해 요청 단위 추적성이 끊김. docs/backend/policies/observability.md correlation 섹션.
+  reason: mutation 성공 후 관련 product query key invalidation이 누락됨. docs/frontend/conventions/query-convention.md Mutation 섹션.
 ```
 
 ---

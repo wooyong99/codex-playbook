@@ -19,10 +19,10 @@ description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 �
 - 공통 마일스톤 분할 기준: [../implement/references/milestone-planning.md](../implement/references/milestone-planning.md)
 - 공통 handoff/checkpoint 규약: [../implement/references/handoff-checkpoint-protocol.md](../implement/references/handoff-checkpoint-protocol.md)
 - 공통 실행 루프: [../implement/references/milestone-execution-workflow.md](../implement/references/milestone-execution-workflow.md)
-- D 계약: [../implement/references/backend-technical-design-writer-contract.md](../implement/references/backend-technical-design-writer-contract.md)
+- D 계약: [references/backend-technical-design-writer-contract.md](references/backend-technical-design-writer-contract.md)
 - backend TDD 작성 스킬: [../write-backend-tech-design-doc/SKILL.md](../write-backend-tech-design-doc/SKILL.md)
-- A 계약: [../implement/references/implementation-engineer-contract.md](../implement/references/implementation-engineer-contract.md)
-- B 계약: [../implement/references/backend-architecture-reviewer-contract.md](../implement/references/backend-architecture-reviewer-contract.md)
+- A 계약: [references/backend-implementation-engineer-contract.md](references/backend-implementation-engineer-contract.md)
+- B 계약: [references/backend-architecture-reviewer-contract.md](references/backend-architecture-reviewer-contract.md)
 
 ## 실행 원칙
 

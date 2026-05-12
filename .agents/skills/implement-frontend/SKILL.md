@@ -19,10 +19,10 @@ description: 프론트엔드 기능 구현, 리팩토링, UI 상태/API client/q
 - 공통 마일스톤 분할 기준: [../implement/references/milestone-planning.md](../implement/references/milestone-planning.md)
 - 공통 handoff/checkpoint 규약: [../implement/references/handoff-checkpoint-protocol.md](../implement/references/handoff-checkpoint-protocol.md)
 - 공통 실행 루프: [../implement/references/milestone-execution-workflow.md](../implement/references/milestone-execution-workflow.md)
-- D 계약: [../implement/references/frontend-technical-design-writer-contract.md](../implement/references/frontend-technical-design-writer-contract.md)
+- D 계약: [references/frontend-technical-design-writer-contract.md](references/frontend-technical-design-writer-contract.md)
 - frontend TDD 작성 스킬: [../write-frontend-tech-design-doc/SKILL.md](../write-frontend-tech-design-doc/SKILL.md)
-- A 계약: [../implement/references/implementation-engineer-contract.md](../implement/references/implementation-engineer-contract.md)
-- B 계약: [../implement/references/frontend-architecture-reviewer-contract.md](../implement/references/frontend-architecture-reviewer-contract.md)
+- A 계약: [references/frontend-implementation-engineer-contract.md](references/frontend-implementation-engineer-contract.md)
+- B 계약: [references/frontend-architecture-reviewer-contract.md](references/frontend-architecture-reviewer-contract.md)
 
 ## 실행 원칙
 
@@ -39,7 +39,7 @@ description: 프론트엔드 기능 구현, 리팩토링, UI 상태/API client/q
 3. run id와 handoff/checkpoint 경로를 할당한다.
 4. 필요한 경우 D를 호출해 frontend TDD를 작성하거나 skip 근거를 받는다.
 5. A로 `frontend-implementation-engineer`를 호출해 구현 또는 수정을 수행한다.
-6. B로 `frontend-architecture-reviewer`를 호출해 frontend 문서 준수 여부를 검토한다.
+6. B로 `frontend-architecture-reviewer`를 호출해 B 계약의 `[Source of Truth]` 기준 준수 여부를 검토한다.
 7. 위반이 있으면 같은 frontend A 인스턴스에 수정 작업을 맡기고 B를 새 인스턴스로 다시 호출한다.
 8. 모든 frontend B와 필수 supplemental reviewer가 통과하면 마일스톤을 완료한다.
 
