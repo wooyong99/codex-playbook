@@ -37,7 +37,7 @@
 - 마일스톤 계획
 - `implement-backend` 실행 경로 선택
 - 필요 시 TDD 또는 TDD skip 근거
-- `backend-implementation-engineer` 구현 결과 handoff artifact
+- `backend-implementation-engineer` 구현 결과 output artifact
 - backend-architecture-reviewer 결과
 - compile/test 검증 결과
 
@@ -60,7 +60,7 @@
 
 - `implement-frontend` 실행 경로 선택
 - 필요 시 상태관리 구조, API 연동 방식, 컴포넌트 구조, 라우팅, 캐싱 전략, 에러 처리, 폴더 구조를 포함한 frontend TDD
-- `frontend-implementation-engineer` 구현 결과 handoff artifact
+- `frontend-implementation-engineer` 구현 결과 output artifact
 - `frontend-architecture-reviewer`가 docs/frontend 기준으로 위반 보고
 - 위반에 `rule_id`, `severity`, `source_path` 포함
 - 기능 정확성 추측 없이 문서 근거만 제시

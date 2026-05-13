@@ -24,7 +24,7 @@ codex-playbook은 사람과 AI가 함께 읽고 실행할 수 있는 프로젝�
 
 - 새 프로젝트 적용 시 핵심 플레이스홀더와 문서 맵 검증을 자동으로 통과한다.
 - 대표 구현 작업에서 설계, 구현, 검토, 검증 산출물이 누락 없이 남는다.
-- 문서 링크, 규칙 ID, handoff artifact, checkpoint artifact 검증을 CI에서 반복 실행할 수 있다.
+- 문서 링크, 규칙 ID, output artifact, checkpoint artifact 검증을 CI에서 반복 실행할 수 있다.
 - 20만~100만 라인 코드베이스 적용 시 전체 정독 없이 census, 샘플링, confidence report 기반 문서화 계획을 만들 수 있다.
 - 대표 평가 시나리오에서 85점 이상, blocker 0건을 pass 기준으로 사용할 수 있다.
 
@@ -54,7 +54,7 @@ codex-playbook은 사람과 AI가 함께 읽고 실행할 수 있는 프로젝�
 - 백엔드와 프론트엔드 지식 시스템을 `docs/backend`, `docs/frontend`로 분리해 관리한다.
 - 구현 작업은 요구사항 분석, 설계, 코드 작성, 아키텍처 검토, 검증 보고 흐름을 따른다.
 - 대규모 코드베이스 분석은 전체 정독이 아니라 census, 우선순위화, 제한 샘플링, confidence report 방식으로 수행한다.
-- 에이전트 간 handoff artifact와 checkpoint artifact를 파일로 남겨 재개 가능성을 보장한다.
+- 에이전트 간 output artifact와 checkpoint artifact를 파일로 남겨 재개 가능성을 보장한다.
 - 새 프로젝트 적용 시 플레이스홀더, 문서 링크, 문서 맵, 규칙 검증을 수행할 수 있어야 한다.
 - 규칙 위반은 안정적인 Rule ID와 severity를 포함해 보고되어야 한다.
 - 평가 시나리오와 scorecard를 제공해 플레이북 품질을 반복 측정할 수 있어야 한다.

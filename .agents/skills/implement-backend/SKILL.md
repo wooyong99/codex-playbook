@@ -17,7 +17,7 @@ description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 �
 
 - backend 역할 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
 - backend 마일스톤 분할 기준: [references/milestone-planning.md](references/milestone-planning.md)
-- backend handoff/checkpoint 규약: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
+- backend input/output/checkpoint 규약: [references/input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)
 - backend 실행 루프: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
 - D 계약: [references/backend-technical-design-writer-contract.md](references/backend-technical-design-writer-contract.md)
 - backend TDD 작성 스킬: [../write-backend-tech-design-doc/SKILL.md](../write-backend-tech-design-doc/SKILL.md)
@@ -36,7 +36,7 @@ description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 �
 
 1. 요구사항, 명시적 제외사항, 성공 기준을 backend 관점으로 고정한다.
 2. 마일스톤을 backend 도메인 경계, 트랜잭션 경계, 계층 경계, 검증 범위 기준으로 나눈다.
-3. run id와 handoff/checkpoint 경로를 할당한다.
+3. run id와 input/output/checkpoint 경로를 할당한다.
 4. 필요한 경우 D를 호출해 backend TDD를 작성하거나 skip 근거를 받는다.
 5. A로 `backend-implementation-engineer`를 호출해 구현 또는 수정을 수행한다.
 6. B로 `backend-architecture-reviewer`를 호출해 B 계약 형식으로 전달한 이번 backend 검토의 `[Source of Truth]` 기준 준수 여부를 검토한다.
@@ -45,7 +45,7 @@ description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 �
 
 ## 완료 산출물
 
-- backend 마일스톤별 D/A/B 결과 파일 경로
+- backend 마일스톤별 D/A/B input/output 파일 경로
 - backend 변경 파일 목록
 - backend compile/test 검증 결과
 - backend architecture review 통과 여부와 남은 위반

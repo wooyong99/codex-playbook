@@ -174,15 +174,15 @@ def main():
     frontend_skill_path = ROOT / ".agents/skills/implement-frontend/SKILL.md"
     boundaries_path = ROOT / ".agents/skills/implement/references/orchestration-boundaries.md"
     planning_path = ROOT / ".agents/skills/implement/references/milestone-planning.md"
-    protocol_path = ROOT / ".agents/skills/implement/references/handoff-checkpoint-protocol.md"
+    protocol_path = ROOT / ".agents/skills/implement/references/input-output-checkpoint-protocol.md"
     workflow_path = ROOT / ".agents/skills/implement/references/milestone-execution-workflow.md"
     backend_boundaries_path = ROOT / ".agents/skills/implement-backend/references/orchestration-boundaries.md"
     backend_planning_path = ROOT / ".agents/skills/implement-backend/references/milestone-planning.md"
-    backend_protocol_path = ROOT / ".agents/skills/implement-backend/references/handoff-checkpoint-protocol.md"
+    backend_protocol_path = ROOT / ".agents/skills/implement-backend/references/input-output-checkpoint-protocol.md"
     backend_workflow_path = ROOT / ".agents/skills/implement-backend/references/milestone-execution-workflow.md"
     frontend_boundaries_path = ROOT / ".agents/skills/implement-frontend/references/orchestration-boundaries.md"
     frontend_planning_path = ROOT / ".agents/skills/implement-frontend/references/milestone-planning.md"
-    frontend_protocol_path = ROOT / ".agents/skills/implement-frontend/references/handoff-checkpoint-protocol.md"
+    frontend_protocol_path = ROOT / ".agents/skills/implement-frontend/references/input-output-checkpoint-protocol.md"
     frontend_workflow_path = ROOT / ".agents/skills/implement-frontend/references/milestone-execution-workflow.md"
 
     implement = read(implement_path)
@@ -196,7 +196,7 @@ def main():
         ("implement-frontend", "frontend execution skill reference"),
         ("references/orchestration-boundaries.md", "orchestration boundary reference"),
         ("references/milestone-planning.md", "milestone planning reference"),
-        ("references/handoff-checkpoint-protocol.md", "handoff checkpoint protocol reference"),
+        ("references/input-output-checkpoint-protocol.md", "input output checkpoint protocol reference"),
         ("references/milestone-execution-workflow.md", "milestone execution workflow reference"),
     ]:
         require(errors, implement_path, implement, needle, reason)
@@ -209,7 +209,7 @@ def main():
         ("backend-architecture-reviewer", "backend review agent"),
         ("references/orchestration-boundaries.md", "backend boundary reference"),
         ("references/milestone-planning.md", "backend planning reference"),
-        ("references/handoff-checkpoint-protocol.md", "backend handoff reference"),
+        ("references/input-output-checkpoint-protocol.md", "backend input output reference"),
         ("references/milestone-execution-workflow.md", "backend workflow reference"),
         ("references/backend-technical-design-writer-contract.md", "backend design contract"),
         ("references/backend-implementation-engineer-contract.md", "backend implementation contract"),
@@ -225,7 +225,7 @@ def main():
         ("frontend-architecture-reviewer", "frontend review agent"),
         ("references/orchestration-boundaries.md", "frontend boundary reference"),
         ("references/milestone-planning.md", "frontend planning reference"),
-        ("references/handoff-checkpoint-protocol.md", "frontend handoff reference"),
+        ("references/input-output-checkpoint-protocol.md", "frontend input output reference"),
         ("references/milestone-execution-workflow.md", "frontend workflow reference"),
         ("references/frontend-technical-design-writer-contract.md", "frontend design contract"),
         ("references/frontend-implementation-engineer-contract.md", "frontend implementation contract"),
@@ -247,9 +247,11 @@ def main():
         (
             protocol_path,
             [
-                ("# Router Handoff And Checkpoint Protocol", "router protocol title"),
-                ("## Router Handoff 처리", "router handoff handling"),
+                ("# Router Input Output And Checkpoint Protocol", "router protocol title"),
+                ("## Router Output 처리", "router output handling"),
                 ("## Router Checkpoint 처리", "router checkpoint handling"),
+                ("├── inputs/", "router input directory"),
+                ("├── outputs/", "router output directory"),
                 ("영역 내부 파일명을 재정의하지 않는다", "router does not own area filenames"),
                 ("존재하고 비어 있지 않은지 확인한다", "checkpoint existence validation"),
                 ("python3 .agents/skills/implement/scripts/validate-context-checkpoints.py", "validation command"),
@@ -283,15 +285,18 @@ def main():
                 ("## 마일스톤 분할 기준", "backend milestone split criteria"),
                 ("트랜잭션 경계", "backend transaction split signal"),
                 ("예상 변경 파일 3~8개 권장", "backend recommended changed file range"),
-                ("frontend handoff", "backend frontend handoff metadata"),
+                ("frontend 전달 계약", "backend frontend contract metadata"),
             ],
         ),
         (
             backend_protocol_path,
             [
-                ("# Backend Handoff And Checkpoint Protocol", "backend protocol title"),
-                ("## Backend Handoff Artifact 처리", "backend handoff handling"),
+                ("# Backend Input Output And Checkpoint Protocol", "backend protocol title"),
+                ("## Backend Input Artifact 처리", "backend input handling"),
+                ("## Backend Output Artifact 처리", "backend output handling"),
                 ("## 체크포인트 처리", "backend checkpoint handling"),
+                ("├── inputs/", "backend input directory"),
+                ("├── outputs/", "backend output directory"),
                 ("역할별 체크포인트 판단 기준은 backend D/A/B 계약 문서가 단일 출처", "backend contract-owned checkpoint criteria"),
                 ("[체크포인트 판단 기준]", "backend protocol passes checkpoint criteria input"),
             ],
@@ -313,6 +318,8 @@ def main():
                 ("backend-technical-design-writer-contract.md", "backend D contract"),
                 ("backend-implementation-engineer-contract.md", "backend A contract"),
                 ("backend-architecture-reviewer-contract.md", "backend B contract"),
+                ("[입력 파일]", "backend workflow input file"),
+                ("[출력 파일]", "backend workflow output file"),
                 ("[체크포인트 판단 기준]", "backend workflow checkpoint criteria input"),
                 ("## Escalation", "backend escalation workflow"),
             ],
@@ -330,9 +337,12 @@ def main():
         (
             frontend_protocol_path,
             [
-                ("# Frontend Handoff And Checkpoint Protocol", "frontend protocol title"),
-                ("## Frontend Handoff Artifact 처리", "frontend handoff handling"),
+                ("# Frontend Input Output And Checkpoint Protocol", "frontend protocol title"),
+                ("## Frontend Input Artifact 처리", "frontend input handling"),
+                ("## Frontend Output Artifact 처리", "frontend output handling"),
                 ("## 체크포인트 처리", "frontend checkpoint handling"),
+                ("├── inputs/", "frontend input directory"),
+                ("├── outputs/", "frontend output directory"),
                 ("역할별 체크포인트 판단 기준은 frontend D/A/B 계약 문서가 단일 출처", "frontend contract-owned checkpoint criteria"),
                 ("[체크포인트 판단 기준]", "frontend protocol passes checkpoint criteria input"),
             ],
@@ -354,6 +364,8 @@ def main():
                 ("frontend-technical-design-writer-contract.md", "frontend D contract"),
                 ("frontend-implementation-engineer-contract.md", "frontend A contract"),
                 ("frontend-architecture-reviewer-contract.md", "frontend B contract"),
+                ("[입력 파일]", "frontend workflow input file"),
+                ("[출력 파일]", "frontend workflow output file"),
                 ("[체크포인트 판단 기준]", "frontend workflow checkpoint criteria input"),
                 ("## Escalation", "frontend escalation workflow"),
             ],
@@ -375,6 +387,8 @@ def main():
         "테스트 모드",
         "### 체크포인트 기준",
         "Output > 역할별 체크포인트 기준",
+        "handoffs",
+        "Handoff Artifact",
         "공통 트리거",
         "D 전용 트리거",
         "A 전용 트리거",
@@ -427,6 +441,12 @@ def main():
         require(errors, spec["contract"], contract, spec["title"], f"{name} checkpoint title")
         require(errors, spec["contract"], contract, "CONTEXT_CHECKPOINT:", f"{name} checkpoint signal")
         require(errors, spec["contract"], contract, "역할별 체크포인트 기준", f"{name} role checkpoint criteria")
+        require(errors, spec["contract"], contract, "[입력 파일]", f"{name} input artifact field")
+        require(errors, spec["contract"], contract, "[출력 파일]", f"{name} output artifact field")
+        require(errors, spec["contract"], contract, "artifacts.output_file", f"{name} output artifact path field")
+        require(errors, spec["contract"], contract, "artifacts.checkpoint_file", f"{name} checkpoint artifact path field")
+        require(errors, spec["contract"], contract, "/inputs/", f"{name} input directory path")
+        require(errors, spec["contract"], contract, "/outputs/", f"{name} output directory path")
         require(errors, spec["contract"], contract, "[체크포인트 판단 기준]", f"{name} checkpoint criteria input field")
         require(errors, spec["contract"], contract, "Input > 역할별 체크포인트 기준", f"{name} checkpoint criteria source pointer")
         require_between(
@@ -534,12 +554,13 @@ def main():
         (
             "backend-technical-design-writer",
             [
-                ("[Source of Truth]", "backend D source-of-truth input field"),
+                ("input.source_of_truth", "backend D source-of-truth input field"),
                 ("docs/PRD.md", "backend D PRD source candidate"),
                 ("docs/backend/README.md", "backend D README source candidate"),
                 ("docs/backend/architecture/**", "backend D architecture source candidates"),
                 ("docs/backend/policies/**", "backend D policy source candidates"),
                 ("docs/backend/design/**", "backend D design source candidates"),
+                ("implement-backend-design-input/v1", "backend D input schema version"),
                 ("implement-backend-design/v1", "backend D schema version"),
                 ("특정 unit 이름은 이 계약에서 고정하지 않는다", "backend D architecture unit neutrality"),
             ],
@@ -547,7 +568,7 @@ def main():
         (
             "frontend-technical-design-writer",
             [
-                ("[Source of Truth]", "frontend D source-of-truth input field"),
+                ("input.source_of_truth", "frontend D source-of-truth input field"),
                 ("docs/PRD.md", "frontend D PRD source candidate"),
                 ("docs/frontend/README.md", "frontend D README source candidate"),
                 ("docs/frontend/architecture/**", "frontend D architecture source candidates"),
@@ -555,44 +576,50 @@ def main():
                 ("docs/frontend/performance/**", "frontend D performance source candidates"),
                 ("docs/frontend/ui-ux/**", "frontend D UI/UX source candidates"),
                 ("docs/frontend/design/**", "frontend D design source candidates"),
+                ("implement-frontend-design-input/v1", "frontend D input schema version"),
                 ("implement-frontend-design/v1", "frontend D schema version"),
             ],
         ),
         (
             "backend-implementation-engineer",
             [
-                ("[Source of Truth]", "backend implementation source-of-truth input field"),
+                ("input.source_of_truth", "backend implementation source-of-truth input field"),
                 ("docs/backend/README.md", "backend A README source candidate"),
                 ("docs/backend/architecture/**", "backend A architecture source candidates"),
                 ("docs/backend/policies/**", "backend A policy source candidates"),
                 ("payload.tdd_path", "backend implementation TDD source candidate"),
+                ("implement-backend-implementation-input/v1", "backend implementation input schema version"),
+                ("implement-backend-fix-input/v1", "backend fix input schema version"),
                 ("implement-backend-implementation/v1", "backend implementation schema version"),
             ],
         ),
         (
             "frontend-implementation-engineer",
             [
-                ("[Source of Truth]", "frontend implementation source-of-truth input field"),
+                ("input.source_of_truth", "frontend implementation source-of-truth input field"),
                 ("docs/frontend/README.md", "frontend A README source candidate"),
                 ("docs/frontend/architecture/**", "frontend A architecture source candidates"),
                 ("docs/frontend/conventions/**", "frontend A convention source candidates"),
                 ("docs/frontend/performance/**", "frontend A performance source candidates"),
                 ("docs/frontend/ui-ux/**", "frontend A UI/UX source candidates"),
                 ("payload.tdd_path", "frontend implementation TDD source candidate"),
+                ("implement-frontend-implementation-input/v1", "frontend implementation input schema version"),
+                ("implement-frontend-fix-input/v1", "frontend fix input schema version"),
                 ("implement-frontend-implementation/v1", "frontend implementation schema version"),
             ],
         ),
         (
             "frontend-architecture-reviewer",
             [
-                ("[Source of Truth]", "frontend reviewer source-of-truth input field"),
-                ("오케스트레이터가 입력한 `[Source of Truth]`", "frontend reviewer source-of-truth ownership"),
+                ("input.source_of_truth", "frontend reviewer source-of-truth input field"),
+                ("검토 기준은 `[입력 파일]`의 `input.source_of_truth`로 한정한다", "frontend reviewer source-of-truth ownership"),
                 ("docs/frontend/README.md", "frontend reviewer README source candidate"),
                 ("docs/frontend/architecture/**", "frontend reviewer architecture source candidates"),
                 ("docs/frontend/conventions/**", "frontend reviewer convention source candidates"),
                 ("docs/frontend/performance/**", "frontend reviewer performance source candidates"),
                 ("docs/frontend/ui-ux/**", "frontend reviewer UI/UX source candidates"),
                 ("payload.tdd_path", "frontend reviewer TDD source candidate"),
+                ("implement-frontend-review-input/v1", "frontend reviewer input schema version"),
                 ("implement-frontend-review/v1", "frontend reviewer schema version"),
             ],
         ),
@@ -610,14 +637,14 @@ def main():
         errors,
         backend_review_spec["contract"],
         backend_review_contract,
-        "[Source of Truth]",
+        "input.source_of_truth",
         "backend reviewer source-of-truth input field",
     )
     require(
         errors,
         backend_review_spec["contract"],
         backend_review_contract,
-        "오케스트레이터가 입력한 `[Source of Truth]`",
+        "검토 기준은 `[입력 파일]`의 `input.source_of_truth`로 한정한다",
         "backend reviewer source-of-truth ownership",
     )
     for needle, reason in [
@@ -625,6 +652,7 @@ def main():
         ("docs/backend/architecture/**", "backend reviewer architecture source candidates"),
         ("docs/backend/policies/**", "backend reviewer policy source candidates"),
         ("payload.tdd_path", "backend reviewer TDD source candidate"),
+        ("implement-backend-review-input/v1", "backend reviewer input schema version"),
         ("implement-backend-review/v1", "backend reviewer schema version"),
         ("특정 unit 이름은 이 계약에서 고정하지 않는다", "backend reviewer architecture unit neutrality"),
         ("변경 파일 경로·A 결과 요약·D 결과의 설계 결정", "backend reviewer source selection basis"),
@@ -643,7 +671,11 @@ def main():
         "Context Window Management",
         "계약 문서 단일 출처",
         "Handoff Artifact:",
+        "Input Artifact:",
+        "Output Artifact:",
         "CONTEXT_CHECKPOINT:",
+        "[입력 파일]",
+        "[출력 파일]",
         "[결과 파일]",
         "[체크포인트 파일]",
         "정상 완료 시",

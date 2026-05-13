@@ -17,7 +17,7 @@ description: 프론트엔드 기능 구현, 리팩토링, UI 상태/API client/q
 
 - frontend 역할 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
 - frontend 마일스톤 분할 기준: [references/milestone-planning.md](references/milestone-planning.md)
-- frontend handoff/checkpoint 규약: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
+- frontend input/output/checkpoint 규약: [references/input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)
 - frontend 실행 루프: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
 - D 계약: [references/frontend-technical-design-writer-contract.md](references/frontend-technical-design-writer-contract.md)
 - frontend TDD 작성 스킬: [../write-frontend-tech-design-doc/SKILL.md](../write-frontend-tech-design-doc/SKILL.md)
@@ -36,7 +36,7 @@ description: 프론트엔드 기능 구현, 리팩토링, UI 상태/API client/q
 
 1. 요구사항, 명시적 제외사항, 성공 기준을 frontend 관점으로 고정한다.
 2. 마일스톤을 사용자 흐름, route/page, feature/entity 경계, 상태/API/cache 경계, UI 검증 범위 기준으로 나눈다.
-3. run id와 handoff/checkpoint 경로를 할당한다.
+3. run id와 input/output/checkpoint 경로를 할당한다.
 4. 필요한 경우 D를 호출해 frontend TDD를 작성하거나 skip 근거를 받는다.
 5. A로 `frontend-implementation-engineer`를 호출해 구현 또는 수정을 수행한다.
 6. B로 `frontend-architecture-reviewer`를 호출해 B 계약 형식으로 전달한 이번 frontend 검토의 `[Source of Truth]` 기준 준수 여부를 검토한다.
@@ -45,7 +45,7 @@ description: 프론트엔드 기능 구현, 리팩토링, UI 상태/API client/q
 
 ## 완료 산출물
 
-- frontend 마일스톤별 D/A/B 결과 파일 경로
+- frontend 마일스톤별 D/A/B input/output 파일 경로
 - frontend 변경 파일 목록
 - frontend build/test 또는 브라우저 검증 결과
 - frontend architecture review 통과 여부와 남은 위반

@@ -7,36 +7,51 @@
 
 ## Input
 
-오케스트레이터는 아래 형식으로 프롬프트를 구성해 전달한다.
+오케스트레이터는 호출 전에 아래 input artifact를 저장하고, 서브에이전트에는 `[입력 파일]` 경로와 계약 파일 경로만 포함한 짧은 프롬프트를 전달한다.
 
 ```text
-[마일스톤]: {마일스톤 제목}
+[입력 파일]: .agents/runs/{run_id}/inputs/M{n}/{seq}-B-r{iter}-input.v1.yaml
+[계약 파일]: .agents/skills/implement-backend/references/backend-architecture-reviewer-contract.md
+[지시]: 입력 파일을 읽고 계약 파일의 Output 규격에 따라 출력 파일과 체크포인트 파일을 저장하세요.
+```
 
-[구현 결과 파일]: {A가 반환한 implementation_result 또는 fix_result artifact 절대 경로}
+`[입력 파일]`은 YAML로 작성한다.
 
-[설계 결과 파일]: {D가 반환한 design_result artifact 절대 경로. 없으면 생략}
-
-[Source of Truth]:
-  - {이번 검토에 적용할 backend 기준 문서 또는 섹션}
-  - {이번 검토에 적용할 TDD 명시 결정. 없으면 생략}
-
-[결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-B-r{iter}-review-result.v1.yaml
-
-[체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/B-r{iter}-v001.md
-
-[체크포인트 판단 기준]: 이 문서의 Input > 역할별 체크포인트 기준 그대로.
-
-[출력 규격]: 이 문서(.agents/skills/implement-backend/references/backend-architecture-reviewer-contract.md) — Output 섹션 그대로.
+```yaml
+schema_version: implement-backend-review-input/v1
+run_id: <run_id>
+milestone: M<n>
+sequence: <오케스트레이터가 파일명에 부여한 순번>
+role: backend-architecture-reviewer
+kind: review_input
+iteration: <A-B 루프 iter>
+created_at: <ISO-8601 timestamp>
+input:
+  milestone_title: <마일스톤 제목>
+  implementation_result_file: <A가 반환한 implementation_result 또는 fix_result output artifact 절대 경로>
+  design_result_file: <D가 반환한 design_result output artifact 절대 경로 또는 null>
+  source_of_truth:
+    - path: <이번 검토에 적용할 backend 기준 문서 또는 섹션>
+      reason: <선별 이유>
+artifacts:
+  output_file: .agents/runs/{run_id}/outputs/M{n}/{seq}-B-r{iter}-review-result.v1.yaml
+  checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/B-r{iter}-v001.md
+checkpoint:
+  criteria: "[체크포인트 판단 기준] 이 문서의 Input > 역할별 체크포인트 기준 그대로."
+output_contract:
+  path: .agents/skills/implement-backend/references/backend-architecture-reviewer-contract.md
+  section: Output
 ```
 
 ## Input Rules
 
-- `[구현 결과 파일]`의 `payload.changed_files`만 검토 대상으로 삼는다.
-- `payload.design_decisions`, `[설계 결과 파일]`, `payload.tdd_path`는 입력된 경우에만 보조 컨텍스트로 사용한다.
-- 검토 기준은 오케스트레이터가 입력한 `[Source of Truth]`로 한정한다.
+- `[입력 파일]`의 `input.implementation_result_file`이 가리키는 `payload.changed_files`만 검토 대상으로 삼는다.
+- `payload.design_decisions`, `[입력 파일]`의 `input.design_result_file`, `payload.tdd_path`는 입력된 경우에만 보조 컨텍스트로 사용한다.
+- 검토 기준은 `[입력 파일]`의 `input.source_of_truth`로 한정한다.
 - 입력되지 않은 문서 경로, 숨은 팀 관행, 개인적 선호, 설계 대안은 violation 근거로 삼지 않는다.
-- `[결과 파일]`과 `[체크포인트 파일]`은 오케스트레이터가 할당한 절대 경로를 그대로 사용한다.
-- 체크포인트 여부는 입력된 `[체크포인트 판단 기준]`을 기준으로 판단한다.
+- `[출력 파일]`은 `[입력 파일]`의 `artifacts.output_file` 값을 그대로 사용한다.
+- `[체크포인트 파일]`은 `[입력 파일]`의 `artifacts.checkpoint_file` 값을 그대로 사용한다.
+- 체크포인트 여부는 `[입력 파일]`의 `checkpoint.criteria`를 기준으로 판단한다.
 - 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다.
 
 Source of Truth 후보:
@@ -44,14 +59,14 @@ Source of Truth 후보:
 - `docs/backend/README.md`
 - `docs/backend/architecture/**`
 - `docs/backend/policies/**`
-- `[설계 결과 파일]`의 `payload.tdd_path`가 가리키는 마일스톤 TDD
+- `[입력 파일]`의 `input.design_result_file`이 가리키는 `payload.tdd_path`의 마일스톤 TDD
 
 `docs/backend/architecture` 하위의 특정 unit 이름은 이 계약에서 고정하지 않는다. 프로젝트별 실제 architecture unit과 strategy 문서 전체가 후보이며, 변경 파일 경로·A 결과 요약·D 결과의 설계 결정을 근거로 필요한 항목만 선별한다.
 
 체크포인트 재호출 시 아래 필드가 추가된다.
 
 ```text
-[체크포인트]: [체크포인트 파일] 경로 참조.
+[체크포인트]: [입력 파일]의 `artifacts.checkpoint_file` 경로 참조.
 완료된 파일은 건너뛰고 남은 파일부터 이어서 검토.
 ```
 
@@ -73,13 +88,13 @@ Source of Truth 후보:
 
 ### Case A: 검토 완료
 
-먼저 `[결과 파일]`에 review artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 결과 파일 경로만 반환한다.
+먼저 `[출력 파일]`에 review artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 출력 파일 경로만 반환한다.
 
 ```text
-REVIEW_COMPLETED: {[결과 파일] 절대 경로}
+REVIEW_COMPLETED: {[출력 파일] 절대 경로}
 ```
 
-`[결과 파일]`은 YAML로 작성한다.
+`[출력 파일]`은 YAML로 작성한다.
 
 ```yaml
 schema_version: implement-backend-review/v1
@@ -103,8 +118,8 @@ payload:
       line_range: <start-end>
       reason: <1줄 근거 + 참조 문서 경로>
   referenced_artifacts:
-    code_result: <[구현 결과 파일] 절대 경로>
-    design_result: <[설계 결과 파일] 절대 경로 또는 null>
+    code_result: <input.implementation_result_file 절대 경로>
+    design_result: <input.design_result_file 절대 경로 또는 null>
     tdd_path: <TDD 절대 경로 또는 null>
 ```
 
@@ -121,7 +136,7 @@ payload:
 - `payload.violations[].file`: 절대 경로
 - `payload.violations[].source_path`: 규칙 원문 문서의 저장소 상대 경로
 
-정상 완료 응답 본문에는 handoff artifact 내용을 복사하지 않는다. 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, 완료 snapshot에는 재호출해도 같은 검토 결론으로 수렴할 수 있는 최소 근거를 남긴다.
+정상 완료 응답 본문에는 output artifact 내용을 복사하지 않는다. 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, 완료 snapshot에는 재호출해도 같은 검토 결론으로 수렴할 수 있는 최소 근거를 남긴다.
 
 ### Case B: 컨텍스트 체크포인트
 

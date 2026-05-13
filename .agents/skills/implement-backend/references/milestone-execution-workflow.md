@@ -1,6 +1,6 @@
 # Backend Milestone Execution Workflow
 
-이 문서는 `implement-backend` 스킬의 backend 마일스톤별 D/A/B 실행 루프를 소유한다. 역할별 프롬프트 필드와 출력 스키마는 각 backend 계약 문서가 단일 출처이며, 파일 검증 절차는 [handoff-checkpoint-protocol.md](handoff-checkpoint-protocol.md)를 따른다.
+이 문서는 `implement-backend` 스킬의 backend 마일스톤별 D/A/B 실행 루프를 소유한다. 역할별 input/output 스키마는 각 backend 계약 문서가 단일 출처이며, 파일 검증 절차는 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.
 
 ## 전체 흐름
 
@@ -17,13 +17,13 @@
 
 - 현재 backend 마일스톤을 진행 중으로 표시한다.
 - 목표, 범위, 명시적 제외사항, compile/test 검증 기준을 다시 확인한다.
-- 이번 마일스톤의 handoff와 checkpoint 경로를 할당한다.
+- 이번 마일스톤의 input, output, checkpoint 경로를 할당한다.
 - D/A/B 호출마다 해당 계약 문서의 `Input > 역할별 체크포인트 기준`을 `[체크포인트 판단 기준]`으로 전달한다.
 - backend Source of Truth 후보에서 이번 변경과 직접 관련된 문서만 선별한다.
 
 ## Step 2. Agent D 위임
 
-`backend-technical-design-writer`를 호출하고, 프롬프트는 [backend-technical-design-writer-contract.md](backend-technical-design-writer-contract.md)의 Input 형식으로 구성한다.
+`backend-technical-design-writer`를 호출하기 전에 [backend-technical-design-writer-contract.md](backend-technical-design-writer-contract.md)의 Input 형식으로 D input artifact를 저장한다. 호출 프롬프트에는 `[입력 파일]` 경로와 계약 파일 경로만 전달한다.
 
 필수 입력:
 
@@ -31,16 +31,17 @@
 - 명시적 제외사항
 - 실제 저장소 기준 backend 프로젝트 컨텍스트
 - 이번 설계에 적용할 `[Source of Truth]`
-- `[결과 파일]`
+- `[입력 파일]`
+- `[출력 파일]`
 - `[체크포인트 파일]`
 - `[체크포인트 판단 기준]`
 - `[출력 규격]`
 
 응답 처리:
 
-- `CONTEXT_CHECKPOINT:`이면 [handoff-checkpoint-protocol.md](handoff-checkpoint-protocol.md)의 체크포인트 처리로 재호출한다.
-- `TDD_CREATED:`이면 D 결과 파일을 검증하고 `payload.tdd_path`와 D 결과 파일 경로를 보관한다.
-- `TDD_SKIPPED:`이면 D 결과 파일을 검증하고 `payload.skip_reason`과 D 결과 파일 경로를 보관한다.
+- `CONTEXT_CHECKPOINT:`이면 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)의 체크포인트 처리로 재호출한다.
+- `TDD_CREATED:`이면 D 출력 파일을 검증하고 `payload.tdd_path`와 D 출력 파일 경로를 보관한다.
+- `TDD_SKIPPED:`이면 D 출력 파일을 검증하고 `payload.skip_reason`과 D 출력 파일 경로를 보관한다.
 
 아래 조건 중 하나라도 만족하면 `TDD_SKIPPED`를 그대로 수용하지 않고 D를 한 번 더 재호출해 스킵 근거를 재확인한다.
 
@@ -51,38 +52,38 @@
 
 ## Step 3. Agent A 위임
 
-`backend-implementation-engineer`를 호출하고, 프롬프트는 [backend-implementation-engineer-contract.md](backend-implementation-engineer-contract.md)의 Input Case A 형식으로 구성한다. A에게는 D 결과 파일 경로를 전달하고, 설계 요약 원문은 복사하지 않는다.
+`backend-implementation-engineer`를 호출하기 전에 [backend-implementation-engineer-contract.md](backend-implementation-engineer-contract.md)의 Input Case A 형식으로 A input artifact를 저장한다. A input artifact에는 D 출력 파일 경로를 기록하고, 설계 요약 원문은 복사하지 않는다.
 
 응답 처리:
 
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 처리로 같은 A 인스턴스를 재호출한다.
-- `IMPLEMENTATION_COMPLETED:`이면 A 결과 파일을 검증하고 `payload.changed_files`, `payload.design_decisions`, `payload.verification`을 필요한 범위에서 읽는다.
+- `IMPLEMENTATION_COMPLETED:`이면 A 출력 파일을 검증하고 `payload.changed_files`, `payload.design_decisions`, `payload.verification`을 필요한 범위에서 읽는다.
 - `verification.compile.exit_code`, `verification.tests.exit_code`가 누락됐거나 실패면 마일스톤을 성공으로 간주하지 않는다.
 - 검증 실패는 A 재호출 또는 사용자 보고로 처리하고 B 검토로 넘기지 않는다.
 
 ## Step 4. Agent B 및 Supplemental Reviewer 위임
 
-backend 변경 파일이 있으면 `backend-architecture-reviewer`를 호출하고, 프롬프트는 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다.
+backend 변경 파일이 있으면 `backend-architecture-reviewer`를 호출하기 전에 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 B input artifact를 저장한다.
 
-B에게는 A 구현 결과 파일, D 설계 결과 파일, 이번 검토의 `[Source of Truth]`, B의 `[결과 파일]`, `[체크포인트 파일]`, `[체크포인트 판단 기준]`, `[출력 규격]`을 전달한다. 기준 문서와 TDD 결정은 B 계약의 Input 필드로 전달하며, agent TOML이 정적으로 소유하지 않는다.
+B input artifact에는 A 출력 파일, D 출력 파일, 이번 검토의 `[Source of Truth]`, B의 `[출력 파일]`, `[체크포인트 파일]`, `[체크포인트 판단 기준]`, `[출력 규격]`을 기록한다. 기준 문서와 TDD 결정은 B 계약의 Input 필드로 전달하며, agent TOML이 정적으로 소유하지 않는다.
 
 변경 파일이 문서 또는 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer를 추가로 적용한다. supplemental reviewer 결과도 Rule ID, severity, source_path를 포함해야 하며, `blocker` 또는 `major` 위반은 B 위반과 동일하게 수정 루프로 보낸다.
 
 응답 처리:
 
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 처리로 새 B 인스턴스를 재호출한다.
-- `REVIEW_COMPLETED:`이면 B 결과 파일을 검증하고 `status`와 `payload.violations`를 읽는다.
+- `REVIEW_COMPLETED:`이면 B 출력 파일을 검증하고 `status`와 `payload.violations`를 읽는다.
 - 호출된 모든 reviewer의 `status: pass`가 확인되면 마일스톤을 완료한다.
 - `status: violations`이면 위반 수정 단계로 진행한다.
 
 ## Step 5. 위반 수정
 
-위반 수정은 같은 마일스톤의 backend A 인스턴스를 이어서 사용한다. 프롬프트는 [backend-implementation-engineer-contract.md](backend-implementation-engineer-contract.md)의 Input Case B 형식으로 구성하고, reviewer 결과 파일 경로만 전달한다.
+위반 수정은 같은 마일스톤의 backend A 인스턴스를 이어서 사용한다. [backend-implementation-engineer-contract.md](backend-implementation-engineer-contract.md)의 Input Case B 형식으로 A fix input artifact를 저장하고, reviewer 출력 파일 경로만 기록한다.
 
 응답 처리:
 
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 처리로 같은 A 인스턴스를 재호출한다.
-- `FIX_APPLIED:`이면 A 수정 결과 파일을 검증하고 `payload.changed_files`, `payload.applied`, `payload.failed`, `payload.verification`을 읽는다.
+- `FIX_APPLIED:`이면 A 수정 출력 파일을 검증하고 `payload.changed_files`, `payload.applied`, `payload.failed`, `payload.verification`을 읽는다.
 - 새로 수정된 파일이 있으면 마일스톤 변경 파일 집합에 합친다.
 - compile 또는 tests 검증이 누락·실패하면 재검토로 진행하지 않는다.
 
@@ -111,7 +112,7 @@ B에게는 A 구현 결과 파일, D 설계 결과 파일, 이번 검토의 `[So
 
 backend 마일스톤 완료 시 아래 항목을 요약한다.
 
-- D/A/B 결과 파일 경로
+- D/A/B input/output 파일 경로
 - backend 변경 파일 수와 주요 변경 요약
 - 실행한 compile/test 명령과 결과
 - backend architecture review 통과 여부

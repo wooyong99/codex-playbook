@@ -10,7 +10,7 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 - 사용자의 구현·리팩토링 요구사항을 backend, frontend, fullstack 중 하나로 분류한다.
 - fullstack 요청은 가능한 한 backend 마일스톤과 frontend 마일스톤으로 분리한다.
 - 각 영역별 실행은 `implement-backend` 또는 `implement-frontend`가 담당한다.
-- 이 스킬은 run id, 영역별 실행 순서, 영역 간 계약 handoff, 통합 보고를 소유한다.
+- 이 스킬은 run id, 영역별 실행 순서, 영역 간 계약 전달, 통합 보고를 소유한다.
 - 세부 D/A/B 실행 루프, 역할별 입출력 포맷, 영역 내부 checkpoint 규약은 영역별 실행 스킬이 소유한다.
 
 ## 기본 범위
@@ -24,7 +24,7 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 
 - 라우터 역할 경계와 영역별 실행 스킬 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
 - 라우터 요구사항 분류와 fullstack 분해 기준: [references/milestone-planning.md](references/milestone-planning.md)
-- 라우터 run id와 영역 간 handoff/checkpoint 처리: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
+- 라우터 run id와 영역 간 input/output/checkpoint 처리: [references/input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)
 - 라우터 영역별 실행 순서와 통합 보고 흐름: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
 - 영역별 D/A/B 실행 계약은 이 스킬에서 열거하지 않고 `implement-backend`와 `implement-frontend`의 `references/`가 소유한다.
 
@@ -50,14 +50,14 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 - API 계약, 도메인 상태, 데이터 저장, 외부 연동은 backend 마일스톤으로 둔다.
 - 화면, 상호작용, 상태 관리, query/cache, 렌더링 성능은 frontend 마일스톤으로 둔다.
 - backend 산출물이 frontend 입력이 되는 경우 backend 마일스톤을 먼저 실행한다.
-- 독립적으로 검증 가능한 결과 단위가 아니면 하나의 사용자 흐름 안에서도 backend와 frontend handoff를 분리한다.
+- 독립적으로 검증 가능한 결과 단위가 아니면 하나의 사용자 흐름 안에서도 backend와 frontend output을 분리한다.
 
 ### 3. 영역별 실행 스킬을 호출한다
 
 - backend 마일스톤은 `implement-backend` 프로세스를 따른다.
 - frontend 마일스톤은 `implement-frontend` 프로세스를 따른다.
-- 같은 run id 아래에서 영역별 handoff와 checkpoint 경로가 충돌하지 않도록 sequence를 분리한다.
-- 영역 간 handoff와 체크포인트 재개 방식은 [handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)를 따른다.
+- 같은 run id 아래에서 영역별 input/output/checkpoint 경로가 충돌하지 않도록 sequence를 분리한다.
+- 영역 간 input/output 전달과 체크포인트 재개 방식은 [input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)를 따른다.
 
 ### 4. 결과를 통합 보고한다
 
@@ -68,7 +68,7 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 ## 완료 산출물
 
 - 영역별 실행 스킬과 마일스톤 목록
-- 영역별 D/A/B 결과 파일 경로
+- 영역별 D/A/B input/output 파일 경로
 - 변경 파일 목록과 검증 결과 요약
 - 호출된 reviewer별 통과 여부와 남은 위반
 - backend/frontend 계약 불확실성

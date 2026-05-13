@@ -7,15 +7,15 @@
 | 주체 | 책임 | 참조 문서 |
 |------|------|-----------|
 | `implement` 라우터 | 요구사항 분류, fullstack 분해, run id 생성, 영역별 실행 순서 결정, 통합 보고 | 이 문서와 `SKILL.md` |
-| `implement-backend` | backend 마일스톤의 D/A/B 실행, backend handoff 검증, backend reviewer 반복 루프 | [implement-backend references](../../implement-backend/references) |
-| `implement-frontend` | frontend 마일스톤의 D/A/B 실행, frontend handoff 검증, frontend reviewer 반복 루프 | [implement-frontend references](../../implement-frontend/references) |
+| `implement-backend` | backend 마일스톤의 D/A/B 실행, backend input/output 검증, backend reviewer 반복 루프 | [implement-backend references](../../implement-backend/references) |
+| `implement-frontend` | frontend 마일스톤의 D/A/B 실행, frontend input/output 검증, frontend reviewer 반복 루프 | [implement-frontend references](../../implement-frontend/references) |
 | Supplemental reviewers | 문서, 보안 민감 변경 검토 | [review routing](../../../../docs/review/README.md) |
 
 ## 라우터 제약
 
 - 라우터는 일반 경로에서 구현 파일을 직접 수정하지 않는다.
 - 라우터는 D/A/B 서브에이전트를 직접 운영하지 않고 영역별 실행 스킬에 위임한다.
-- 라우터는 영역별 결과 파일과 체크포인트 파일의 존재 여부를 확인할 수 있지만, 영역 내부 payload 스키마를 재정의하지 않는다.
+- 라우터는 영역별 input/output 파일과 체크포인트 파일의 존재 여부를 확인할 수 있지만, 영역 내부 payload 스키마를 재정의하지 않는다.
 - 라우터는 backend/frontend 검토를 직접 수행하지 않는다.
 - 라우터는 영역 간 계약 불확실성을 추측해 채우지 않고 사용자 보고 또는 후속 마일스톤으로 분리한다.
 
@@ -44,6 +44,6 @@
 
 - 라우터의 성공 판단은 영역별 실행 스킬의 완료 결과를 종합하는 것이다.
 - 한 영역의 `pass`는 다른 영역의 계약 또는 검증을 보증하지 않는다.
-- 정상 산출물 전달의 표준 경로는 handoff artifact 파일과 결과 신호다.
+- 정상 산출물 전달의 표준 경로는 output artifact 파일과 결과 신호다.
 - 체크포인트 복구의 표준 경로는 영역별 체크포인트 파일과 `CONTEXT_CHECKPOINT:` 신호다.
 - 영역별 실행 스킬의 계약 문서와 라우터 문서가 충돌하면 영역 내부 실행은 해당 영역 문서를 우선하고, 통합 순서와 보고는 라우터 문서를 우선한다.

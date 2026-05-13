@@ -53,7 +53,7 @@
 - `영역`: `backend`, `frontend`, `fullstack split`
 - `선행 관계`: 먼저 실행해야 하는 영역. 없으면 "없음"
 - `명시적 제외사항`: 사용자 요청 또는 마일스톤 분할상 제외된 항목. 없으면 "없음"
-- `계약 handoff`: 다음 영역에 넘길 API/UI/data 계약. 없으면 "없음"
+- `계약 전달`: 다음 영역에 넘길 API/UI/data 계약. 없으면 "없음"
 - `검증 기준`: 영역별 실행 스킬이 보고해야 할 검증 결과
 
 ## 실행 준비
@@ -61,4 +61,4 @@
 - 라우팅 결과와 마일스톤 계획을 사용자에게 짧게 보고한다.
 - 영역별 마일스톤이 5개 이상이면 진행 여부를 확인한다.
 - 진행이 확정되면 `run_id`를 생성하고 영역별 실행 스킬에 전달한다.
-- run id와 영역별 경로 구성 규칙은 [handoff-checkpoint-protocol.md](handoff-checkpoint-protocol.md)를 따른다.
+- run id와 영역별 경로 구성 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.

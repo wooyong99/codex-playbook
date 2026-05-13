@@ -10,62 +10,90 @@
 ### Case A — 신규 구현
 
 ```text
-[마일스톤]: {마일스톤 제목}
-[요구사항]:
-{구체적 범위·목표}
+[입력 파일]: .agents/runs/{run_id}/inputs/M{n}/{seq}-A-r00-input.v1.yaml
+[계약 파일]: .agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md
+[지시]: 입력 파일을 읽고 계약 파일의 Output > Case A 규격에 따라 출력 파일과 체크포인트 파일을 저장하세요.
+```
 
-[명시적 제외사항]:
-{사용자 요청 또는 마일스톤 분할상 제외된 항목. 없으면 "없음"}
+`[입력 파일]`은 YAML로 작성한다.
 
-[프로젝트 컨텍스트]:
-  - 구현 영역: frontend
-  - {실제 저장소 문서에서 확인한 frontend 스택/모듈/의존 방향}
-  - 관련 문서: {docs/frontend 하위에서 실제로 필요한 문서}
-  - 관련 도메인/기능: {사용자 흐름, 화면, feature 또는 entity}
-
-[Source of Truth]:
-  - {이번 구현에 적용할 frontend 기준 문서 또는 섹션}
-  - {이번 구현에 적용할 설계 결정 또는 정책}
-
-[설계 결과 파일]: {D가 반환한 design_result artifact 절대 경로}
-
-[결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-A-r00-implementation-result.v1.yaml
-
-[체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/A-r00-v001.md
-
-[체크포인트 판단 기준]: 이 문서의 Input > 역할별 체크포인트 기준 그대로.
-
-[출력 규격]: 이 문서(.agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md) — Output > Case A 그대로.
+```yaml
+schema_version: implement-frontend-implementation-input/v1
+run_id: <run_id>
+milestone: M<n>
+sequence: <오케스트레이터가 파일명에 부여한 순번>
+role: frontend-implementation-engineer
+kind: implementation_input
+iteration: 0
+created_at: <ISO-8601 timestamp>
+input:
+  milestone_title: <마일스톤 제목>
+  requirements: <구체적 범위·목표>
+  explicit_exclusions: <사용자 요청 또는 마일스톤 분할상 제외된 항목. 없으면 "없음">
+  project_context:
+    area: frontend
+    stack_or_modules:
+      - <실제 저장소 문서에서 확인한 frontend 스택/모듈/의존 방향>
+    related_docs:
+      - <docs/frontend 하위에서 실제로 필요한 문서>
+    related_domain_or_feature: <사용자 흐름, 화면, feature 또는 entity>
+  source_of_truth:
+    - path: <이번 구현에 적용할 frontend 기준 문서 또는 섹션>
+      reason: <선별 이유>
+  design_result_file: <D가 반환한 design_result output artifact 절대 경로>
+artifacts:
+  output_file: .agents/runs/{run_id}/outputs/M{n}/{seq}-A-r00-implementation-result.v1.yaml
+  checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/A-r00-v001.md
+checkpoint:
+  criteria: "[체크포인트 판단 기준] 이 문서의 Input > 역할별 체크포인트 기준 그대로."
+output_contract:
+  path: .agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md
+  section: Output > Case A
 ```
 
 ### Case B — 위반 수정
 
 ```text
-[수정 작업]: 이전 frontend architecture review에서 위반이 발견됐습니다.
-검토 결과 파일의 `payload.violations` 각 항목을 근거로 수정하세요.
+[입력 파일]: .agents/runs/{run_id}/inputs/M{n}/{seq}-A-r{iter}-input.v1.yaml
+[계약 파일]: .agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md
+[지시]: 입력 파일을 읽고 계약 파일의 Output > Case B 규격에 따라 출력 파일과 체크포인트 파일을 저장하세요.
+```
 
-[검토 결과 파일]: {B가 반환한 review_result artifact 절대 경로}
+`[입력 파일]`은 YAML로 작성한다.
 
-[규칙]:
-  - 위반 항목 외 코드는 변경하지 말 것.
-  - 모든 수정 후 필수 검증 성공 확인.
-
-[결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-A-r{iter}-fix-result.v1.yaml
-
-[체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/A-r{iter}-v001.md
-
-[체크포인트 판단 기준]: 이 문서의 Input > 역할별 체크포인트 기준 그대로.
-
-[출력 규격]: 이 문서(.agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md) — Output > Case B 그대로.
+```yaml
+schema_version: implement-frontend-fix-input/v1
+run_id: <run_id>
+milestone: M<n>
+sequence: <오케스트레이터가 파일명에 부여한 순번>
+role: frontend-implementation-engineer
+kind: fix_input
+iteration: <A-B 루프 iter>
+created_at: <ISO-8601 timestamp>
+input:
+  task: 이전 frontend architecture review에서 위반이 발견됐습니다.
+  review_result_file: <B가 반환한 review_result output artifact 절대 경로>
+  rules:
+    - 위반 항목 외 코드는 변경하지 말 것.
+    - 모든 수정 후 필수 검증 성공 확인.
+artifacts:
+  output_file: .agents/runs/{run_id}/outputs/M{n}/{seq}-A-r{iter}-fix-result.v1.yaml
+  checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/A-r{iter}-v001.md
+checkpoint:
+  criteria: "[체크포인트 판단 기준] 이 문서의 Input > 역할별 체크포인트 기준 그대로."
+output_contract:
+  path: .agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md
+  section: Output > Case B
 ```
 
 ## Input Rules
 
 - `[명시적 제외사항]`은 구현 범위에서 제외한다.
-- 신규 구현은 `[설계 결과 파일]`과 `[Source of Truth]`를 기준으로 수행한다.
-- 위반 수정은 `[검토 결과 파일]`의 `payload.violations`와 그 안의 `source_path`, `rule`, `reason`만 기준으로 수행한다.
-- `[결과 파일]`과 `[체크포인트 파일]`은 오케스트레이터가 할당한 절대 경로를 그대로 사용한다.
-- 체크포인트 여부는 입력된 `[체크포인트 판단 기준]`을 기준으로 판단한다.
+- 신규 구현은 `[입력 파일]`의 `input.design_result_file`과 `input.source_of_truth`를 기준으로 수행한다.
+- 위반 수정은 `[입력 파일]`의 `input.review_result_file`이 가리키는 `payload.violations`와 그 안의 `source_path`, `rule`, `reason`만 기준으로 수행한다.
+- `[출력 파일]`은 `[입력 파일]`의 `artifacts.output_file` 값을 그대로 사용한다.
+- `[체크포인트 파일]`은 `[입력 파일]`의 `artifacts.checkpoint_file` 값을 그대로 사용한다.
+- 체크포인트 여부는 `[입력 파일]`의 `checkpoint.criteria`를 기준으로 판단한다.
 - 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다.
 
 Source of Truth 후보:
@@ -75,12 +103,12 @@ Source of Truth 후보:
 - `docs/frontend/conventions/**`
 - `docs/frontend/performance/**`
 - `docs/frontend/ui-ux/**`
-- `[설계 결과 파일]`의 `payload.tdd_path`가 가리키는 마일스톤 TDD
+- `[입력 파일]`의 `input.design_result_file`이 가리키는 `payload.tdd_path`의 마일스톤 TDD
 
 체크포인트 재호출 시 아래 필드가 추가된다.
 
 ```text
-[체크포인트]: [체크포인트 파일] 경로 참조.
+[체크포인트]: [입력 파일]의 `artifacts.checkpoint_file` 경로 참조.
 완료된 작업은 건너뛰고 남은 작업부터 이어서 수행.
 ```
 
@@ -102,10 +130,10 @@ Source of Truth 후보:
 
 ### Case A: 신규 구현
 
-먼저 `[결과 파일]`에 implementation artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 결과 파일 경로만 반환한다.
+먼저 `[출력 파일]`에 implementation artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 출력 파일 경로만 반환한다.
 
 ```text
-IMPLEMENTATION_COMPLETED: {[결과 파일] 절대 경로}
+IMPLEMENTATION_COMPLETED: {[출력 파일] 절대 경로}
 ```
 
 ```yaml
@@ -141,10 +169,10 @@ payload:
 
 ### Case B: 위반 수정
 
-먼저 `[결과 파일]`에 fix artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 결과 파일 경로만 반환한다.
+먼저 `[출력 파일]`에 fix artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 출력 파일 경로만 반환한다.
 
 ```text
-FIX_APPLIED: {[결과 파일] 절대 경로}
+FIX_APPLIED: {[출력 파일] 절대 경로}
 ```
 
 ```yaml

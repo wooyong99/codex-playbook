@@ -52,11 +52,11 @@ backend 마일스톤은 하나의 도메인 책임과 하나의 검증 가능한
 - `명시적 제외사항`: 사용자 요청 또는 마일스톤 분할상 제외된 항목. 없으면 "없음"
 - `예상 변경 파일 수`: 3~8개 권장
 - `검증 기준`: 실행할 compile/test 명령
-- `frontend handoff`: frontend가 소비해야 할 API 계약 또는 미해결 사항. 없으면 "없음"
+- `frontend 전달 계약`: frontend가 소비해야 할 API 계약 또는 미해결 사항. 없으면 "없음"
 
 ## 실행 준비
 
 - 마일스톤 계획을 사용자에게 짧게 보고한다.
 - 마일스톤이 5개 이상이면 진행 여부를 확인한다.
-- 진행이 확정되면 `run_id`를 생성하고 `.agents/runs/{run_id}/handoffs`, `.agents/runs/{run_id}/checkpoints` 하위 경로를 준비한다.
-- run id와 경로 구성 규칙은 [handoff-checkpoint-protocol.md](handoff-checkpoint-protocol.md)를 따른다.
+- 진행이 확정되면 `run_id`를 생성하고 `.agents/runs/{run_id}/inputs`, `.agents/runs/{run_id}/outputs`, `.agents/runs/{run_id}/checkpoints` 하위 경로를 준비한다.
+- run id와 경로 구성 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.

@@ -7,43 +7,58 @@
 
 ## Input
 
-오케스트레이터는 아래 형식으로 프롬프트를 구성해 전달한다.
+오케스트레이터는 호출 전에 아래 input artifact를 저장하고, 서브에이전트에는 `[입력 파일]` 경로와 계약 파일 경로만 포함한 짧은 프롬프트를 전달한다.
 
 ```text
-[마일스톤]: {마일스톤 제목}
-[요구사항]:
-{구체적 범위·목표}
+[입력 파일]: .agents/runs/{run_id}/inputs/M{n}/{seq}-D-r00-input.v1.yaml
+[계약 파일]: .agents/skills/implement-backend/references/backend-technical-design-writer-contract.md
+[지시]: 입력 파일을 읽고 계약 파일의 Output 규격에 따라 출력 파일과 체크포인트 파일을 저장하세요.
+```
 
-[명시적 제외사항]:
-{사용자 요청 또는 마일스톤 분할상 제외된 항목. 없으면 "없음"}
+`[입력 파일]`은 YAML로 작성한다.
 
-[프로젝트 컨텍스트]:
-  - 구현 영역: backend
-  - {실제 저장소 문서에서 확인한 backend 스택/모듈/의존 방향}
-  - 관련 문서: {docs/backend 하위에서 실제로 필요한 문서}
-  - 관련 도메인/기능: {도메인명 또는 backend 기능명}
-
-[Source of Truth]:
-  - {이번 설계에 적용할 backend 기준 문서 또는 섹션}
-  - {이번 설계에 적용할 제품 요구사항 또는 정책}
-
-[결과 파일]: .agents/runs/{run_id}/handoffs/M{n}/{seq}-D-r00-design-result.v1.yaml
-
-[체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/D-r00-v001.md
-
-[체크포인트 판단 기준]: 이 문서의 Input > 역할별 체크포인트 기준 그대로.
-
-[출력 규격]: 이 문서(.agents/skills/implement-backend/references/backend-technical-design-writer-contract.md) — Output 섹션 그대로.
+```yaml
+schema_version: implement-backend-design-input/v1
+run_id: <run_id>
+milestone: M<n>
+sequence: <오케스트레이터가 파일명에 부여한 순번>
+role: backend-technical-design-writer
+kind: design_input
+iteration: 0
+created_at: <ISO-8601 timestamp>
+input:
+  milestone_title: <마일스톤 제목>
+  requirements: <구체적 범위·목표>
+  explicit_exclusions: <사용자 요청 또는 마일스톤 분할상 제외된 항목. 없으면 "없음">
+  project_context:
+    area: backend
+    stack_or_modules:
+      - <실제 저장소 문서에서 확인한 backend 스택/모듈/의존 방향>
+    related_docs:
+      - <docs/backend 하위에서 실제로 필요한 문서>
+    related_domain_or_feature: <도메인명 또는 backend 기능명>
+  source_of_truth:
+    - path: <이번 설계에 적용할 backend 기준 문서 또는 섹션>
+      reason: <선별 이유>
+artifacts:
+  output_file: .agents/runs/{run_id}/outputs/M{n}/{seq}-D-r00-design-result.v1.yaml
+  checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/D-r00-v001.md
+checkpoint:
+  criteria: "[체크포인트 판단 기준] 이 문서의 Input > 역할별 체크포인트 기준 그대로."
+output_contract:
+  path: .agents/skills/implement-backend/references/backend-technical-design-writer-contract.md
+  section: Output
 ```
 
 ## Input Rules
 
 - `[명시적 제외사항]`은 설계 범위에서 제외한다.
-- 설계 판단 기준은 오케스트레이터가 입력한 `[Source of Truth]`로 한정한다.
-- `[결과 파일]`과 `[체크포인트 파일]`은 오케스트레이터가 할당한 절대 경로를 그대로 사용한다.
-- 체크포인트 여부는 입력된 `[체크포인트 판단 기준]`을 기준으로 판단한다.
+- 설계 판단 기준은 `[입력 파일]`의 `input.source_of_truth`로 한정한다.
+- `[출력 파일]`은 `[입력 파일]`의 `artifacts.output_file` 값을 그대로 사용한다.
+- `[체크포인트 파일]`은 `[입력 파일]`의 `artifacts.checkpoint_file` 값을 그대로 사용한다.
+- 체크포인트 여부는 `[입력 파일]`의 `checkpoint.criteria`를 기준으로 판단한다.
 - 정상 완료 전에도 `[체크포인트 파일]`을 반드시 저장한다.
-- TDD가 불필요한 경우에도 `TDD_SKIPPED` 결과 파일과 완료 snapshot을 남긴다.
+- TDD가 불필요한 경우에도 `TDD_SKIPPED` 출력 파일과 완료 snapshot을 남긴다.
 
 Source of Truth 후보:
 
@@ -58,7 +73,7 @@ Source of Truth 후보:
 체크포인트 재호출 시 아래 필드가 추가된다.
 
 ```text
-[체크포인트]: [체크포인트 파일] 경로 참조. 이어서 작업 진행.
+[체크포인트]: [입력 파일]의 `artifacts.checkpoint_file` 경로 참조. 이어서 작업 진행.
 ```
 
 ### 역할별 체크포인트 기준
@@ -81,21 +96,21 @@ Source of Truth 후보:
 
 ### Case A: TDD 작성 완료
 
-먼저 `[결과 파일]`에 design artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 결과 파일 경로만 반환한다.
+먼저 `[출력 파일]`에 design artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 출력 파일 경로만 반환한다.
 
 ```text
-TDD_CREATED: {[결과 파일] 절대 경로}
+TDD_CREATED: {[출력 파일] 절대 경로}
 ```
 
 ### Case B: TDD 불필요
 
-먼저 `[결과 파일]`에 design artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 결과 파일 경로만 반환한다.
+먼저 `[출력 파일]`에 design artifact를 저장하고, `[체크포인트 파일]`에 완료 snapshot을 저장한다. 두 파일 저장이 끝난 뒤 출력 첫 줄에 출력 파일 경로만 반환한다.
 
 ```text
-TDD_SKIPPED: {[결과 파일] 절대 경로}
+TDD_SKIPPED: {[출력 파일] 절대 경로}
 ```
 
-`[결과 파일]`은 YAML로 작성한다.
+`[출력 파일]`은 YAML로 작성한다.
 
 ```yaml
 schema_version: implement-backend-design/v1

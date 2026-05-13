@@ -9,7 +9,7 @@
 1. 요구사항을 backend, frontend, fullstack 중 하나로 분류한다.
 2. fullstack 요청은 가능한 한 backend 마일스톤과 frontend 마일스톤으로 분리한다.
 3. 영역별 실행 스킬을 호출한다.
-4. 영역별 결과 파일과 검증 결과를 확인한다.
+4. 영역별 input/output 파일과 검증 결과를 확인한다.
 5. 영역 간 계약 불확실성이 남으면 사용자에게 보고하거나 후속 마일스톤으로 분리한다.
 6. 모든 영역이 완료되면 통합 결과를 보고한다.
 
@@ -25,13 +25,13 @@
 - API 계약, 도메인 상태, 데이터 저장, 외부 연동은 backend 마일스톤으로 둔다.
 - 화면, 상호작용, 상태 관리, query/cache, 렌더링 성능은 frontend 마일스톤으로 둔다.
 - backend 산출물이 frontend 입력이 되는 경우 backend 마일스톤을 먼저 실행한다.
-- 독립적으로 검증 가능한 결과 단위가 아니면 하나의 사용자 흐름 안에서도 backend와 frontend handoff를 분리한다.
+- 독립적으로 검증 가능한 결과 단위가 아니면 하나의 사용자 흐름 안에서도 backend와 frontend output을 분리한다.
 
 ## Step 3. 영역별 실행 스킬 호출
 
 - backend 마일스톤은 `implement-backend` 프로세스를 따른다.
 - frontend 마일스톤은 `implement-frontend` 프로세스를 따른다.
-- 같은 run id 아래에서 영역별 handoff와 checkpoint 경로가 충돌하지 않도록 마일스톤 id를 분리한다.
+- 같은 run id 아래에서 영역별 input/output/checkpoint 경로가 충돌하지 않도록 마일스톤 id를 분리한다.
 - 영역 내부 D/A/B 계약, 체크포인트 기준, 검증 명령 판단은 해당 실행 스킬의 `references/` 문서를 따른다.
 
 ## Step 4. 결과 통합
@@ -64,7 +64,7 @@
 모든 영역이 완료되면 아래 항목을 요약한다.
 
 - 완료한 backend/frontend 마일스톤 수
-- 영역별 D/A/B 결과 파일 경로
+- 영역별 D/A/B input/output 파일 경로
 - 변경 파일 수와 주요 변경 요약
 - 실행한 검증 명령과 결과
 - 남은 API/UI/data 계약 불확실성

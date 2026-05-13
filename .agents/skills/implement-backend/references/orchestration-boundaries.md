@@ -6,9 +6,9 @@
 
 | 주체 | 책임 | 계약 문서 |
 |------|------|-----------|
-| 메인 에이전트 | backend 요구사항 분석, 마일스톤 분할, D/A/B 호출, handoff 검증, 반복 종료 판단, 사용자 보고 | 이 문서와 `SKILL.md` |
+| 메인 에이전트 | backend 요구사항 분석, 마일스톤 분할, D/A/B 호출, input/output 검증, 반복 종료 판단, 사용자 보고 | 이 문서와 `SKILL.md` |
 | Agent D `backend-technical-design-writer` | backend 마일스톤별 TDD 작성 또는 스킵 근거 작성 | [backend-technical-design-writer-contract.md](backend-technical-design-writer-contract.md) |
-| Agent A `backend-implementation-engineer` | backend 코드 작성·수정, compile/test 확인, 구현 결과 파일 작성 | [backend-implementation-engineer-contract.md](backend-implementation-engineer-contract.md) |
+| Agent A `backend-implementation-engineer` | backend 코드 작성·수정, compile/test 확인, 구현 output 파일 작성 | [backend-implementation-engineer-contract.md](backend-implementation-engineer-contract.md) |
 | Agent B `backend-architecture-reviewer` | 입력으로 전달된 backend 아키텍처 기준과 TDD 결정 준수 여부 검토 | [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md) |
 | Supplemental reviewers | 문서, 보안 민감 변경 검토 | [review routing](../../../../docs/review/README.md) |
 
@@ -20,14 +20,14 @@
 - [documentation-governance-reviewer.toml](../../../../.codex/agents/documentation-governance-reviewer.toml)
 - [security-policy-reviewer.toml](../../../../.codex/agents/security-policy-reviewer.toml)
 
-각 `.toml` 파일은 역할, 판단 철학, 기본 금지사항만 가진다. 어떤 기준 문서를 읽을지, 어떤 출력 규격을 따를지, handoff artifact 스키마, 프롬프트 필드 이름, 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 backend workflow와 계약 문서가 단일 출처다.
+각 `.toml` 파일은 역할, 판단 철학, 기본 금지사항만 가진다. 어떤 기준 문서를 읽을지, 어떤 출력 규격을 따를지, input/output artifact 스키마, 프롬프트 필드 이름, 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 backend workflow와 계약 문서가 단일 출처다.
 
 ## 메인 에이전트 제약
 
 - 일반 경로에서 backend 구현 파일을 직접 수정하지 않는다.
 - backend 코드 작업은 A에게, backend 설계 문서는 D에게, backend 아키텍처 검토는 B에게 위임한다.
 - 요구사항 이해에 필요한 경우 `docs/backend/README.md` 같은 맵 문서와 관련 Source of Truth 후보를 읽을 수 있다.
-- 정상 산출물 전달과 체크포인트 복구를 위해 `[결과 파일]`과 `[체크포인트 파일]`을 읽고 존재 여부와 스키마를 검증할 수 있다.
+- 정상 산출물 전달과 체크포인트 복구를 위해 `[입력 파일]`, `[출력 파일]`, `[체크포인트 파일]`을 읽고 존재 여부와 스키마를 검증할 수 있다.
 - B의 검토를 직접 대체하지 않는다. B의 결과를 읽어 반복 종료 여부만 판단한다.
 - 변경 파일이 문서 또는 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer 결과도 함께 확인한다.
 - D/A/B는 서로 호출하지 않는다. 모든 통신은 메인 에이전트를 경유한다.
@@ -64,6 +64,6 @@
 - B의 `status: pass`는 backend 문서 준수 통과를 뜻한다. 기능 정확성, 성능, 운영 안정성 전체를 보증하는 의미가 아니다.
 - D/A/B 프롬프트의 `[프로젝트 컨텍스트]`는 현재 저장소 문서와 코드에서 확인한 사실로 채운다.
 - 계약 문서의 예시 문구를 프로젝트 사실처럼 복사하지 않는다.
-- 정상 산출물 전달의 표준 경로는 handoff artifact 파일과 결과 신호다.
+- 정상 산출물 전달의 표준 경로는 output artifact 파일과 결과 신호다.
 - 체크포인트 복구의 표준 경로는 체크포인트 파일과 `CONTEXT_CHECKPOINT:` 신호다.
 - 정상 완료 경로에서도 각 역할은 호출별 `[체크포인트 파일]`을 반드시 남긴다.
