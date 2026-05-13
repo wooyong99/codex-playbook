@@ -15,10 +15,10 @@ description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 �
 
 ## 참조 문서
 
-- 공통 역할 경계: [../implement/references/orchestration-boundaries.md](../implement/references/orchestration-boundaries.md)
-- 공통 마일스톤 분할 기준: [../implement/references/milestone-planning.md](../implement/references/milestone-planning.md)
-- 공통 handoff/checkpoint 규약: [../implement/references/handoff-checkpoint-protocol.md](../implement/references/handoff-checkpoint-protocol.md)
-- 공통 실행 루프: [../implement/references/milestone-execution-workflow.md](../implement/references/milestone-execution-workflow.md)
+- backend 역할 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
+- backend 마일스톤 분할 기준: [references/milestone-planning.md](references/milestone-planning.md)
+- backend handoff/checkpoint 규약: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
+- backend 실행 루프: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
 - D 계약: [references/backend-technical-design-writer-contract.md](references/backend-technical-design-writer-contract.md)
 - backend TDD 작성 스킬: [../write-backend-tech-design-doc/SKILL.md](../write-backend-tech-design-doc/SKILL.md)
 - A 계약: [references/backend-implementation-engineer-contract.md](references/backend-implementation-engineer-contract.md)

@@ -163,6 +163,14 @@ def main():
     planning_path = ROOT / ".agents/skills/implement/references/milestone-planning.md"
     protocol_path = ROOT / ".agents/skills/implement/references/handoff-checkpoint-protocol.md"
     workflow_path = ROOT / ".agents/skills/implement/references/milestone-execution-workflow.md"
+    backend_boundaries_path = ROOT / ".agents/skills/implement-backend/references/orchestration-boundaries.md"
+    backend_planning_path = ROOT / ".agents/skills/implement-backend/references/milestone-planning.md"
+    backend_protocol_path = ROOT / ".agents/skills/implement-backend/references/handoff-checkpoint-protocol.md"
+    backend_workflow_path = ROOT / ".agents/skills/implement-backend/references/milestone-execution-workflow.md"
+    frontend_boundaries_path = ROOT / ".agents/skills/implement-frontend/references/orchestration-boundaries.md"
+    frontend_planning_path = ROOT / ".agents/skills/implement-frontend/references/milestone-planning.md"
+    frontend_protocol_path = ROOT / ".agents/skills/implement-frontend/references/handoff-checkpoint-protocol.md"
+    frontend_workflow_path = ROOT / ".agents/skills/implement-frontend/references/milestone-execution-workflow.md"
 
     implement = read(implement_path)
     for needle, reason in [
@@ -186,7 +194,10 @@ def main():
         ("backend-technical-design-writer", "backend design agent"),
         ("backend-implementation-engineer", "backend implementation agent"),
         ("backend-architecture-reviewer", "backend review agent"),
-        ("../implement/references/handoff-checkpoint-protocol.md", "shared handoff reference"),
+        ("references/orchestration-boundaries.md", "backend boundary reference"),
+        ("references/milestone-planning.md", "backend planning reference"),
+        ("references/handoff-checkpoint-protocol.md", "backend handoff reference"),
+        ("references/milestone-execution-workflow.md", "backend workflow reference"),
         ("references/backend-technical-design-writer-contract.md", "backend design contract"),
         ("references/backend-implementation-engineer-contract.md", "backend implementation contract"),
         ("references/backend-architecture-reviewer-contract.md", "backend reviewer contract"),
@@ -199,7 +210,10 @@ def main():
         ("frontend-technical-design-writer", "frontend design agent"),
         ("frontend-implementation-engineer", "frontend implementation agent"),
         ("frontend-architecture-reviewer", "frontend review agent"),
-        ("../implement/references/handoff-checkpoint-protocol.md", "shared handoff reference"),
+        ("references/orchestration-boundaries.md", "frontend boundary reference"),
+        ("references/milestone-planning.md", "frontend planning reference"),
+        ("references/handoff-checkpoint-protocol.md", "frontend handoff reference"),
+        ("references/milestone-execution-workflow.md", "frontend workflow reference"),
         ("references/frontend-technical-design-writer-contract.md", "frontend design contract"),
         ("references/frontend-implementation-engineer-contract.md", "frontend implementation contract"),
         ("references/frontend-architecture-reviewer-contract.md", "frontend reviewer contract"),
@@ -210,44 +224,121 @@ def main():
         (
             planning_path,
             [
-                ("## 마일스톤 분할 기준", "milestone split criteria"),
-                ("명시적 제외사항", "explicit exclusions planning"),
-                ("예상 변경 파일 3~8개 권장", "recommended changed file range"),
+                ("# Router Milestone Planning", "router planning title"),
+                ("## 라우팅 기준", "router classification criteria"),
+                ("## 마일스톤 분할 기준", "router milestone split criteria"),
+                ("영역 내부의 예상 변경 파일 수", "router does not own area file-count rules"),
+                ("명시적 제외사항", "router explicit exclusions planning"),
             ],
         ),
         (
             protocol_path,
             [
-                ("## Handoff Artifact 공통 처리", "common handoff handling"),
-                ("## 체크포인트 공통 처리", "common checkpoint handling"),
-                ("역할별 체크포인트 판단 기준은 D/A/B 계약 문서가 단일 출처로 가진다", "contract-owned checkpoint criteria"),
+                ("# Router Handoff And Checkpoint Protocol", "router protocol title"),
+                ("## Router Handoff 처리", "router handoff handling"),
+                ("## Router Checkpoint 처리", "router checkpoint handling"),
+                ("영역 내부 파일명을 재정의하지 않는다", "router does not own area filenames"),
                 ("존재하고 비어 있지 않은지 확인한다", "checkpoint existence validation"),
-                ("정상 완료 경로에서도 이번 호출의 `[체크포인트 파일]`", "orchestrator normal-result checkpoint validation"),
                 ("python3 .agents/skills/implement/scripts/validate-context-checkpoints.py", "validation command"),
             ],
         ),
         (
             boundaries_path,
             [
-                ("체크포인트 복구를 위해", "orchestrator read exception"),
-                ("정상 완료 경로에서도 각 역할은 호출별 `[체크포인트 파일]`을 반드시 남긴다", "normal-completion checkpoint guarantee"),
-                ("D/A/B는 서로 호출하지 않는다", "subagent communication boundary"),
+                ("# Router Orchestration Boundaries", "router boundary title"),
+                ("D/A/B 서브에이전트를 직접 운영하지 않고", "router delegates DAB ownership"),
+                ("backend 세부 기준 문서 선택은 `implement-backend`", "backend source ownership"),
+                ("frontend 세부 기준 문서 선택은 `implement-frontend`", "frontend source ownership"),
             ],
         ),
         (
             workflow_path,
             [
-                ("## Step 2. Agent D 위임", "D workflow step"),
-                ("구체 계약 경로는 `implement-backend` 또는 `implement-frontend` 실행 스킬", "area skill contract ownership"),
-                ("`implement-backend`의 D 계약 Input 형식", "backend D workflow contract ownership"),
-                ("`implement-frontend`의 D 계약 Input 형식", "frontend D workflow contract ownership"),
-                ("자기 A 계약 문서", "area-owned A workflow contract"),
-                ("## Step 3. Agent A 라우팅 및 위임", "A workflow step"),
-                ("## Step 4. Agent B 라우팅 및 Reviewer 위임", "review workflow step"),
-                ("`implement-backend`의 B 계약 Input 형식", "backend B workflow contract ownership"),
-                ("`implement-frontend`의 B 계약 Input 형식", "frontend B workflow contract ownership"),
-                ("[Source of Truth]", "B source-of-truth input responsibility"),
+                ("# Router Milestone Execution Workflow", "router workflow title"),
+                ("## Step 1. 요청 분류", "router classification step"),
+                ("## Step 2. Fullstack 분해", "fullstack split step"),
+                ("## Step 3. 영역별 실행 스킬 호출", "area skill execution step"),
+                ("영역 내부 D/A/B 실행 루프", "area workflow ownership"),
+                ("## Step 4. 결과 통합", "integration result step"),
                 ("## Escalation", "escalation workflow"),
+            ],
+        ),
+        (
+            backend_planning_path,
+            [
+                ("# Backend Milestone Planning", "backend planning title"),
+                ("## 마일스톤 분할 기준", "backend milestone split criteria"),
+                ("트랜잭션 경계", "backend transaction split signal"),
+                ("예상 변경 파일 3~8개 권장", "backend recommended changed file range"),
+                ("frontend handoff", "backend frontend handoff metadata"),
+            ],
+        ),
+        (
+            backend_protocol_path,
+            [
+                ("# Backend Handoff And Checkpoint Protocol", "backend protocol title"),
+                ("## Backend Handoff Artifact 처리", "backend handoff handling"),
+                ("## 체크포인트 처리", "backend checkpoint handling"),
+                ("역할별 체크포인트 판단 기준은 backend D/A/B 계약 문서가 단일 출처", "backend contract-owned checkpoint criteria"),
+            ],
+        ),
+        (
+            backend_boundaries_path,
+            [
+                ("# Backend Orchestration Boundaries", "backend boundary title"),
+                ("backend D/A/B 서브에이전트", "backend DAB boundary"),
+                ("D/A/B는 서로 호출하지 않는다", "backend subagent communication boundary"),
+                ("정상 완료 경로에서도 각 역할은 호출별 `[체크포인트 파일]`을 반드시 남긴다", "backend normal-completion checkpoint guarantee"),
+            ],
+        ),
+        (
+            backend_workflow_path,
+            [
+                ("# Backend Milestone Execution Workflow", "backend workflow title"),
+                ("## Step 2. Agent D 위임", "backend D workflow step"),
+                ("backend-technical-design-writer-contract.md", "backend D contract"),
+                ("backend-implementation-engineer-contract.md", "backend A contract"),
+                ("backend-architecture-reviewer-contract.md", "backend B contract"),
+                ("## Escalation", "backend escalation workflow"),
+            ],
+        ),
+        (
+            frontend_planning_path,
+            [
+                ("# Frontend Milestone Planning", "frontend planning title"),
+                ("## 마일스톤 분할 기준", "frontend milestone split criteria"),
+                ("route/page", "frontend route split signal"),
+                ("예상 변경 파일 3~8개 권장", "frontend recommended changed file range"),
+                ("backend 계약", "frontend backend contract metadata"),
+            ],
+        ),
+        (
+            frontend_protocol_path,
+            [
+                ("# Frontend Handoff And Checkpoint Protocol", "frontend protocol title"),
+                ("## Frontend Handoff Artifact 처리", "frontend handoff handling"),
+                ("## 체크포인트 처리", "frontend checkpoint handling"),
+                ("역할별 체크포인트 판단 기준은 frontend D/A/B 계약 문서가 단일 출처", "frontend contract-owned checkpoint criteria"),
+            ],
+        ),
+        (
+            frontend_boundaries_path,
+            [
+                ("# Frontend Orchestration Boundaries", "frontend boundary title"),
+                ("frontend D/A/B 서브에이전트", "frontend DAB boundary"),
+                ("D/A/B는 서로 호출하지 않는다", "frontend subagent communication boundary"),
+                ("정상 완료 경로에서도 각 역할은 호출별 `[체크포인트 파일]`을 반드시 남긴다", "frontend normal-completion checkpoint guarantee"),
+            ],
+        ),
+        (
+            frontend_workflow_path,
+            [
+                ("# Frontend Milestone Execution Workflow", "frontend workflow title"),
+                ("## Step 2. Agent D 위임", "frontend D workflow step"),
+                ("frontend-technical-design-writer-contract.md", "frontend D contract"),
+                ("frontend-implementation-engineer-contract.md", "frontend A contract"),
+                ("frontend-architecture-reviewer-contract.md", "frontend B contract"),
+                ("## Escalation", "frontend escalation workflow"),
             ],
         ),
     ]:
@@ -290,6 +381,14 @@ def main():
         planning_path,
         protocol_path,
         workflow_path,
+        backend_boundaries_path,
+        backend_planning_path,
+        backend_protocol_path,
+        backend_workflow_path,
+        frontend_boundaries_path,
+        frontend_planning_path,
+        frontend_protocol_path,
+        frontend_workflow_path,
     ]
     all_paths.extend(spec["agent"] for spec in AGENTS.values())
     all_paths.extend(spec["contract"] for spec in AGENTS.values())

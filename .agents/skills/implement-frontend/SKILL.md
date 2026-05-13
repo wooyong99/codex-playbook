@@ -15,10 +15,10 @@ description: 프론트엔드 기능 구현, 리팩토링, UI 상태/API client/q
 
 ## 참조 문서
 
-- 공통 역할 경계: [../implement/references/orchestration-boundaries.md](../implement/references/orchestration-boundaries.md)
-- 공통 마일스톤 분할 기준: [../implement/references/milestone-planning.md](../implement/references/milestone-planning.md)
-- 공통 handoff/checkpoint 규약: [../implement/references/handoff-checkpoint-protocol.md](../implement/references/handoff-checkpoint-protocol.md)
-- 공통 실행 루프: [../implement/references/milestone-execution-workflow.md](../implement/references/milestone-execution-workflow.md)
+- frontend 역할 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
+- frontend 마일스톤 분할 기준: [references/milestone-planning.md](references/milestone-planning.md)
+- frontend handoff/checkpoint 규약: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
+- frontend 실행 루프: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
 - D 계약: [references/frontend-technical-design-writer-contract.md](references/frontend-technical-design-writer-contract.md)
 - frontend TDD 작성 스킬: [../write-frontend-tech-design-doc/SKILL.md](../write-frontend-tech-design-doc/SKILL.md)
 - A 계약: [references/frontend-implementation-engineer-contract.md](references/frontend-implementation-engineer-contract.md)

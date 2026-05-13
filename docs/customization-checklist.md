@@ -25,9 +25,9 @@
 - [ ] `.agents/skills/implement` 라우터가 현재 프로젝트 영역 분류와 맞는지 확인
 - [ ] `.agents/skills/implement-backend`의 backend 실행 지시가 현재 프로젝트 규칙과 맞는지 확인
 - [ ] `.agents/skills/implement-frontend`의 frontend 실행 지시가 현재 프로젝트 규칙과 맞는지 확인
-- [ ] `.agents/skills/implement/references`의 공통 오케스트레이션 문서가 현재 프로젝트 규칙에 맞는지 확인
-- [ ] `.agents/skills/implement-backend/references`의 backend 실행 계약이 현재 프로젝트 규칙에 맞는지 확인
-- [ ] `.agents/skills/implement-frontend/references`의 frontend 실행 계약이 현재 프로젝트 규칙에 맞는지 확인
+- [ ] `.agents/skills/implement/references`의 라우터 오케스트레이션 문서가 현재 프로젝트 규칙에 맞는지 확인
+- [ ] `.agents/skills/implement-backend/references`의 backend 실행 문서와 계약이 현재 프로젝트 규칙에 맞는지 확인
+- [ ] `.agents/skills/implement-frontend/references`의 frontend 실행 문서와 계약이 현재 프로젝트 규칙에 맞는지 확인
 - [ ] `.agents/skills/write-backend-tech-design-doc`의 backend TDD 템플릿이 현재 프로젝트 규칙에 맞는지 확인
 - [ ] `.agents/skills/write-frontend-tech-design-doc`의 frontend TDD 템플릿이 현재 프로젝트 규칙에 맞는지 확인
 - [ ] 기존 코드베이스가 있다면 `reverse-engineer-backend-docs` 적용 여부 결정

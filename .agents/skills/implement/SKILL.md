@@ -10,8 +10,8 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 - 사용자의 구현·리팩토링 요구사항을 backend, frontend, fullstack 중 하나로 분류한다.
 - fullstack 요청은 가능한 한 backend 마일스톤과 frontend 마일스톤으로 분리한다.
 - 각 영역별 실행은 `implement-backend` 또는 `implement-frontend`가 담당한다.
-- 이 스킬은 공통 run id, handoff artifact, checkpoint 규약의 단일 진입점을 유지한다.
-- 세부 D/A/B 실행 루프와 역할별 입출력 포맷은 공통 참조 문서와 영역별 실행 스킬이 소유한다.
+- 이 스킬은 run id, 영역별 실행 순서, 영역 간 계약 handoff, 통합 보고를 소유한다.
+- 세부 D/A/B 실행 루프, 역할별 입출력 포맷, 영역 내부 checkpoint 규약은 영역별 실행 스킬이 소유한다.
 
 ## 기본 범위
 
@@ -22,10 +22,10 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 
 ## 참조 문서
 
-- 공통 역할 경계와 서브에이전트 운영 원칙: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
-- 공통 요구사항 분석과 마일스톤 분할 기준: [references/milestone-planning.md](references/milestone-planning.md)
-- 공통 handoff artifact와 체크포인트 처리 규약: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
-- 공통 마일스톤별 D/A/B 실행 루프: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
+- 라우터 역할 경계와 영역별 실행 스킬 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
+- 라우터 요구사항 분류와 fullstack 분해 기준: [references/milestone-planning.md](references/milestone-planning.md)
+- 라우터 run id와 영역 간 handoff/checkpoint 처리: [references/handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)
+- 라우터 영역별 실행 순서와 통합 보고 흐름: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
 - 영역별 D/A/B 실행 계약은 이 스킬에서 열거하지 않고 `implement-backend`와 `implement-frontend`의 `references/`가 소유한다.
 
 ## 라우팅 기준
@@ -57,7 +57,7 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 - backend 마일스톤은 `implement-backend` 프로세스를 따른다.
 - frontend 마일스톤은 `implement-frontend` 프로세스를 따른다.
 - 같은 run id 아래에서 영역별 handoff와 checkpoint 경로가 충돌하지 않도록 sequence를 분리한다.
-- 공통 파일명과 검증 규칙은 [handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)를 따른다.
+- 영역 간 handoff와 체크포인트 재개 방식은 [handoff-checkpoint-protocol.md](references/handoff-checkpoint-protocol.md)를 따른다.
 
 ### 4. 결과를 통합 보고한다
 

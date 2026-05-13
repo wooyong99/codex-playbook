@@ -1,72 +1,66 @@
-# Handoff And Checkpoint Protocol
+# Router Handoff And Checkpoint Protocol
 
-이 문서는 `implement` 스킬 패밀리의 handoff artifact, 체크포인트 파일, 결과 신호, 메인 에이전트 검증 절차를 소유한다. 역할별 payload 스키마와 체크포인트 템플릿은 D/A/B 계약 문서가 단일 출처다.
+이 문서는 `implement` 라우터가 backend/frontend 실행 스킬을 조율할 때 사용하는 통합 run id, 영역별 handoff 경계, 체크포인트 확인 절차를 소유한다. D/A/B 세부 payload 스키마와 체크포인트 템플릿은 `implement-backend/references`와 `implement-frontend/references`가 각각 소유한다.
 
 ## 저장 위치
 
-정상 산출물과 체크포인트는 run 단위로 저장한다.
+라우터는 하나의 사용자 요청에 하나의 `run_id`를 만들고, 영역별 실행 스킬이 같은 run 아래에 자기 마일스톤 산출물을 저장하게 한다.
 
 ```text
 .agents/runs/{run_id}/
 ├── handoffs/
-│   └── M{n}/
-│       ├── 001-D-r00-design-result.v1.yaml
-│       ├── 002-A-r00-implementation-result.v1.yaml
-│       ├── 003-B-r01-review-result.v1.yaml
-│       ├── 004-A-r01-fix-result.v1.yaml
-│       └── 005-B-r02-review-result.v1.yaml
+│   ├── M1-backend/
+│   └── M2-frontend/
 └── checkpoints/
-    └── M{n}/
-        ├── D-r00-v001.md
-        ├── A-r00-v001.md
-        └── B-r01-v001.md
+    ├── M1-backend/
+    └── M2-frontend/
 ```
 
-파일명 규칙:
+경로 규칙:
 
-- `{seq}`: run 안의 마일스톤별 append-only 3자리 순번. 메인 에이전트가 할당하며 서브에이전트가 임의 생성하지 않는다.
-- `{role}`: `D`, `A`, `B`
-- `r{iter}`: 설계와 최초 구현은 `r00`, 첫 검토는 `r01`, 이후 A-B 루프마다 증가한다.
-- `{kind}`: `design-result`, `implementation-result`, `review-result`, `fix-result`
-- `v1`: handoff artifact 파일명 스키마 버전. 파일 내용의 `schema_version`은 `implement-handoff/v1`로 고정한다.
-- 정상 결과를 다시 받아야 하면 새 `{seq}`를 할당한다. 같은 파일 경로 재사용은 동일 호출의 저장 실패 복구에만 허용한다.
+- `run_id`: 상위 `implement`가 생성하고 backend/frontend 실행 스킬에 전달한다.
+- `M{n}-{area}`: 라우터가 분해한 영역별 마일스톤 식별자. `area`는 `backend` 또는 `frontend`다.
+- 영역 내부의 D/A/B 파일명과 결과 신호는 각 실행 스킬의 [handoff-checkpoint-protocol.md](../../implement-backend/references/handoff-checkpoint-protocol.md) 또는 [handoff-checkpoint-protocol.md](../../implement-frontend/references/handoff-checkpoint-protocol.md)를 따른다.
+- 라우터는 영역 내부 파일명을 재정의하지 않는다.
 
-## Handoff Artifact 공통 처리
+## Router Handoff 처리
 
-정상 완료 결과는 응답 본문에 길게 싣지 않는다. D/A/B는 메인 에이전트가 미리 할당한 `[결과 파일]`에 YAML payload를 저장하고, 같은 호출의 `[체크포인트 파일]`에도 완료 snapshot을 저장한 뒤 첫 줄에 결과 신호와 파일 경로만 반환한다.
-
-메인 에이전트의 처리 절차:
-
-1. 서브에이전트 호출 전에 `[결과 파일]` 절대 경로와 `[체크포인트 파일]` 절대 경로를 할당한다.
-2. 정상 결과 신호의 경로가 이번 호출에서 전달한 `[결과 파일]`과 일치하는지 확인한다.
-3. 해당 파일이 존재하고 비어 있지 않은지 확인한다.
-4. `schema_version`, `run_id`, `milestone`, `role`, `kind`, `status`, `payload` 같은 핵심 필드를 검증한다.
-5. 정상 완료 경로에서도 이번 호출의 `[체크포인트 파일]`이 존재하고 비어 있지 않으며, 계약 문서의 체크포인트 파일 스키마에 있는 제목과 핵심 섹션이 포함됐는지 검증한다.
-6. 정상 결과 파일은 유효하지만 체크포인트 파일 검증이 실패하면 같은 서브에이전트에게 한 번만 재호출하여 동일 `[결과 파일]`과 `[체크포인트 파일]` 저장을 재수행하게 한다.
-7. 두 번째도 실패하면 자동 루프를 멈추고 사용자에게 체크포인트 프로토콜 실패를 보고한다.
-8. 다음 에이전트에게는 필요한 payload 원문을 복사하지 않고, 선행 에이전트가 만든 handoff artifact 경로만 전달한다.
-9. 사용자 업데이트와 루프 종료 판단에 필요한 최소 필드만 메인 에이전트가 읽는다.
-
-## 체크포인트 공통 처리
-
-서브에이전트 응답 첫 줄이 `CONTEXT_CHECKPOINT:` 인 경우, 이를 성공·완료 응답으로 파싱하지 않는다. 체크포인트는 복구 절차로만 처리한다.
+라우터는 backend/frontend 실행 스킬의 결과를 통합하기 위해 필요한 최소 정보만 읽는다.
 
 처리 절차:
 
-1. 첫 줄의 경로가 현재 호출에서 전달한 `[체크포인트 파일]` 경로와 일치하는지 확인한다.
-2. 해당 파일이 존재하고 비어 있지 않은지 확인한다.
-3. 계약 문서의 체크포인트 파일 스키마에 있는 제목과 핵심 섹션이 포함됐는지 확인한다.
-4. 위 검증이 실패하면 같은 서브에이전트에게 한 번만 재호출하여 체크포인트 파일 저장부터 다시 수행하게 한다.
-5. 두 번째도 실패하면 자동 루프를 멈추고 사용자에게 체크포인트 프로토콜 실패를 보고한다.
-6. 검증이 통과하면 체크포인트 파일을 읽은 뒤, 계약 문서의 체크포인트 재호출 규격으로 같은 서브에이전트를 재호출한다.
+1. 영역별 실행 전에 `run_id`, 마일스톤 id, 명시적 제외사항, 성공 기준을 고정한다.
+2. backend 산출물이 frontend 입력이 되면 backend 실행 결과에서 API 계약, 미해결 사항, 변경 파일 요약만 읽어 frontend 마일스톤 입력으로 넘긴다.
+3. frontend 산출물이 backend 선행 작업 필요성을 드러내면 새 backend 마일스톤을 만들거나 사용자에게 계약 불확실성을 보고한다.
+4. 영역별 실행 스킬이 반환한 D/A/B 결과 파일 경로가 실제로 존재하고 비어 있지 않은지 확인한다.
+5. 영역 내부 payload 원문을 불필요하게 복사하지 않고, 통합 보고에 필요한 요약 필드만 읽는다.
+6. backend/frontend 중 하나가 실패하면 다른 영역의 완료 상태와 분리해 보고한다.
 
-역할별 체크포인트 판단 기준은 D/A/B 계약 문서가 단일 출처로 가진다. 메인 에이전트는 체크포인트 파일 경로를 전달하고, `CONTEXT_CHECKPOINT:` 응답을 복구 절차로 처리하는 책임만 가진다.
+## Router Checkpoint 처리
 
-역할별 체크포인트 판단은 하이브리드 방식으로 작성한다. 주 판단은 현재 작업의 흐름, 전환점, 기억해야 할 결정의 밀도 같은 상대적 신호를 본다. 절대 수치는 판단 흔들림을 막기 위한 안전선으로만 사용한다. 계약 문서는 각 조건을 `조건`, `관측 신호`, `fallback`으로 쪼개어 기록해야 한다.
+라우터는 영역별 실행 스킬이 남긴 체크포인트를 직접 해석해 수정하지 않는다. 체크포인트 재개는 해당 실행 스킬의 프로토콜로 되돌려 보낸다.
+
+처리 절차:
+
+1. 영역별 실행 중 `CONTEXT_CHECKPOINT:` 신호가 반환되면 해당 경로가 현재 영역 마일스톤의 checkpoint 경로인지 확인한다.
+2. 파일 존재 여부와 비어 있지 않은지만 확인한다.
+3. 체크포인트 파일의 세부 섹션 검증과 재호출 형식은 해당 영역 실행 스킬의 프로토콜을 따른다.
+4. 같은 영역의 실행 스킬로 재개하고, 다른 영역 마일스톤에는 체크포인트 내용을 복사하지 않는다.
+5. 체크포인트 복구가 두 번 실패하면 자동 루프를 멈추고 사용자에게 영역, 마일스톤, 실패 경로를 보고한다.
+
+## 통합 보고
+
+최종 보고에는 아래 항목을 영역별로 분리해 포함한다.
+
+- 완료한 backend/frontend 마일스톤 수
+- 영역별 D/A/B 결과 파일 경로
+- 영역별 검증 명령과 결과
+- 남은 API 계약, UI 계약, 데이터 계약 불확실성
+- 자동 수렴 실패 또는 사용자 확인이 필요한 항목
 
 ## 검증 스크립트
 
-체크포인트 규약, D/A/B 계약 문서, 서브에이전트 정의를 수정한 뒤에는 아래 명령으로 필수 항목을 검증한다.
+라우터 프로토콜이나 영역별 실행 프로토콜을 수정한 뒤에는 아래 명령으로 필수 항목을 검증한다.
 
 ```bash
 python3 .agents/skills/implement/scripts/validate-context-checkpoints.py
