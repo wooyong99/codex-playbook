@@ -76,5 +76,5 @@ frontend 마일스톤은 하나의 사용자 흐름 또는 하나의 화면 책�
 
 - 마일스톤 계획을 사용자에게 짧게 보고한다.
 - 마일스톤이 5개 이상이면 진행 여부를 확인한다.
-- 진행이 확정되면 `run_id`를 생성하고 `.agents/runs/{run_id}/inputs`, `.agents/runs/{run_id}/outputs`, `.agents/runs/{run_id}/checkpoints` 하위 경로를 준비한다.
-- run id와 경로 구성 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.
+- 진행이 확정되면 `run_id`를 생성하고 frontend 마일스톤의 run artifact 경로를 준비한다.
+- run artifact의 디렉토리 구조와 파일명 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.
