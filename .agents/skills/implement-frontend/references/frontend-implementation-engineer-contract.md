@@ -33,7 +33,7 @@
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/A-r00-v001.md
 
-[체크포인트 판단 기준]: 이 문서의 Output > 역할별 체크포인트 기준 그대로.
+[체크포인트 판단 기준]: 이 문서의 Input > 역할별 체크포인트 기준 그대로.
 
 [출력 규격]: 이 문서(.agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md) — Output > Case A 그대로.
 ```
@@ -54,7 +54,7 @@
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/A-r{iter}-v001.md
 
-[체크포인트 판단 기준]: 이 문서의 Output > 역할별 체크포인트 기준 그대로.
+[체크포인트 판단 기준]: 이 문서의 Input > 역할별 체크포인트 기준 그대로.
 
 [출력 규격]: 이 문서(.agents/skills/implement-frontend/references/frontend-implementation-engineer-contract.md) — Output > Case B 그대로.
 ```
@@ -83,6 +83,18 @@ Source of Truth 후보:
 [체크포인트]: [체크포인트 파일] 경로 참조.
 완료된 작업은 건너뛰고 남은 작업부터 이어서 수행.
 ```
+
+### 역할별 체크포인트 기준
+
+체크포인트 판단은 상대 기준을 먼저 적용하고, 절대 수치는 안전장치로만 사용한다. 남은 작업이 없고 곧 `IMPLEMENTATION_COMPLETED:` 또는 `FIX_APPLIED:`를 반환할 수 있으면 `CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다.
+
+아래 전환점 중 하나를 만나고 남은 작업이 있으면 체크포인트한다.
+
+- 구현 배치가 끝나고 다른 frontend 책임 영역으로 넘어간다.
+- 변경 집합 또는 테스트 기대값이 서로 맞물려 보존이 필요하다.
+- 위반 수정 흐름이 다른 위반 묶음으로 넘어간다.
+- 빌드/테스트 실패가 수정 방향 전환을 요구한다.
+- 요구사항 또는 명시적 제외사항 경계가 불명확해진다.
 
 ---
 
@@ -180,18 +192,6 @@ payload:
 - `payload.failed`: 실패 항목이 없으면 빈 배열 `[]`
 
 정상 완료 응답 본문에는 artifact 내용을 복사하지 않는다. 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, 완료 snapshot에는 재호출해도 같은 변경·검증 결론으로 수렴할 수 있는 최소 근거를 남긴다.
-
-### 역할별 체크포인트 기준
-
-체크포인트 판단은 상대 기준을 먼저 적용하고, 절대 수치는 안전장치로만 사용한다. 남은 작업이 없고 곧 `IMPLEMENTATION_COMPLETED:` 또는 `FIX_APPLIED:`를 반환할 수 있으면 `CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다.
-
-아래 전환점 중 하나를 만나고 남은 작업이 있으면 체크포인트한다.
-
-- 구현 배치가 끝나고 다른 frontend 책임 영역으로 넘어간다.
-- 변경 집합 또는 테스트 기대값이 서로 맞물려 보존이 필요하다.
-- 위반 수정 흐름이 다른 위반 묶음으로 넘어간다.
-- 빌드/테스트 실패가 수정 방향 전환을 요구한다.
-- 요구사항 또는 명시적 제외사항 경계가 불명확해진다.
 
 ### Case C: 컨텍스트 체크포인트
 

@@ -31,7 +31,7 @@
 
 [체크포인트 파일]: .agents/runs/{run_id}/checkpoints/M{n}/D-r00-v001.md
 
-[체크포인트 판단 기준]: 이 문서의 Output > 역할별 체크포인트 기준 그대로.
+[체크포인트 판단 기준]: 이 문서의 Input > 역할별 체크포인트 기준 그대로.
 
 [출력 규격]: 이 문서(.agents/skills/implement-frontend/references/frontend-technical-design-writer-contract.md) — Output 섹션 그대로.
 ```
@@ -60,6 +60,18 @@ Source of Truth 후보:
 ```text
 [체크포인트]: [체크포인트 파일] 경로 참조. 이어서 작업 진행.
 ```
+
+### 역할별 체크포인트 기준
+
+체크포인트 판단은 상대 기준을 먼저 적용하고, 절대 수치는 안전장치로만 사용한다. 남은 작업이 없고 곧 `TDD_CREATED:` 또는 `TDD_SKIPPED:`를 반환할 수 있으면 `CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다.
+
+아래 전환점 중 하나를 만나고 남은 작업이 있으면 체크포인트한다.
+
+- 설계 판단 주제가 state, API, component, routing, cache 중 다른 축으로 바뀐다.
+- 작성한 TDD 일부를 다음 섹션에서도 보존해야 한다.
+- 근거 수집에서 설계 결론 도출로 전환한다.
+- 요구사항 또는 명시적 제외사항 경계가 불명확해진다.
+- 중간 설계 결정이 누적되어 완료 전 보존이 필요하다.
 
 ---
 
@@ -132,18 +144,6 @@ payload:
 - `payload.design_summary`: frontend A가 구현 판단에 재사용할 수 있는 최소 설계 요약
 
 정상 완료 응답 본문에는 artifact 내용을 복사하지 않는다. 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, 완료 snapshot에는 재호출해도 같은 설계 결론으로 수렴할 수 있는 최소 근거를 남긴다.
-
-### 역할별 체크포인트 기준
-
-체크포인트 판단은 상대 기준을 먼저 적용하고, 절대 수치는 안전장치로만 사용한다. 남은 작업이 없고 곧 `TDD_CREATED:` 또는 `TDD_SKIPPED:`를 반환할 수 있으면 `CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다.
-
-아래 전환점 중 하나를 만나고 남은 작업이 있으면 체크포인트한다.
-
-- 설계 판단 주제가 state, API, component, routing, cache 중 다른 축으로 바뀐다.
-- 작성한 TDD 일부를 다음 섹션에서도 보존해야 한다.
-- 근거 수집에서 설계 결론 도출로 전환한다.
-- 요구사항 또는 명시적 제외사항 경계가 불명확해진다.
-- 중간 설계 결정이 누적되어 완료 전 보존이 필요하다.
 
 ### Case C: 컨텍스트 체크포인트
 

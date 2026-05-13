@@ -153,6 +153,19 @@ def require(errors, path, text, needle, reason):
         errors.append(f"{path}: missing {reason}: {needle}")
 
 
+def require_between(errors, path, text, start, needle, end, reason):
+    if text is None:
+        errors.append(f"{path}: missing file")
+        return
+    start_idx = text.find(start)
+    needle_idx = text.find(needle)
+    end_idx = text.find(end)
+    if start_idx == -1 or needle_idx == -1 or end_idx == -1:
+        errors.append(f"{path}: missing ordering marker for {reason}")
+    elif not (start_idx < needle_idx < end_idx):
+        errors.append(f"{path}: {reason} must appear between {start} and {end}")
+
+
 def main():
     errors = []
 
@@ -361,6 +374,7 @@ def main():
         "체크포인트 동작 검증",
         "테스트 모드",
         "### 체크포인트 기준",
+        "Output > 역할별 체크포인트 기준",
         "공통 트리거",
         "D 전용 트리거",
         "A 전용 트리거",
@@ -414,7 +428,16 @@ def main():
         require(errors, spec["contract"], contract, "CONTEXT_CHECKPOINT:", f"{name} checkpoint signal")
         require(errors, spec["contract"], contract, "역할별 체크포인트 기준", f"{name} role checkpoint criteria")
         require(errors, spec["contract"], contract, "[체크포인트 판단 기준]", f"{name} checkpoint criteria input field")
-        require(errors, spec["contract"], contract, "Output > 역할별 체크포인트 기준", f"{name} checkpoint criteria source pointer")
+        require(errors, spec["contract"], contract, "Input > 역할별 체크포인트 기준", f"{name} checkpoint criteria source pointer")
+        require_between(
+            errors,
+            spec["contract"],
+            contract,
+            "## Input",
+            "### 역할별 체크포인트 기준",
+            "## Output",
+            f"{name} checkpoint criteria location",
+        )
         require(errors, spec["contract"], contract, "단일 출처", f"{name} contract single source")
         require(
             errors,
