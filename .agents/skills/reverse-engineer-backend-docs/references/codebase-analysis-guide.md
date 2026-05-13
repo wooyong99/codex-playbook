@@ -2,6 +2,15 @@
 
 이 문서는 기존 백엔드 코드베이스를 읽어 `docs/backend`에 기록할 실제 구조, 정책 신호, 구현 전략, 실행 정보를 찾는 세부 분석 기준이다. `SKILL.md`의 "코드베이스를 역공학한다" 단계에서 사용한다.
 
+## 문서 역할
+
+이 문서는 코드에서 문서 후보를 찾는 분석 모델만 소유한다.
+
+- 문서 위치와 소유권 판단은 [backend-document-routing.md](backend-document-routing.md)가 소유한다.
+- 선택된 문서의 섹션 구조는 [backend-doc-templates.md](backend-doc-templates.md)가 소유한다.
+- 이 문서는 repo census, 샘플링, confidence, 전략 후보 분류, 분석 메모 형식을 정의한다.
+- 코드에서 관찰되지 않은 정책이나 패턴을 만들기 위한 템플릿으로 사용하지 않는다.
+
 ## 분석 목표
 
 `docs/backend`는 플레이북 예시의 복제본이 아니라 현재 프로젝트의 지식 시스템이어야 한다. 분석 단계에서는 실제 코드의 모듈, 패키지, 책임 경계, 의존 방향, 반복 패턴을 관찰하고 문서 후보로 정리한다. 이름보다 책임과 의존 방향을 우선하되, 최종 문서 단위명은 프로젝트가 실제로 쓰는 이름을 우선한다.
@@ -257,7 +266,7 @@
 - 일부 코드는 interface/port를 쓰고 일부 코드는 구현체나 framework API를 직접 참조함
 - transaction, validation, exception mapping, DTO 변환 위치가 업무 영역마다 다름
 - 테스트 방식이 mock 중심, slice test, integration test로 나뉘며 대상 코드와 함께 반복됨
-- TODO/FIXME, deprecated annotation, suppressed warning, feature flag, profile 분기가 특정 구현 방식을 감쌈
+- pending-work 주석, deprecated annotation, suppressed warning, feature flag, profile 분기가 특정 구현 방식을 감쌈
 
 새 코드가 어떤 방식을 따라야 하는지 코드만으로 명확하지 않으면 임의로 정하지 않는다. 대신 `권장 주류`, `레거시 허용`, `충돌/확인 필요`를 구분하고 사용자 확인 항목에 남긴다.
 

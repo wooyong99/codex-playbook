@@ -2,6 +2,15 @@
 
 이 문서는 실제 코드베이스 기반으로 `docs/backend` 하위 문서를 생성·갱신할 때 사용하는 파일별 템플릿과 완료 전 검증 기준이다. 문서 위치 판단은 [backend-document-routing.md](backend-document-routing.md)가 소유하고, 이 문서는 파일을 실제로 작성할 때의 구조를 소유한다.
 
+## 문서 역할
+
+이 문서는 선택된 `docs/backend` 문서를 실제로 작성할 때의 섹션 구조와 완료 전 검증 기준만 소유한다.
+
+- 코드 분석과 confidence 판단은 [codebase-analysis-guide.md](codebase-analysis-guide.md)가 소유한다.
+- 문서 위치와 소유권 라우팅은 [backend-document-routing.md](backend-document-routing.md)가 소유한다.
+- 이 문서의 템플릿은 코드 근거를 정리하는 구조이며, 확인되지 않은 내용을 채우는 근거가 아니다.
+- 새 문서 생성 여부나 기존 문서 삭제·이전 판단을 이 문서에서 결정하지 않는다.
+
 ## 파일 작성 기준
 
 템플릿은 실제 코드에서 관찰한 사실을 담는 최소 구조로 사용한다. 문서 위치와 소유권 판단은 [backend-document-routing.md](backend-document-routing.md)를 먼저 따르고, 이 문서에서는 선택된 파일에 어떤 섹션을 둘지만 결정한다.
