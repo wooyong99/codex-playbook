@@ -28,7 +28,7 @@ frontend 산출물과 체크포인트는 run과 frontend 마일스톤 단위로 
 - `{role}`: `D`, `A`, `B`
 - `r{iter}`: 설계와 최초 구현은 `r00`, 첫 검토는 `r01`, 이후 frontend A-B 루프마다 증가한다.
 - `{kind}`: `design-result`, `implementation-result`, `review-result`, `fix-result`
-- `v1`: handoff artifact 파일명 스키마 버전. 파일 내용의 `schema_version`은 `implement-handoff/v1`로 고정한다.
+- `v1`: handoff artifact 파일명 스키마 버전. 파일 내용의 `schema_version`은 각 frontend D/A/B 계약 문서가 정한다.
 - 정상 결과를 다시 받아야 하면 새 `{seq}`를 할당한다. 같은 파일 경로 재사용은 동일 호출의 저장 실패 복구에만 허용한다.
 
 ## Frontend Handoff Artifact 처리
@@ -37,7 +37,7 @@ D/A/B는 `[결과 파일]`에 YAML payload를 저장하고, 같은 호출의 `[�
 
 `implement-frontend`의 처리 절차:
 
-1. 서브에이전트 호출 전에 `[결과 파일]` 절대 경로와 `[체크포인트 파일]` 절대 경로를 할당한다.
+1. 서브에이전트 호출 전에 `[결과 파일]` 절대 경로와 `[체크포인트 파일]` 절대 경로를 할당하고, 해당 계약 문서의 `Output > 역할별 체크포인트 기준`을 `[체크포인트 판단 기준]`으로 전달한다.
 2. 정상 결과 신호의 경로가 이번 호출에서 전달한 `[결과 파일]`과 일치하는지 확인한다.
 3. 해당 파일이 존재하고 비어 있지 않은지 확인한다.
 4. `schema_version`, `run_id`, `milestone`, `role`, `kind`, `status`, `payload` 같은 핵심 필드를 검증한다.

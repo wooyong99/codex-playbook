@@ -280,6 +280,7 @@ def main():
                 ("## Backend Handoff Artifact 처리", "backend handoff handling"),
                 ("## 체크포인트 처리", "backend checkpoint handling"),
                 ("역할별 체크포인트 판단 기준은 backend D/A/B 계약 문서가 단일 출처", "backend contract-owned checkpoint criteria"),
+                ("[체크포인트 판단 기준]", "backend protocol passes checkpoint criteria input"),
             ],
         ),
         (
@@ -299,6 +300,7 @@ def main():
                 ("backend-technical-design-writer-contract.md", "backend D contract"),
                 ("backend-implementation-engineer-contract.md", "backend A contract"),
                 ("backend-architecture-reviewer-contract.md", "backend B contract"),
+                ("[체크포인트 판단 기준]", "backend workflow checkpoint criteria input"),
                 ("## Escalation", "backend escalation workflow"),
             ],
         ),
@@ -319,6 +321,7 @@ def main():
                 ("## Frontend Handoff Artifact 처리", "frontend handoff handling"),
                 ("## 체크포인트 처리", "frontend checkpoint handling"),
                 ("역할별 체크포인트 판단 기준은 frontend D/A/B 계약 문서가 단일 출처", "frontend contract-owned checkpoint criteria"),
+                ("[체크포인트 판단 기준]", "frontend protocol passes checkpoint criteria input"),
             ],
         ),
         (
@@ -338,6 +341,7 @@ def main():
                 ("frontend-technical-design-writer-contract.md", "frontend D contract"),
                 ("frontend-implementation-engineer-contract.md", "frontend A contract"),
                 ("frontend-architecture-reviewer-contract.md", "frontend B contract"),
+                ("[체크포인트 판단 기준]", "frontend workflow checkpoint criteria input"),
                 ("## Escalation", "frontend escalation workflow"),
             ],
         ),
@@ -409,6 +413,8 @@ def main():
         require(errors, spec["contract"], contract, spec["title"], f"{name} checkpoint title")
         require(errors, spec["contract"], contract, "CONTEXT_CHECKPOINT:", f"{name} checkpoint signal")
         require(errors, spec["contract"], contract, "역할별 체크포인트 기준", f"{name} role checkpoint criteria")
+        require(errors, spec["contract"], contract, "[체크포인트 판단 기준]", f"{name} checkpoint criteria input field")
+        require(errors, spec["contract"], contract, "Output > 역할별 체크포인트 기준", f"{name} checkpoint criteria source pointer")
         require(errors, spec["contract"], contract, "단일 출처", f"{name} contract single source")
         require(
             errors,
@@ -511,6 +517,7 @@ def main():
                 ("docs/backend/architecture/**", "backend D architecture source candidates"),
                 ("docs/backend/policies/**", "backend D policy source candidates"),
                 ("docs/backend/design/**", "backend D design source candidates"),
+                ("implement-backend-design/v1", "backend D schema version"),
                 ("특정 unit 이름은 이 계약에서 고정하지 않는다", "backend D architecture unit neutrality"),
             ],
         ),
@@ -525,6 +532,7 @@ def main():
                 ("docs/frontend/performance/**", "frontend D performance source candidates"),
                 ("docs/frontend/ui-ux/**", "frontend D UI/UX source candidates"),
                 ("docs/frontend/design/**", "frontend D design source candidates"),
+                ("implement-frontend-design/v1", "frontend D schema version"),
             ],
         ),
         (
@@ -535,6 +543,7 @@ def main():
                 ("docs/backend/architecture/**", "backend A architecture source candidates"),
                 ("docs/backend/policies/**", "backend A policy source candidates"),
                 ("payload.tdd_path", "backend implementation TDD source candidate"),
+                ("implement-backend-implementation/v1", "backend implementation schema version"),
             ],
         ),
         (
@@ -547,6 +556,7 @@ def main():
                 ("docs/frontend/performance/**", "frontend A performance source candidates"),
                 ("docs/frontend/ui-ux/**", "frontend A UI/UX source candidates"),
                 ("payload.tdd_path", "frontend implementation TDD source candidate"),
+                ("implement-frontend-implementation/v1", "frontend implementation schema version"),
             ],
         ),
         (
@@ -560,6 +570,7 @@ def main():
                 ("docs/frontend/performance/**", "frontend reviewer performance source candidates"),
                 ("docs/frontend/ui-ux/**", "frontend reviewer UI/UX source candidates"),
                 ("payload.tdd_path", "frontend reviewer TDD source candidate"),
+                ("implement-frontend-review/v1", "frontend reviewer schema version"),
             ],
         ),
     ]
@@ -591,6 +602,7 @@ def main():
         ("docs/backend/architecture/**", "backend reviewer architecture source candidates"),
         ("docs/backend/policies/**", "backend reviewer policy source candidates"),
         ("payload.tdd_path", "backend reviewer TDD source candidate"),
+        ("implement-backend-review/v1", "backend reviewer schema version"),
         ("특정 unit 이름은 이 계약에서 고정하지 않는다", "backend reviewer architecture unit neutrality"),
         ("변경 파일 경로·A 결과 요약·D 결과의 설계 결정", "backend reviewer source selection basis"),
     ]:

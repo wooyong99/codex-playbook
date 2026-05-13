@@ -18,6 +18,7 @@
 - 현재 backend 마일스톤을 진행 중으로 표시한다.
 - 목표, 범위, 명시적 제외사항, compile/test 검증 기준을 다시 확인한다.
 - 이번 마일스톤의 handoff와 checkpoint 경로를 할당한다.
+- D/A/B 호출마다 해당 계약 문서의 `Output > 역할별 체크포인트 기준`을 `[체크포인트 판단 기준]`으로 전달한다.
 - backend Source of Truth 후보에서 이번 변경과 직접 관련된 문서만 선별한다.
 
 ## Step 2. Agent D 위임
@@ -32,6 +33,7 @@
 - 이번 설계에 적용할 `[Source of Truth]`
 - `[결과 파일]`
 - `[체크포인트 파일]`
+- `[체크포인트 판단 기준]`
 - `[출력 규격]`
 
 응답 처리:
@@ -62,7 +64,7 @@
 
 backend 변경 파일이 있으면 `backend-architecture-reviewer`를 호출하고, 프롬프트는 [backend-architecture-reviewer-contract.md](backend-architecture-reviewer-contract.md)의 Input 형식으로 구성한다.
 
-B에게는 A 구현 결과 파일, D 설계 결과 파일, 이번 검토의 `[Source of Truth]`, B의 `[결과 파일]`, `[체크포인트 파일]`, `[출력 규격]`을 전달한다. 기준 문서와 TDD 결정은 B 계약의 Input 필드로 전달하며, agent TOML이 정적으로 소유하지 않는다.
+B에게는 A 구현 결과 파일, D 설계 결과 파일, 이번 검토의 `[Source of Truth]`, B의 `[결과 파일]`, `[체크포인트 파일]`, `[체크포인트 판단 기준]`, `[출력 규격]`을 전달한다. 기준 문서와 TDD 결정은 B 계약의 Input 필드로 전달하며, agent TOML이 정적으로 소유하지 않는다.
 
 변경 파일이 문서 또는 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer를 추가로 적용한다. supplemental reviewer 결과도 Rule ID, severity, source_path를 포함해야 하며, `blocker` 또는 `major` 위반은 B 위반과 동일하게 수정 루프로 보낸다.
 
