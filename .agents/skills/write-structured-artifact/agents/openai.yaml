@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Structured Artifact"
+  short_description: "Create layered docs, skills, and agents"
+  default_prompt: "Use $write-structured-artifact to create or update Markdown files, skills, or subagents with purpose, responsibility, and flow before implementation details."
