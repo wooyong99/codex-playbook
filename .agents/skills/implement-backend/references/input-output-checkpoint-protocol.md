@@ -2,6 +2,15 @@
 
 이 문서는 `implement-backend` 스킬의 backend D/A/B input artifact, output artifact, 체크포인트 파일, 결과 신호, 검증 절차를 소유한다. 세부 input/output payload 스키마와 체크포인트 템플릿은 backend D/A/B 계약 문서가 단일 출처다.
 
+## 문서 역할
+
+이 문서는 저수준 실행 규격이다.
+
+- 전체 책임 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)를 따른다.
+- D/A/B 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)를 따른다.
+- 역할별 YAML payload와 체크포인트 판단 기준은 각 `*-contract.md`를 따른다.
+- 이 문서는 `.agents/runs/{run_id}` 하위 파일 구조, 결과 신호 검증, 체크포인트 복구 절차를 정의한다.
+
 ## 저장 위치
 
 backend 입력, 출력, 체크포인트는 run과 backend 마일스톤 단위로 저장한다.
@@ -76,7 +85,7 @@ D/A/B는 `[출력 파일]`에 YAML payload를 저장하고, 같은 호출의 `[�
 5. 두 번째도 실패하면 자동 루프를 멈추고 사용자에게 backend 체크포인트 프로토콜 실패를 보고한다.
 6. 검증이 통과하면 체크포인트 파일을 읽은 뒤, 계약 문서의 체크포인트 재호출 규격으로 같은 서브에이전트를 재호출한다.
 
-역할별 체크포인트 판단 기준은 backend D/A/B 계약 문서가 단일 출처로 가진다. `implement-backend`는 체크포인트 파일 경로를 전달하고, `CONTEXT_CHECKPOINT:` 응답을 복구 절차로 처리하는 책임만 가진다.
+역할별 체크포인트 판단 기준은 backend D/A/B 계약 문서가 단일 출처로 가진다. `implement-backend`는 해당 기준을 input artifact의 `checkpoint.criteria`로 전달하고, `CONTEXT_CHECKPOINT:` 응답을 복구 절차로 처리한다.
 
 ## 검증 스크립트
 

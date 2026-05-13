@@ -5,6 +5,15 @@
 
 ---
 
+## 문서 역할
+
+이 문서는 Agent B의 파일 기반 인터페이스만 정의한다.
+
+- Agent B의 역할 철학은 `.codex/agents/backend-architecture-reviewer.toml`이 제공한다.
+- B 호출과 재검토 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 결정한다.
+- 이 문서는 B input schema, B output schema, 결과 신호, 체크포인트 기준만 소유한다.
+- 메인 에이전트는 A output과 D output을 읽고 B input으로 재구성한다.
+
 ## Input
 
 오케스트레이터는 호출 전에 아래 input artifact를 저장하고, 서브에이전트에는 `[입력 파일]` 경로와 계약 파일 경로만 포함한 짧은 프롬프트를 전달한다.

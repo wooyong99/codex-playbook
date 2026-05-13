@@ -5,6 +5,15 @@
 
 ---
 
+## 문서 역할
+
+이 문서는 Agent A의 파일 기반 인터페이스만 정의한다.
+
+- Agent A의 역할 철학은 `.codex/agents/backend-implementation-engineer.toml`이 제공한다.
+- A 호출과 재호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 결정한다.
+- 이 문서는 신규 구현 input, 위반 수정 input, output schema, 결과 신호, 체크포인트 기준만 소유한다.
+- 메인 에이전트는 D/B output을 읽고 A input으로 재구성한다.
+
 ## Input
 
 ### Case A — 신규 구현

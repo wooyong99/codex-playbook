@@ -5,45 +5,86 @@ description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 �
 
 # implement-backend — 백엔드 구현 실행
 
-## 역할
+## 목적
 
-- backend 마일스톤을 기술설계(D), backend 구현(A), backend 아키텍처 검토(B), 위반 수정 루프로 실행한다.
-- Agent D는 `backend-technical-design-writer`를 사용하며, backend TDD가 필요하면 `write-backend-tech-design-doc` 스킬을 통해 문서를 작성한다.
-- Agent A는 `backend-implementation-engineer`를 사용한다.
-- Agent B는 `backend-architecture-reviewer`를 사용한다.
-- 문서 구조 변경과 보안 민감 변경은 필요한 경우 supplemental reviewer로 추가한다.
+`implement-backend`는 backend 변경을 하나 이상의 마일스톤으로 나누고, 각 마일스톤을 설계(D) → 구현(A) → 아키텍처 검토(B) → 수정 루프로 실행하는 backend 전용 오케스트레이션 스킬이다.
+
+이 문서는 스킬의 진입점이다. 전체 구조와 책임 경계만 설명하고, 세부 파일 규칙·YAML 스키마·체크포인트 템플릿은 references 문서가 소유한다.
+
+## 적용 범위
+
+포함:
+
+- backend 코드, 서버 설정, DB/schema, UseCase, domain, storage, external integration 변경
+- `docs/backend/**`에 직접 영향을 주는 backend 설계·정책·전략 변경
+- frontend가 소비할 API 계약 또는 미해결 backend 계약 정리
+
+제외:
+
+- frontend 화면, route, component, client cache, UI 상태 구현
+- backend 아키텍처 기준과 무관한 일반 코드 리뷰
+- 서브에이전트 간 직접 통신
 
 ## 참조 문서
 
-- backend 역할 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
-- backend 마일스톤 분할 기준: [references/milestone-planning.md](references/milestone-planning.md)
-- backend input/output/checkpoint 규약: [references/input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)
-- backend 실행 루프: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
+먼저 [references/README.md](references/README.md)를 읽고 문서 계층을 확인한다.
+
+핵심 개념 문서:
+
+- 책임 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
+- 마일스톤 계획: [references/milestone-planning.md](references/milestone-planning.md)
+- 실행 흐름: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
+
+세부 규격 문서:
+
+- input/output/checkpoint 규약: [references/input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)
 - D 계약: [references/backend-technical-design-writer-contract.md](references/backend-technical-design-writer-contract.md)
-- backend TDD 작성 스킬: [../write-backend-tech-design-doc/SKILL.md](../write-backend-tech-design-doc/SKILL.md)
 - A 계약: [references/backend-implementation-engineer-contract.md](references/backend-implementation-engineer-contract.md)
 - B 계약: [references/backend-architecture-reviewer-contract.md](references/backend-architecture-reviewer-contract.md)
 
-## 실행 원칙
+관련 스킬:
 
-- backend 코드와 `docs/backend/**`에 직접 영향을 주는 범위만 처리한다.
-- frontend 작업은 직접 구현하지 않고 `implement-frontend` 마일스톤으로 분리한다.
-- backend와 frontend가 함께 필요한 요청에서는 API 계약, 도메인 상태, 데이터 저장, 외부 연동을 먼저 안정화한다.
-- backend 변경 파일은 `backend-architecture-reviewer`가 검토한다.
-- secret, token, 인증/인가, 로그, 외부 연동 설정 변경은 `security-policy-reviewer`를 추가한다.
+- backend TDD 작성: [../write-backend-tech-design-doc/SKILL.md](../write-backend-tech-design-doc/SKILL.md)
 
-## 프로세스
+## 운영 모델
 
-1. 요구사항, 명시적 제외사항, 성공 기준을 backend 관점으로 고정한다.
-2. 마일스톤을 backend 도메인 경계, 트랜잭션 경계, 계층 경계, 검증 범위 기준으로 나눈다.
-3. run id와 input/output/checkpoint 경로를 할당한다.
-4. 필요한 경우 D를 호출해 backend TDD를 작성하거나 skip 근거를 받는다.
-5. A로 `backend-implementation-engineer`를 호출해 구현 또는 수정을 수행한다.
-6. B로 `backend-architecture-reviewer`를 호출해 B 계약 형식으로 전달한 이번 backend 검토의 `[Source of Truth]` 기준 준수 여부를 검토한다.
-7. 위반이 있으면 같은 backend A 인스턴스에 수정 작업을 맡기고 B를 새 인스턴스로 다시 호출한다.
-8. 모든 backend B와 필수 supplemental reviewer가 통과하면 마일스톤을 완료한다.
+`implement-backend`의 중심 책임은 메인 에이전트의 오케스트레이션이다.
 
-## 완료 산출물
+- 메인 에이전트는 요구사항을 backend 마일스톤으로 나눈다.
+- 메인 에이전트는 각 서브에이전트 호출 전에 input artifact를 저장한다.
+- 서브에이전트는 자기 역할의 output artifact와 checkpoint snapshot을 저장한다.
+- 메인 에이전트는 output을 검증하고, 다음 서브에이전트의 input artifact로 재구성한다.
+- B 또는 supplemental reviewer가 blocker/major 위반을 반환하면 같은 A 인스턴스에 수정 작업을 맡긴다.
+
+```text
+Backend request
+  -> Main agent plans backend milestones
+  -> D input -> D output
+  -> Main agent converts D output into A input
+  -> A output
+  -> Main agent converts A output into B input
+  -> B output
+  -> pass or A fix loop
+```
+
+## 역할
+
+- Agent D: `backend-technical-design-writer`
+- Agent A: `backend-implementation-engineer`
+- Agent B: `backend-architecture-reviewer`
+- Supplemental reviewer: 문서 구조 또는 보안 민감 변경이 포함될 때만 추가
+
+역할별 상세 책임은 [references/orchestration-boundaries.md](references/orchestration-boundaries.md)가 소유한다.
+
+## 실행 흐름
+
+1. backend 범위, 제외사항, 성공 기준을 확정한다.
+2. [milestone-planning.md](references/milestone-planning.md)에 따라 마일스톤을 나눈다.
+3. [input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)에 따라 run 경로를 준비한다.
+4. [milestone-execution-workflow.md](references/milestone-execution-workflow.md)에 따라 D/A/B 루프를 실행한다.
+5. 모든 필수 reviewer가 통과하면 backend 마일스톤을 완료한다.
+
+## 완료 기준
 
 - backend 마일스톤별 D/A/B input/output 파일 경로
 - backend 변경 파일 목록
