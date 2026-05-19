@@ -1,6 +1,6 @@
 # Frontend
 
-codex-playbook 프론트엔드 문서. 아키텍처, 컨벤션, 성능, UI/UX 가이드라인으로 구성된다.
+BiGS Groupware 프론트엔드 문서. 아키텍처, 컨벤션, 성능, UI/UX 가이드라인으로 구성된다.
 
 ---
 
@@ -9,7 +9,7 @@ codex-playbook 프론트엔드 문서. 아키텍처, 컨벤션, 성능, UI/UX �
 ```
 docs/frontend/
 ├── getting-started.md  # 오리엔테이션 (기술 스택, 프로젝트 구성, 로컬 실행)
-├── architecture/       # FSD 아키텍처, 폴더 구조, 상태 관리
+├── architecture/       # FSD 아키텍처, 라우팅, 상태, 런타임, 테스트·성능 기준
 ├── conventions/        # 코드/네이밍/컴포넌트/API 컨벤션
 ├── design/             # 프론트엔드 기술설계문서(TDD)
 ├── performance/        # 렌더링/캐싱/리스트 최적화
@@ -23,7 +23,7 @@ docs/frontend/
 | 영역 | 진입점 | 설명 |
 |------|--------|------|
 | 시작하기 | [getting-started.md](getting-started.md) | 기술 스택, 프로젝트 구성, 로컬 실행 |
-| 아키텍처 | [architecture/README.md](architecture/README.md) | FSD 아키텍처, 폴더 구조, 상태 관리 |
+| 아키텍처 | [architecture/README.md](architecture/README.md) | FSD 아키텍처, 폴더 구조, 상태, 라우팅, 런타임, 테스트·성능 기준 |
 | 컨벤션 | [conventions/README.md](conventions/README.md) | 코드, 네이밍, 컴포넌트, API 컨벤션 |
 | 설계 | [design/README.md](design/README.md) | 프론트엔드 기술설계문서(TDD) |
 | 성능 | [performance/README.md](performance/README.md) | 렌더링, 캐싱, 리스트 최적화 |

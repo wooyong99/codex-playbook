@@ -1,234 +1,377 @@
 # State Management
 
-상태를 어디에, 어떻게 두는지에 대한 기준을 정의한다.
+## 목적
 
----
+이 문서는 FSD 구조 안에서 상태를 어디에 두고, 서버 캐시를 어떻게 관리하며, mutation 후 화면을 어떻게 갱신할지 정의한다.
+
+핵심 원칙은 **서버 상태는 React Query, 전역 클라이언트 상태는 Zustand, 단기 UI 상태는 local state**로 분리하는 것이다.
+
+## 적용 범위
+
+포함:
+
+- layer별 상태 위치 기준
+- React Query 위치와 query key 전략
+- Zustand 사용 기준
+- local state와 derived state 기준
+- mutation, invalidation, optimistic update, rollback 기준
+
+제외:
+
+- error/loading UI 표현 기준: [runtime-strategies](runtime-strategies.md)
+- 성능 최적화의 memoization 기준: [testing-and-performance](testing-and-performance.md)
 
 ## 상태 분류
 
-| 분류 | 설명 | 예시 |
-|------|------|------|
-| 서버 상태 | 서버에서 fetch한 데이터. 캐싱, 동기화 필요 | 상품 목록, 카테고리 |
-| 전역 클라이언트 상태 | 여러 컴포넌트가 공유해야 하는 앱 상태 | 인증 정보, 사이드바 열림 상태 |
-| 로컬 UI 상태 | 단일 컴포넌트 내에서만 유효한 상태 | 모달 열림 여부, input 포커스 |
-| 폼 상태 | 사용자 입력값 및 검증 상태 | 등록 폼 필드, 에러 메시지 |
+| 분류 | 소유 도구 | 예시 | 위치 |
+| --- | --- | --- | --- |
+| 서버 상태 | React Query | 사용자 목록, 부서 상세, 결재 문서 | `entities/*/api`, `features/*/model` |
+| 전역 클라이언트 상태 | Zustand | 인증 세션, 테마, 사이드바 열림 | `app` 또는 제한된 `shared/config`/전용 slice |
+| route 상태 | Router/search params | page, tab, filter query string | `pages/*/model` |
+| local UI 상태 | `useState`, `useReducer` | modal open, focused item, selected row draft | 해당 컴포넌트 또는 가까운 부모 |
+| form 상태 | form library 또는 local state | 입력값, validation error | `features/*/model` 또는 form component |
+| derived state | 변수 또는 `useMemo` | count, filtered list, disabled 여부 | 저장하지 않음 |
 
----
+## Layer별 상태 기준
 
-## 전역 상태 사용 기준
+### app
 
-전역 상태는 아래 조건을 **모두** 충족할 때만 도입한다.
+허용:
 
-1. **두 개 이상의 슬라이스(features, widgets, pages)** 에서 동일한 값을 공유해야 할 때
-2. **props로 전달하기 어려운 구조**일 때 (컴포넌트 트리 깊이가 깊거나 관계가 없는 컴포넌트 간 공유)
-3. **서버 상태가 아닌** 순수 클라이언트 상태일 때 (서버 상태는 React Query로 관리)
+- provider 초기화 상태
+- 인증 세션 복원 상태
+- feature flag, theme, locale 같은 앱 전역 설정
 
-### 전역 상태로 관리하는 항목
+금지:
 
-- 인증 정보 (액세스 토큰, 사용자 정보)
-- UI 전역 설정 (사이드바 열림 상태, 테마)
+- 특정 화면의 filter, modal, selected row
+- 업무 entity 목록을 전역 store에 저장
+- React Query data를 Zustand로 복사
 
-### 전역 상태로 관리하지 않는 항목
+### pages
 
-- 서버에서 가져온 데이터 → React Query로 관리
-- 단일 컴포넌트 내 UI 상태 → `useState`로 관리
-- 폼 입력값 → 로컬 상태 또는 폼 라이브러리로 관리
+허용:
 
----
+- route params/search params 해석
+- page-level tab, filter draft, selected id
+- page composition에 필요한 local state
 
-## Props Drilling 방지 기준
+금지:
 
-props drilling은 **2단계까지 허용**한다. 3단계 이상으로 전달해야 하는 경우 아래 방법 중 하나를 선택한다.
+- 재사용 가능한 action state
+- 공통 entity cache
+- 복잡한 mutation orchestration
 
-### 판단 기준
+기준:
 
-```
-Page → Widget → Feature      ← 2단계, 허용
-Page → Widget → Feature → UI ← 3단계, 개선 필요
-```
+- URL로 복원되어야 하는 값은 search params에 둔다.
+- URL과 무관한 단기 UI 상태는 local state로 둔다.
 
-### 해결 방법
+### widgets
 
-| 상황 | 해결 방법 |
-|------|-----------|
-| 서버 데이터를 여러 하위 컴포넌트가 사용 | React Query 훅을 하위 컴포넌트에서 직접 호출 |
-| 컴포넌트 합성으로 해결 가능한 경우 | children 또는 render props 패턴 |
-| 동일 레이어 내 여러 컴포넌트가 상태 공유 | 공통 부모로 상태 끌어올리기 |
-| 슬라이스 간 공유가 필요한 UI 상태 | 전역 클라이언트 상태 (Zustand 등) |
+허용:
 
-> 서버 상태를 전달하기 위해 props drilling을 하는 경우, 하위 컴포넌트에서 React Query 훅을 직접 호출하는 것이 우선이다.
+- section 내부 표시 상태
+- table column visibility, local sorting draft, panel open state
+- 여러 feature/entity를 조합하는 view model
 
----
+금지:
 
-## Derived State 원칙
+- widget 외부에서도 필요한 global state를 숨김
+- feature mutation 결과를 자체 store에 복사
 
-이미 존재하는 상태에서 파생할 수 있는 값은 별도 상태로 저장하지 않는다.
+### features
 
-### 금지 패턴
+허용:
 
-```ts
-// 금지: items에서 파생 가능한 값을 별도 상태로 저장
-const [items, setItems] = useState<Item[]>([])
-const [count, setCount] = useState(0)   // items.length와 동일
+- action form state
+- mutation state
+- optimistic update context
+- 액션 수행에 필요한 짧은 lived state
 
-useEffect(() => {
-  setCount(items.length)
-}, [items])
-```
+금지:
 
-### 올바른 패턴
+- read model cache를 feature local store에 장기 보관
+- 여러 feature가 공유해야 하는 entity model 소유
 
-```ts
-// 허용: 렌더링 시점에 계산
-const [items, setItems] = useState<Item[]>([])
-const count = items.length  // 파생값은 변수로 선언
+### entities
 
-// 계산 비용이 높은 경우 useMemo 사용
-const expensiveValue = useMemo(() => computeExpensive(items), [items])
-```
+허용:
 
-### 판단 기준
+- entity query key
+- read query hook
+- entity model mapper
+- entity display helper
 
-- 다른 상태나 props로부터 **계산 가능한 값**이라면 `useState` 사용 금지
-- 계산 비용이 낮으면 단순 변수로 선언
-- 계산 비용이 높으면 `useMemo`로 메모이제이션
-- `useEffect`로 상태를 동기화하는 패턴은 derived state의 신호 — 제거를 검토한다
+금지:
 
----
+- 사용자 액션별 mutation workflow
+- 화면 전용 filter draft
+- 다른 entity의 cache 직접 수정
 
-## 폼 상태 처리 기준
+### shared
 
-### 단순 폼 (필드 3개 이하, 단순 검증)
+허용:
 
-`useState`로 직접 관리한다.
+- 상태 도구의 기술적 adapter
+- storage wrapper
+- 범용 event bus는 매우 제한적으로 허용
 
-```ts
-const [email, setEmail] = useState('')
-const [password, setPassword] = useState('')
-```
+금지:
 
-### 복잡한 폼 (필드 다수, 복잡한 검증, 다단계)
+- 업무 store
+- entity/feature 이름이 들어간 store
+- 서버 상태 cache 대체 store
 
-폼 라이브러리를 도입한다. (예: React Hook Form)
+## React Query 위치 기준
 
-```ts
-const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
-  resolver: zodResolver(schema),
-})
-```
+기본 위치:
 
-### 기준 요약
+- entity read query: `entities/{entity}/api`
+- entity query key: `entities/{entity}/model`
+- feature mutation: `features/{action}/model`
+- feature 전용 API call: `features/{action}/api`
+- app bootstrap query: `app/providers` 또는 `app/model`
 
-| 조건 | 방법 |
-|------|------|
-| 필드 1~3개, 검증 단순 | `useState` |
-| 필드 4개 이상 또는 복잡한 검증 | React Hook Form + Zod |
-| 다단계 폼, 조건부 필드 | React Hook Form |
-
-### 공통 원칙
-
-- 폼 상태는 해당 feature 또는 컴포넌트 내에서만 관리한다. 전역 상태로 올리지 않는다.
-- 제출 후 폼 초기화는 라이브러리의 `reset()` 또는 상태 초기값으로 처리한다.
-- 서버 에러는 폼 상태와 별도로 관리한다 (`setError` 또는 로컬 상태).
-
----
-
-## 캐시 Invalidation 기준
-
-React Query를 기준으로 한다.
-
-### Invalidation 트리거 시점
-
-| 액션 | Invalidation 대상 |
-|------|------------------|
-| 데이터 생성 (POST) | 해당 엔티티 목록 쿼리 |
-| 데이터 수정 (PUT/PATCH) | 해당 엔티티 목록 + 상세 쿼리 |
-| 데이터 삭제 (DELETE) | 해당 엔티티 목록 쿼리 |
-
-### 쿼리 키 설계
-
-쿼리 키는 계층적으로 설계하여 범위 invalidation이 가능하도록 한다.
+Entity query 예시:
 
 ```ts
-// 쿼리 키 팩토리
-export const categoryKeys = {
-  all: ['categories'] as const,
-  lists: () => [...categoryKeys.all, 'list'] as const,
-  list: (params: CategoryListParams) => [...categoryKeys.lists(), params] as const,
-  detail: (id: string) => [...categoryKeys.all, 'detail', id] as const,
+// entities/department/model/departmentKeys.ts
+export const departmentKeys = {
+  all: ["department"] as const,
+  lists: () => [...departmentKeys.all, "list"] as const,
+  list: (params: DepartmentListParams) => [...departmentKeys.lists(), params] as const,
+  details: () => [...departmentKeys.all, "detail"] as const,
+  detail: (id: DepartmentId) => [...departmentKeys.details(), id] as const,
 }
 ```
 
 ```ts
-// 목록 전체 invalidation
-queryClient.invalidateQueries({ queryKey: categoryKeys.lists() })
-
-// 특정 항목 invalidation
-queryClient.invalidateQueries({ queryKey: categoryKeys.detail(id) })
-
-// 엔티티 전체 invalidation
-queryClient.invalidateQueries({ queryKey: categoryKeys.all })
+// entities/department/api/useDepartmentDetailQuery.ts
+export function useDepartmentDetailQuery(id: DepartmentId) {
+  return useQuery({
+    queryKey: departmentKeys.detail(id),
+    queryFn: () => departmentApi.getDetail(id),
+  })
+}
 ```
 
-### Optimistic Update 기준
-
-- 단순 목록 변경(삭제, 상태 토글)은 optimistic update를 적용해 UX를 개선한다.
-- 복잡한 연산(결제, 재고 차감 등)은 서버 응답 후 invalidation 방식을 사용한다.
-
----
-
-## 삭제/수정 후 재조회 방식 기준
-
-### 기본 원칙
-
-삭제 또는 수정 성공 후 **화면에 반영하는 기준은 Invalidation + 자동 재조회**이다. 로컬 상태를 직접 수정하는 방식은 서버 상태와 불일치를 야기할 수 있으므로 사용하지 않는다.
-
-### 삭제 처리
+Feature mutation 예시:
 
 ```ts
-const deleteMutation = useMutation({
-  mutationFn: (id: string) => categoryApi.delete(id),
-  onSuccess: () => {
-    // 목록 쿼리 무효화 → 자동 재조회
-    queryClient.invalidateQueries({ queryKey: categoryKeys.lists() })
-  },
-})
+// features/assign-department-leader/model/useAssignDepartmentLeaderMutation.ts
+export function useAssignDepartmentLeaderMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: assignDepartmentLeaderApi,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: departmentKeys.detail(variables.departmentId) })
+      queryClient.invalidateQueries({ queryKey: departmentKeys.lists() })
+    },
+  })
+}
 ```
 
-### 수정 처리
+## Query Key 전략
+
+원칙:
+
+- query key는 entity 기준으로 grouping한다.
+- key factory는 entity `model`이 소유한다.
+- 문자열 literal을 컴포넌트에 직접 흩뿌리지 않는다.
+- 목록, 상세, 검색, 통계 key를 계층적으로 둔다.
+
+Naming:
+
+- root key는 entity singular: `["department"]`
+- list group: `lists()`
+- specific list: `list(params)`
+- detail group: `details()`
+- specific detail: `detail(id)`
+- aggregate/stat: `stats(params)` 또는 `summary(params)`
+
+금지:
 
 ```ts
-const updateMutation = useMutation({
-  mutationFn: (data: UpdateCategoryRequest) => categoryApi.update(data),
-  onSuccess: (_, variables) => {
-    // 목록 + 상세 모두 무효화
-    queryClient.invalidateQueries({ queryKey: categoryKeys.lists() })
-    queryClient.invalidateQueries({ queryKey: categoryKeys.detail(variables.id) })
-  },
-})
+useQuery({ queryKey: ["department-list"], queryFn: ... })
+useQuery({ queryKey: ["getDepartment", id], queryFn: ... })
 ```
 
-### 예외: 즉각적인 UI 반응이 필요한 경우
-
-사용자 경험상 서버 응답 대기 시간이 체감될 수 있는 경우, optimistic update를 적용하되 실패 시 롤백을 반드시 구현한다.
+허용:
 
 ```ts
-const deleteMutation = useMutation({
-  mutationFn: categoryApi.delete,
-  onMutate: async (id) => {
-    await queryClient.cancelQueries({ queryKey: categoryKeys.lists() })
-    const previous = queryClient.getQueryData(categoryKeys.lists())
-    queryClient.setQueryData(categoryKeys.lists(), (old) =>
-      old?.filter((item) => item.id !== id)
-    )
-    return { previous }
-  },
-  onError: (_, __, context) => {
-    // 실패 시 이전 상태로 복구
-    queryClient.setQueryData(categoryKeys.lists(), context?.previous)
-  },
-  onSettled: () => {
-    queryClient.invalidateQueries({ queryKey: categoryKeys.lists() })
-  },
-})
+useQuery({ queryKey: departmentKeys.detail(id), queryFn: ... })
 ```
+
+Invalidation 범위:
+
+- 생성: list group invalidation
+- 수정: detail + 관련 list invalidation
+- 삭제: detail remove 또는 invalidate + list invalidation
+- 순서 변경: affected list invalidation
+- 권한/인증 변경: session 또는 permission 관련 root invalidation
+
+## Mutation 전략
+
+기본 원칙:
+
+- mutation 후에는 invalidation을 우선한다.
+- cache 직접 수정은 즉각적인 UX가 중요하거나 서버 응답이 충분히 신뢰 가능한 경우만 허용한다.
+- optimistic update는 rollback을 반드시 구현한다.
+
+Invalidation 우선:
+
+```ts
+onSuccess: (_, variables) => {
+  queryClient.invalidateQueries({ queryKey: departmentKeys.detail(variables.id) })
+  queryClient.invalidateQueries({ queryKey: departmentKeys.lists() })
+}
+```
+
+Cache 직접 수정 허용 기준:
+
+- 단일 entity detail 갱신처럼 영향 범위가 명확하다.
+- 서버 응답이 최신 canonical model이다.
+- list ordering, permission, aggregate count에 영향을 주지 않는다.
+
+Optimistic update 허용 기준:
+
+- 토글, 즐겨찾기, 단일 필드 변경처럼 실패 시 복구가 단순하다.
+- 사용자 체감 latency가 중요하다.
+- 실패하면 이전 snapshot으로 복구할 수 있다.
+
+Optimistic update 금지 또는 주의:
+
+- 결재 승인, 결제, 재고, 권한 변경처럼 업무 영향이 큰 mutation
+- 서버에서 복잡한 cascade가 발생하는 mutation
+- 목록 정렬과 count가 복잡하게 바뀌는 mutation
+
+Rollback 기본 구조:
+
+```ts
+onMutate: async (variables) => {
+  await queryClient.cancelQueries({ queryKey: departmentKeys.detail(variables.id) })
+  const previous = queryClient.getQueryData(departmentKeys.detail(variables.id))
+
+  queryClient.setQueryData(departmentKeys.detail(variables.id), draft => ({
+    ...draft,
+    name: variables.name,
+  }))
+
+  return { previous }
+},
+onError: (_, variables, context) => {
+  queryClient.setQueryData(departmentKeys.detail(variables.id), context?.previous)
+},
+onSettled: (_, __, variables) => {
+  queryClient.invalidateQueries({ queryKey: departmentKeys.detail(variables.id) })
+}
+```
+
+## Zustand 사용 기준
+
+Zustand는 서버 상태 캐시가 아니라 전역 클라이언트 상태 저장소다.
+
+허용:
+
+- 인증 세션과 client-side auth 상태
+- theme, layout preference, sidebar open
+- 앱 전체에서 공유되는 ephemeral UI preference
+
+금지:
+
+- React Query data 복사
+- entity list/detail 보관
+- form state 전역화
+- mutation 결과를 store에 저장하고 query invalidation 생략
+
+Store 위치:
+
+- 앱 전역 store: `app/model` 또는 `app/providers` 주변
+- 순수 기술 preference: `shared/config` 또는 별도 app-level store
+- 업무 slice 전용 store: 해당 feature/widget `model`
+
+Store 설계:
+
+- store는 작게 유지한다.
+- action 이름은 업무 의도를 드러낸다.
+- persist는 필요한 state만 whitelist한다.
+- 서버 동기화가 필요한 값은 persist하지 않는다.
+
+## Local State 기준
+
+local state를 우선한다:
+
+- 한 컴포넌트 또는 가까운 하위 트리에서만 사용한다.
+- URL 복원이 필요 없다.
+- 서버와 동기화할 필요가 없다.
+- 닫히면 사라져도 되는 값이다.
+
+가까운 부모로 올린다:
+
+- sibling 컴포넌트 둘 이상이 같은 값을 사용한다.
+- children composition으로 전달 가능하다.
+
+전역으로 올리지 않는다:
+
+- props drilling을 피하고 싶다는 이유만으로는 부족하다.
+- 2단계 전달은 허용한다.
+- 3단계 이상이면 composition 또는 slice 재설계를 먼저 검토한다.
+
+## Derived State 금지
+
+저장하지 않는다:
+
+- `items.length`
+- `selectedIds.includes(id)`
+- `query.data`에서 계산 가능한 filtered list
+- props에서 계산 가능한 disabled 여부
+
+허용 방식:
+
+```ts
+const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds])
+const visibleItems = useMemo(() => filterItems(items, filters), [items, filters])
+const isSubmitDisabled = !form.name || mutation.isPending
+```
+
+금지 방식:
+
+```ts
+const [count, setCount] = useState(0)
+useEffect(() => setCount(items.length), [items])
+```
+
+## Form State 기준
+
+단순 form:
+
+- 필드 1~3개
+- validation 단순
+- submit side effect 단순
+- local state 허용
+
+복잡한 form:
+
+- 필드 4개 이상
+- nested field 또는 conditional field
+- 서버 validation error mapping 필요
+- React Hook Form + schema validation 권장
+
+위치:
+
+- 사용자 action form은 feature `model/ui`가 소유한다.
+- page 전용 filter form은 page 또는 widget `model`이 소유한다.
+- entity는 form state를 소유하지 않는다.
+
+## 검토 체크리스트
+
+- 이 값은 서버 canonical data인가? 그렇다면 React Query에 둔다.
+- 이 값은 URL로 복원되어야 하는가? 그렇다면 route/search params를 우선한다.
+- 이 값은 닫히면 사라져도 되는가? 그렇다면 local state다.
+- 이 값은 여러 unrelated slice에서 필요한가? 그렇다면 Zustand를 검토한다.
+- derived state를 저장하고 있지 않은가?
+- query data를 Zustand로 복사하지 않았는가?
+- mutation 후 cache 갱신 범위가 query key factory로 표현되는가?
+- optimistic update에는 rollback이 있는가?
