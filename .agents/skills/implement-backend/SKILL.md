@@ -1,6 +1,6 @@
 ---
 name: implement-backend
-description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 모델 변경, storage/external/app/application 계층 변경을 기술설계(D) → backend 구현(A) → backend 아키텍처 검토(B) → 수정 루프로 실행하는 스킬. backend-only 요청이거나 `implement` 라우터가 backend 마일스톤으로 분류한 작업에 사용한다.
+description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 모델 변경, storage/external/app/application 계층 변경을 기술설계(D) → backend 구현(A) → backend 아키텍처 검토(B) → 수정 루프로 실행하는 스킬. backend-only 요청이거나 backend 마일스톤 입력 artifact가 주어진 작업에 사용한다.
 ---
 
 # implement-backend — 백엔드 구현 실행
@@ -83,6 +83,13 @@ Backend request
 3. [input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)에 따라 run 경로를 준비한다.
 4. [milestone-execution-workflow.md](references/milestone-execution-workflow.md)에 따라 D/A/B 루프를 실행한다.
 5. 모든 필수 reviewer가 통과하면 backend 마일스톤을 완료한다.
+
+## 검증
+
+backend 실행 규약, 계약 문서, 서브에이전트 정의를 수정한 뒤에는 아래 검증을 수행한다.
+
+- `python3 /Users/a1004/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/implement-backend`
+- `python3 .agents/skills/write-structured-artifact/scripts/check_structured_artifact.py .agents/skills/implement-backend/SKILL.md .agents/skills/implement-backend/references/*.md`
 
 ## 완료 기준
 

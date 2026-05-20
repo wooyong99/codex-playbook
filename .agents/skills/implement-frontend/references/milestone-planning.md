@@ -24,6 +24,8 @@ frontend 마일스톤은 하나의 사용자 흐름 또는 하나의 화면 책�
 - `목표`: 사용자 관점 frontend 결과 1개
 - `범위`: 포함할 route/page, feature/entity, component, state/API/cache 영역
 - `명시적 제외사항`: 사용자 요청 또는 마일스톤 분할상 제외된 항목. 없으면 "없음"
+- `입력 근거`: 상위 input artifact에 포함된 사용자 흐름·화면·상태·계약 근거. 없으면 "없음"
+- `계약 근거`: frontend가 소비해야 할 API/UI/data 계약. 없으면 "없음"
 - `검증 기준`: 실행할 build/test 또는 브라우저 검증 명령
 - `backend 계약`: 필요한 API 계약 또는 불확실성. 없으면 "없음"
 - `예상 변경 파일 수`: 가능하면 3~8개
@@ -36,6 +38,8 @@ frontend 마일스톤은 하나의 사용자 흐름 또는 하나의 화면 책�
 
 - route/page, feature/entity, component, state, API client, cache, rendering, UI/UX 중 무엇이 바뀌는가
 - 명시적 제외사항은 무엇인가
+- 상위 input artifact의 사용자 흐름, 화면 설계, 상태별 피드백 중 frontend 책임은 무엇인가
+- 상위 input artifact의 계약 근거 중 frontend가 소비해야 할 API/UI/data 계약은 무엇인가
 - API 계약과 backend 응답 shape가 확정돼 있는가
 - 상태 소유권, cache key, invalidation, loading/error/empty 상태가 필요한가
 - 브라우저 검증, 반응형, 접근성, 시각 검증 기준이 무엇인가
@@ -69,6 +73,7 @@ frontend 마일스톤은 하나의 사용자 흐름 또는 하나의 화면 책�
 
 - 단일 화면의 작은 상태 추가는 보통 1개 frontend 마일스톤으로 둔다.
 - API client와 화면 상태가 함께 바뀌는 기능은 설계, 구현, 검증이 한 루프에서 끝나는지 먼저 판단한다.
+- 상위 input artifact에 병렬 구현 가능 여부나 선행 관계가 명시되어 있으면 해당 값을 마일스톤 선행 관계 판단에 반영한다.
 - 여러 화면에 걸친 기능은 보통 2~4개 frontend 마일스톤으로 나눈다.
 - 전역 상태 구조, routing 구조, cache 전략 리팩토링은 5개 이상 마일스톤을 허용하되 사용자에게 진행 여부를 먼저 확인한다.
 

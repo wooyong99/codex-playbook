@@ -62,7 +62,6 @@
 
 - backend 변경은 `implement-frontend`에서 직접 구현하지 않는다.
 - backend API 계약이 필요한 경우 계약, 불확실성, 선행 backend 마일스톤 필요 여부를 명시한다.
-- frontend와 backend가 함께 필요한 경우 backend API 계약이 안정된 뒤 frontend 상태/API/cache/UI 구현을 진행한다.
 - 문서 구조 변경은 `documentation-governance-reviewer`를 추가한다.
 - secret, token, 인증/인가, 민감 정보 노출, 외부 연동 설정 변경은 `security-policy-reviewer`를 추가한다.
 - 계약 문서의 예시 문구를 프로젝트 사실처럼 복사하지 않는다.

@@ -170,6 +170,12 @@ def main():
     errors = []
 
     implement_path = ROOT / ".agents/skills/implement/SKILL.md"
+    planning_skill_path = ROOT / ".agents/skills/plan-implementation-requirements/SKILL.md"
+    api_spec_skill_path = ROOT / ".agents/skills/write-api-spec/SKILL.md"
+    planning_agent_path = ROOT / ".codex/agents/product-planning-designer.toml"
+    api_contract_agent_path = ROOT / ".codex/agents/api-contract-designer.toml"
+    planning_contract_path = ROOT / ".agents/skills/plan-implementation-requirements/references/product-planning-designer-contract.md"
+    api_contract_path = ROOT / ".agents/skills/write-api-spec/references/api-contract-designer-contract.md"
     backend_skill_path = ROOT / ".agents/skills/implement-backend/SKILL.md"
     frontend_skill_path = ROOT / ".agents/skills/implement-frontend/SKILL.md"
     boundaries_path = ROOT / ".agents/skills/implement/references/orchestration-boundaries.md"
@@ -198,8 +204,34 @@ def main():
         ("references/milestone-planning.md", "milestone planning reference"),
         ("references/input-output-checkpoint-protocol.md", "input output checkpoint protocol reference"),
         ("references/milestone-execution-workflow.md", "milestone execution workflow reference"),
+        ("plan-implementation-requirements", "planning skill reference"),
+        ("write-api-spec", "api spec skill reference"),
     ]:
         require(errors, implement_path, implement, needle, reason)
+
+    planning_skill = read(planning_skill_path)
+    for needle, reason in [
+        ("name: plan-implementation-requirements", "planning skill name"),
+        ("product-planning-designer", "planning designer agent"),
+        ("references/product-planning-designer-contract.md", "planning contract reference"),
+        ("references/planning-artifact-template.md", "planning template reference"),
+        ("업무 흐름", "business flow planning artifact"),
+        ("정책 정의서", "policy planning artifact"),
+        ("상태 정의서", "state planning artifact"),
+        ("화면 설계서", "screen planning artifact"),
+    ]:
+        require(errors, planning_skill_path, planning_skill, needle, reason)
+
+    api_spec_skill = read(api_spec_skill_path)
+    for needle, reason in [
+        ("name: write-api-spec", "api spec skill name"),
+        ("api-contract-designer", "api contract designer agent"),
+        ("references/api-contract-designer-contract.md", "api contract reference"),
+        ("references/api-spec-template.md", "api spec template reference"),
+        ("stable_for_parallel", "parallel readiness field"),
+        ("request/response", "request response contract"),
+    ]:
+        require(errors, api_spec_skill_path, api_spec_skill, needle, reason)
 
     backend_skill = read(backend_skill_path)
     for needle, reason in [
@@ -270,6 +302,8 @@ def main():
             workflow_path,
             [
                 ("# Router Milestone Execution Workflow", "router workflow title"),
+                ("## Step 0. 기획 산출물 준비", "planning preparation step"),
+                ("## Step 0.5. API 스펙 준비", "api spec preparation step"),
                 ("## Step 1. 요청 분류", "router classification step"),
                 ("## Step 2. Fullstack 분해", "fullstack split step"),
                 ("## Step 3. 영역별 실행 스킬 호출", "area skill execution step"),
@@ -693,6 +727,61 @@ def main():
         for needle in implement_coupling_banned:
             if agent_text is not None and needle in agent_text:
                 errors.append(f"{path}: agent TOML should not embed implement-specific, skill-specific, or static source text: {needle}")
+
+    planning_agent = read(planning_agent_path)
+    for needle, reason in [
+        ("Product Planning Designer", "planning agent identity"),
+        ("업무 흐름", "planning agent business flow lens"),
+        ("정책", "planning agent policy lens"),
+        ("상태", "planning agent state lens"),
+        ("화면", "planning agent screen lens"),
+        ("응답을 생략하지 않는다", "planning agent response guarantee"),
+    ]:
+        require(errors, planning_agent_path, planning_agent, needle, reason)
+
+    api_contract_agent = read(api_contract_agent_path)
+    for needle, reason in [
+        ("API Contract Designer", "api contract agent identity"),
+        ("backend와 frontend", "api contract agent cross-area contract"),
+        ("병렬", "api contract agent parallel readiness lens"),
+        ("오류", "api contract agent error lens"),
+        ("응답을 생략하지 않는다", "api contract agent response guarantee"),
+    ]:
+        require(errors, api_contract_agent_path, api_contract_agent, needle, reason)
+
+    planning_contract = read(planning_contract_path)
+    for needle, reason in [
+        ("# Product Planning Designer", "planning contract title"),
+        ("plan-implementation-requirements-input/v1", "planning input schema"),
+        ("plan-implementation-requirements/v1", "planning output schema"),
+        ("PLANNING_CREATED:", "planning completion signal"),
+        ("NEEDS_CLARIFICATION:", "planning clarification signal"),
+        ("CONTEXT_CHECKPOINT:", "planning checkpoint signal"),
+        ("artifacts.output_file", "planning output artifact path field"),
+        ("artifacts.checkpoint_file", "planning checkpoint artifact path field"),
+        ("업무 흐름", "planning business flow output"),
+        ("정책", "planning policy output"),
+        ("상태", "planning state output"),
+        ("화면", "planning screen output"),
+    ]:
+        require(errors, planning_contract_path, planning_contract, needle, reason)
+
+    api_contract = read(api_contract_path)
+    for needle, reason in [
+        ("# API Contract Designer", "api contract title"),
+        ("write-api-spec-input/v1", "api spec input schema"),
+        ("write-api-spec/v1", "api spec output schema"),
+        ("API_SPEC_CREATED:", "api spec completion signal"),
+        ("API_SPEC_BLOCKED:", "api spec blocked signal"),
+        ("CONTEXT_CHECKPOINT:", "api spec checkpoint signal"),
+        ("artifacts.output_file", "api spec output artifact path field"),
+        ("artifacts.checkpoint_file", "api spec checkpoint artifact path field"),
+        ("stable_for_parallel", "api spec parallel readiness field"),
+        ("operations:", "api spec operations section"),
+        ("frontend_consumption", "api spec frontend consumption section"),
+        ("backend_implementation_notes", "api spec backend notes section"),
+    ]:
+        require(errors, api_contract_path, api_contract, needle, reason)
 
     if errors:
         print("FAIL context checkpoint contract validation")

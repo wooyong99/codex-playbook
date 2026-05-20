@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write API Spec"
+  short_description: "기획 산출물로 backend/frontend API 스펙을 작성합니다"
+  default_prompt: "Use $write-api-spec to derive backend and frontend API specs from planning artifacts."

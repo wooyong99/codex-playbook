@@ -12,7 +12,7 @@
 | L1 | [orchestration-boundaries.md](orchestration-boundaries.md) | 메인 에이전트와 D/A/B의 책임 경계 |
 | L1 | [milestone-planning.md](milestone-planning.md) | frontend 마일스톤을 나누는 기준 |
 | L1 | [milestone-execution-workflow.md](milestone-execution-workflow.md) | frontend 마일스톤 실행 흐름 |
-| L2 | [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md) | run artifact 저장 위치, 결과 신호, 검증·복구 규칙 |
+| L2 | [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md) | run artifact 저장 위치, 파일명, output 경로 검증, 체크포인트 복구 규칙 |
 | L3 | [frontend-technical-design-writer-contract.md](frontend-technical-design-writer-contract.md) | D 입출력 계약 |
 | L3 | [frontend-implementation-engineer-contract.md](frontend-implementation-engineer-contract.md) | A 입출력 계약 |
 | L3 | [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md) | B 입출력 계약 |
@@ -47,8 +47,8 @@ Main agent
 - `orchestration-boundaries.md`: 누가 무엇을 판단하고 무엇을 판단하지 않는지 소유한다.
 - `milestone-planning.md`: frontend 작업을 어떤 단위로 나눌지 소유한다.
 - `milestone-execution-workflow.md`: D/A/B 호출 순서와 output-to-input 변환 책임을 소유한다.
-- `input-output-checkpoint-protocol.md`: `.agents/runs/{run_id}` 하위 파일 구조와 검증·복구 절차를 소유한다.
-- `*-contract.md`: 역할별 input schema, output schema, 결과 신호, 체크포인트 판단 기준을 소유한다.
+- `input-output-checkpoint-protocol.md`: `.agents/runs/{run_id}` 하위 파일 구조, 파일명 할당, output 경로 검증, 체크포인트 복구 절차를 소유한다.
+- `*-contract.md`: 역할별 input schema, output schema, 정상 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿을 소유한다.
 
 ## 변경 가이드
 
@@ -56,5 +56,5 @@ Main agent
 - 책임 경계가 바뀌면 `orchestration-boundaries.md`를 수정한다.
 - 마일스톤 분할 기준이 바뀌면 `milestone-planning.md`를 수정한다.
 - 실행 순서나 반복 종료 기준이 바뀌면 `milestone-execution-workflow.md`를 수정한다.
-- 파일 경로, 결과 신호, 검증·복구 규칙이 바뀌면 `input-output-checkpoint-protocol.md`를 수정한다.
-- 특정 서브에이전트의 입출력 필드가 바뀌면 해당 `*-contract.md`를 수정한다.
+- 파일 저장 위치, 파일명, output 경로 검증, 체크포인트 복구 규칙이 바뀌면 `input-output-checkpoint-protocol.md`를 수정한다.
+- 특정 서브에이전트의 입출력 필드, 정상 결과 신호, 체크포인트 판단 기준이 바뀌면 해당 `*-contract.md`를 수정한다.

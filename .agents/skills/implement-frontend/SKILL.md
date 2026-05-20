@@ -1,6 +1,6 @@
 ---
 name: implement-frontend
-description: 프론트엔드 기능 구현, 리팩토링, UI 상태/API client/query/cache/rendering/UI-UX 변경을 기술설계(D) → frontend 구현(A) → frontend 아키텍처 검토(B) → 수정 루프로 실행하는 스킬. frontend-only 요청이거나 `implement` 라우터가 frontend 마일스톤으로 분류한 작업에 사용한다.
+description: 프론트엔드 기능 구현, 리팩토링, UI 상태/API client/query/cache/rendering/UI-UX 변경을 기술설계(D) → frontend 구현(A) → frontend 아키텍처 검토(B) → 수정 루프로 실행하는 스킬. frontend-only 요청이거나 frontend 마일스톤 입력 artifact가 주어진 작업에 사용한다.
 ---
 
 # implement-frontend — 프론트엔드 구현 실행
@@ -88,7 +88,6 @@ Frontend request
 
 frontend 실행 규약, 계약 문서, 서브에이전트 정의를 수정한 뒤에는 아래 검증을 수행한다.
 
-- `python3 .agents/skills/implement/scripts/validate-context-checkpoints.py`
 - `python3 /Users/a1004/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/implement-frontend`
 - `python3 .agents/skills/write-structured-artifact/scripts/check_structured_artifact.py .agents/skills/implement-frontend/SKILL.md .agents/skills/implement-frontend/references/*.md`
 

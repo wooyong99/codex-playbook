@@ -60,7 +60,7 @@
 ## 경계 원칙
 
 - frontend 변경은 `implement-backend`에서 직접 구현하지 않는다.
-- backend와 frontend가 함께 필요한 경우 backend API 계약, 도메인 상태, 저장, 외부 연동을 먼저 안정화한다.
+- backend API 계약, 도메인 상태, 저장, 외부 연동은 backend 범위 안에서 정리한다.
 - 문서 구조 변경은 `documentation-governance-reviewer`를 추가한다.
 - secret, token, 인증/인가, 로그, 외부 연동 설정 변경은 `security-policy-reviewer`를 추가한다.
 - 계약 문서의 예시 문구를 프로젝트 사실처럼 복사하지 않는다.

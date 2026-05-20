@@ -1,7 +1,11 @@
 # Backend Implementation Engineer — Input / Output Contract
 
+이 문서는 Agent A의 역할별 파일 기반 인터페이스 계약이다.
+
 `implement-backend` 스킬이 `backend-implementation-engineer` 서브에이전트와 주고받는 인터페이스 규격.
-에이전트 정의 파일(`.codex/agents/backend-implementation-engineer.toml`)이 아닌 이 문서가 backend 구현 입출력 포맷, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+에이전트 정의 파일(`.codex/agents/backend-implementation-engineer.toml`)이 아닌 이 문서가 Agent A의 입출력 payload schema, 정상 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+
+공통 파일 프로토콜과의 경계는 아래 문서 역할 섹션에서 정의한다.
 
 ---
 
@@ -11,7 +15,8 @@
 
 - Agent A의 역할 철학은 `.codex/agents/backend-implementation-engineer.toml`이 제공한다.
 - A 호출과 재호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 결정한다.
-- 이 문서는 신규 구현 input, 위반 수정 input, output schema, 결과 신호, 체크포인트 기준만 소유한다.
+- 이 문서는 신규 구현 input, 위반 수정 input, output schema, 정상 결과 신호 이름, 체크포인트 기준만 소유한다.
+- 실행 artifact의 저장·명명·검증·복구 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)가 소유한다.
 - 메인 에이전트는 D/B output을 읽고 A input으로 재구성한다.
 
 ## Input

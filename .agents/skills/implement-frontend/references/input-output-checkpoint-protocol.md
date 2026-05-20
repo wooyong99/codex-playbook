@@ -1,15 +1,25 @@
 # Frontend Input Output And Checkpoint Protocol
 
-이 문서는 `implement-frontend` 스킬의 frontend D/A/B input artifact, output artifact, 체크포인트 파일, 결과 신호, 검증 절차를 소유한다. 세부 input/output payload 스키마와 체크포인트 템플릿은 frontend D/A/B 계약 문서가 단일 출처다.
+이 문서는 `implement-frontend` 스킬에서 frontend D/A/B 계약을 따라 생성되는 실행 artifact를 저장, 전달, 검증, 복구하는 공통 파일 프로토콜이다.
+
+이 문서는 역할별 payload schema를 정의하지 않는다. frontend D/A/B input schema, output schema, 정상 결과 신호 이름, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 각 frontend D/A/B 계약 문서가 단일 출처다.
 
 ## 문서 역할
 
-이 문서는 저수준 실행 규격이다.
+이 문서는 저수준 실행 규격이며, 역할별 계약의 저장·전달 레이어만 소유한다.
 
 - 전체 책임 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)를 따른다.
 - D/A/B 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)를 따른다.
-- 역할별 YAML payload와 체크포인트 판단 기준은 각 `*-contract.md`를 따른다.
-- 이 문서는 `.agents/runs/{run_id}` 하위 파일 구조, 결과 신호 검증, 체크포인트 복구 절차를 정의한다.
+- 역할별 YAML payload, 정상 결과 신호 이름, 체크포인트 판단 기준, 체크포인트 파일 템플릿은 각 `*-contract.md`를 따른다.
+- 이 문서는 `.agents/runs/{run_id}` 하위 파일 구조, 파일명 할당, output 경로 검증, 체크포인트 복구 절차를 정의한다.
+- 이 문서는 계약 문서가 지정한 input/output/checkpoint artifact를 어느 경로에 저장하고 어떻게 처리하는지만 정의한다.
+
+소유하지 않는 것:
+
+- 역할별 input/output payload의 필수 필드와 의미
+- `TDD_CREATED`, `IMPLEMENTATION_COMPLETED`, `REVIEW_COMPLETED` 같은 정상 결과 신호 이름
+- 역할별 `CONTEXT_CHECKPOINT` 판단 기준
+- 체크포인트 파일 본문 템플릿
 
 ## 저장 위치
 
@@ -88,10 +98,6 @@ D/A/B는 `[출력 파일]`에 YAML payload를 저장하고, 같은 호출의 `[�
 
 역할별 체크포인트 판단 기준은 frontend D/A/B 계약 문서가 단일 출처로 가진다. `implement-frontend`는 해당 기준을 input artifact의 `checkpoint.criteria`로 전달하고, `CONTEXT_CHECKPOINT:` 응답을 복구 절차로 처리한다.
 
-## 검증 스크립트
+## 검증
 
-frontend 실행 규약, 계약 문서, 서브에이전트 정의를 수정한 뒤에는 아래 명령으로 필수 항목을 검증한다.
-
-```bash
-python3 .agents/skills/implement/scripts/validate-context-checkpoints.py
-```
+frontend 실행 규약, 계약 문서, 서브에이전트 정의를 수정한 뒤에는 스킬 진입점의 검증 절차를 따른다.
