@@ -41,10 +41,27 @@ def main() -> int:
             "--new-run",
             trace_dir=trace_dir,
         )
-        assert "1번째 호출 시작" in start
+        assert "\n  담당: backend-delivery-engineer\n" in start
+        assert "\n  스킬: backend-code-implementation-rules\n" in start
+        assert "\n  호출: 1번째 시작\n" in start
+        assert "\n  입력: backend_design_basis, 비표시\n" in start
         assert "backend_design_basis" in start
         assert "비밀번호=1234" not in start
         assert "비표시" in start
+
+        compact_start = run_trace(
+            "start",
+            "--agent",
+            "backend-delivery-engineer",
+            "--skill",
+            "backend-code-implementation-rules",
+            "--input",
+            "remediation_input",
+            "--compact",
+            trace_dir=trace_dir,
+        )
+        assert " | 담당=backend-delivery-engineer | " in compact_start
+        assert "2번째 호출 시작" in compact_start
 
         end = run_trace(
             "end",
@@ -58,7 +75,9 @@ def main() -> int:
             "완료",
             trace_dir=trace_dir,
         )
-        assert "1번째 호출 종료" in end
+        assert "\n  호출: 2번째 종료\n" in end
+        assert "\n  출력: implementation_result\n" in end
+        assert "\n  상태: 완료\n" in end
         assert "implementation_result" in end
 
         second_start = run_trace(
@@ -71,7 +90,7 @@ def main() -> int:
             "remediation_input",
             trace_dir=trace_dir,
         )
-        assert "2번째 호출 시작" in second_start
+        assert "\n  호출: 3번째 시작\n" in second_start
 
         summary = run_trace(
             "summary",
@@ -80,7 +99,7 @@ def main() -> int:
             trace_dir=trace_dir,
         )
         assert "[스킬 요약]" in summary
-        assert "backend-code-implementation-rules: 2회 호출" in summary
+        assert "backend-code-implementation-rules: 3회 호출" in summary
 
     print("PASS trace skill stage smoke test")
     return 0

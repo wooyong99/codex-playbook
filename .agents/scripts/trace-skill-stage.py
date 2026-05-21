@@ -113,6 +113,41 @@ def append_event(agent: str, run_id: str, event: dict[str, object]) -> None:
         handle.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n")
 
 
+def print_stage_trace(
+    args: argparse.Namespace,
+    run_id: str,
+    *,
+    agent: str,
+    skill: str,
+    call: int,
+    phase_label: str,
+    payload_label: str,
+    payload_values: list[str],
+    status: str | None = None,
+) -> None:
+    payload = ", ".join(payload_values)
+    if args.compact:
+        message = (
+            f"[스킬 진행] 실행={run_id} | 담당={agent} | 스킬={skill} | "
+            f"{call}번째 호출 {phase_label} | {payload_label}={payload}"
+        )
+        if status is not None:
+            message = f"{message} | 상태={status}"
+        print(message)
+        return
+
+    lines = [
+        f"[스킬 진행] 실행={run_id}",
+        f"  담당: {agent}",
+        f"  스킬: {skill}",
+        f"  호출: {call}번째 {phase_label}",
+        f"  {payload_label}: {payload}",
+    ]
+    if status is not None:
+        lines.append(f"  상태: {status}")
+    print("\n".join(lines))
+
+
 def print_start(args: argparse.Namespace, run_id: str) -> None:
     agent = sanitize_label(args.agent)
     skill = sanitize_label(args.skill)
@@ -127,9 +162,15 @@ def print_start(args: argparse.Namespace, run_id: str) -> None:
         "input": labels,
     }
     append_event(agent, run_id, event)
-    print(
-        f"[스킬 진행] 실행={run_id} | 담당={agent} | 스킬={skill} | "
-        f"{call}번째 호출 시작 | 입력={', '.join(labels)}"
+    print_stage_trace(
+        args,
+        run_id,
+        agent=agent,
+        skill=skill,
+        call=call,
+        phase_label="시작",
+        payload_label="입력",
+        payload_values=labels,
     )
 
 
@@ -149,9 +190,16 @@ def print_end(args: argparse.Namespace, run_id: str) -> None:
         "status": status,
     }
     append_event(agent, run_id, event)
-    print(
-        f"[스킬 진행] 실행={run_id} | 담당={agent} | 스킬={skill} | "
-        f"{call}번째 호출 종료 | 출력={', '.join(labels)} | 상태={status}"
+    print_stage_trace(
+        args,
+        run_id,
+        agent=agent,
+        skill=skill,
+        call=call,
+        phase_label="종료",
+        payload_label="출력",
+        payload_values=labels,
+        status=status,
     )
 
 
@@ -181,6 +229,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input", action="append", default=[])
     parser.add_argument("--output", action="append", default=[])
     parser.add_argument("--status", default="완료")
+    parser.add_argument("--compact", action="store_true")
     args = parser.parse_args()
     if args.phase in {"start", "end"} and not args.skill:
         parser.error("--skill is required for start/end")
