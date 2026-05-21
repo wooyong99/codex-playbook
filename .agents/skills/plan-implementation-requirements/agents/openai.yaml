@@ -1,4 +1,0 @@
-interface:
-  display_name: "Plan Implementation Requirements"
-  short_description: "구현 전 요구사항과 업무 흐름, 정책, 화면을 설계합니다"
-  default_prompt: "Use $plan-implementation-requirements to turn an implementation request into planning artifacts before coding."

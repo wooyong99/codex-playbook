@@ -13,4 +13,4 @@
 - 신규 frontend TDD는 `tdd-{feature}.md` 형식으로 작성한다.
 - TDD는 상태관리 구조, API 연동 방식, 컴포넌트 구조, 라우팅, 캐싱 전략, 에러 처리, 폴더 구조를 포함한다.
 - 상위 문서인 `docs/frontend/README.md`는 개별 TDD가 아니라 이 README만 참조한다.
-- TDD 작성 절차는 `.agents/skills/write-frontend-tech-design-doc/SKILL.md`가 소유한다.
+- 이 디렉토리는 실제 설계 문서만 소유한다. 작성 가이드 파일을 별도로 만들지 않는다.

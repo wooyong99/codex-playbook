@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Technical Design Writing Rules"
+  short_description: "Rules for frontend technical design docs"
+  default_prompt: "Use $frontend-technical-design-writing-rules to draft or update a frontend technical design document covering state, API integration, components, routing, caching, errors, and folder structure."

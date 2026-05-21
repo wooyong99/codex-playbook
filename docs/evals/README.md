@@ -5,6 +5,7 @@
 ## 문서 목록
 
 - [scenarios](scenarios.md): 대표 평가 시나리오와 기대 산출물
+- [enterprise-agent-collaboration](enterprise-agent-collaboration.md): 대형 코드베이스와 모호한 프롬프트에서 subagent/skill 협력 품질을 검증하는 평가 매트릭스
 - [scorecard](scorecard.md): 점수표, pass 기준, blocker 기준
 
 ## 평가 원칙
@@ -17,7 +18,8 @@
 ## 기본 실행 흐름
 
 1. [scenarios](scenarios.md)에서 평가 케이스를 고른다.
-2. 동일한 저장소 상태에서 에이전트에게 케이스를 실행하게 한다.
-3. 산출물, 변경 파일, 검증 명령, reviewer 결과를 모은다.
-4. [scorecard](scorecard.md) 기준으로 채점한다.
-5. 실패 원인을 규칙, 문서, 스킬, reviewer, 검증 자동화 backlog로 분류한다.
+2. 대형 코드베이스나 모호한 프롬프트 평가는 [enterprise-agent-collaboration](enterprise-agent-collaboration.md)의 preflight를 먼저 적용한다.
+3. 동일한 저장소 상태에서 에이전트에게 케이스를 실행하게 한다.
+4. 산출물, 변경 파일, 검증 명령, reviewer 결과를 모은다.
+5. [scorecard](scorecard.md) 기준으로 채점한다.
+6. 실패 원인을 규칙, 문서, 스킬, reviewer, 검증 자동화 backlog로 분류한다.
