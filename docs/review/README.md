@@ -1,6 +1,14 @@
 # Review Routing
 
+## 목적
+
 이 문서는 변경 파일 유형에 따라 어떤 reviewer가 어떤 문서를 기준으로 검토하는지 정의한다.
+
+## Reviewer Ownership
+
+Reviewer subagents are reusable review execution units. They are selected by a lead subagent or caller based on changed files and risk signals.
+
+Review routing does not own workflow orchestration, retry scheduling, implementation task decomposition, or implementation changes.
 
 ## Reviewer Matrix
 

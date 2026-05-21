@@ -63,5 +63,6 @@
 - [Review routing](docs/review/README.md)
 - [Examples](docs/examples/README.md)
 - [Agent evaluation suite](docs/evals/README.md)
+- [Superpowers working artifacts](docs/superpowers/README.md)
 - [Backend 문서 홈](docs/backend/README.md)
 - [Frontend 문서 홈](docs/frontend/README.md)

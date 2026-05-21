@@ -1,6 +1,6 @@
 ---
 name: reverse-engineer-backend-docs
-description: Analyze an existing backend codebase, infer its real modules, architecture units, cross-cutting policies, implementation strategies, and backend documentation needs, then create, update, migrate, or merge the `docs/backend` knowledge system so it reflects actual code instead of generic playbook assumptions. Use when applying codex-playbook to an existing backend, when `docs/backend` is empty/generic/misaligned with code, or when asked to reverse-engineer backend architecture, policies, strategies, getting-started notes, or backend design documentation from existing code.
+description: Analyze an existing backend codebase and update `docs/backend` so architecture, policies, strategies, getting-started notes, and design documentation reflect actual code instead of generic playbook assumptions.
 ---
 
 # Reverse Engineer Backend Docs
@@ -57,7 +57,7 @@ description: Analyze an existing backend codebase, infer its real modules, archi
 
 ## 참조 문서
 
-먼저 [references/README.md](references/README.md)를 읽고 문서 계층을 확인한다.
+먼저 [references/reference-map.md](references/reference-map.md)를 읽고 문서 계층을 확인한다.
 
 핵심 참조:
 

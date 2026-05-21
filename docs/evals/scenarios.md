@@ -25,7 +25,7 @@
 
 ## Scenario 2. Backend Feature Implementation
 
-목표: 백엔드 기능 추가 작업에서 설계, 구현, 아키텍처 검토, 검증 결과가 누락 없이 남는지 확인한다.
+목표: 백엔드 기능 추가 작업에서 설계, 구현, 구현 검증 evidence, 아키텍처 검토 결과가 누락 없이 남는지 확인한다.
 
 입력:
 
@@ -35,11 +35,11 @@
 기대 산출물:
 
 - 마일스톤 계획
-- `implement-backend` 실행 경로 선택
+- `backend-delivery-lead` 실행 경로 선택
 - 필요 시 TDD 또는 TDD skip 근거
 - `backend-implementation-engineer` 구현 결과 output artifact
 - backend-architecture-reviewer 결과
-- compile/test 검증 결과
+- compile/test/typecheck 같은 구현 검증 evidence
 
 주요 실패 신호:
 
@@ -58,9 +58,10 @@
 
 기대 산출물:
 
-- `implement-frontend` 실행 경로 선택
+- `frontend-delivery-lead` 실행 경로 선택
 - 필요 시 상태관리 구조, API 연동 방식, 컴포넌트 구조, 라우팅, 캐싱 전략, 에러 처리, 폴더 구조를 포함한 frontend TDD
 - `frontend-implementation-engineer` 구현 결과 output artifact
+- build/test/typecheck/browser 같은 구현 검증 evidence
 - `frontend-architecture-reviewer`가 docs/frontend 기준으로 위반 보고
 - 위반에 `rule_id`, `severity`, `source_path` 포함
 - 기능 정확성 추측 없이 문서 근거만 제시
@@ -129,10 +130,10 @@
 - checkpoint 파일 생성
 - 정상 완료 시에도 완료 snapshot 생성
 - 재호출 시 완료된 작업 건너뛰기
-- `validate-context-checkpoints.py` 통과
+- `validate-agent-workflow-architecture.py` 통과
 
 주요 실패 신호:
 
-- `CONTEXT_CHECKPOINT:` 신호만 있고 파일 없음
+- checkpoint 완료 신호만 있고 파일 없음
 - checkpoint 파일에 남은 작업이 모호함
 - 완료 snapshot 누락

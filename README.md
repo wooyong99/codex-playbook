@@ -25,7 +25,7 @@ Codex와 사람이 함께 사용할 수 있도록 정리한 프로젝트 플레�
 5. 아래 명령으로 플레이북 자체 검증을 실행한다.
 
 ```bash
-python3 .agents/skills/implement/scripts/check-playbook.py
+python3 .agents/scripts/check-playbook.py
 ```
 
 ## 먼저 읽으면 좋은 문서

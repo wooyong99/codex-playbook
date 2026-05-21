@@ -1,4 +1,0 @@
-interface:
-  display_name: "Write Backend Tech Design Doc"
-  short_description: "Draft backend technical design docs"
-  default_prompt: "Use $write-backend-tech-design-doc to draft a backend technical design document covering architecture decisions, domain models, transactions, consistency, errors, and implementation strategy."

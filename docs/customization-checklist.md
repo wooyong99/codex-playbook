@@ -1,5 +1,7 @@
 # 커스터마이징 체크리스트
 
+## 목적
+
 이 저장소를 다른 프로젝트에 가져갔을 때 최소한 점검해야 하는 항목들.
 
 ## 프로젝트 컨텍스트
@@ -17,24 +19,30 @@
 - [ ] `docs/backend/design/README.md` 링크 최신화
 - [ ] 새 디렉토리가 생기면 해당 영역의 가장 가까운 `README.md` 문서 맵 갱신
 - [ ] `AGENTS.md`는 `docs/backend/README.md`, `docs/frontend/README.md` 같은 최상위 진입점 경로가 바뀔 때만 갱신
-- [ ] `python3 .agents/skills/implement/scripts/check-playbook.py` 통과
+- [ ] `python3 .agents/scripts/check-playbook.py` 통과
 
 ## 스킬
 
 - [ ] `.agents/skills/setup-project-context`가 현재 프로젝트에도 맞는지 확인
-- [ ] `.agents/skills/implement` 라우터가 현재 프로젝트 영역 분류와 맞는지 확인
-- [ ] `.agents/skills/implement-backend`의 backend 실행 지시가 현재 프로젝트 규칙과 맞는지 확인
-- [ ] `.agents/skills/implement-frontend`의 frontend 실행 지시가 현재 프로젝트 규칙과 맞는지 확인
-- [ ] `.agents/skills/implement/references`의 라우터 오케스트레이션 문서가 현재 프로젝트 규칙에 맞는지 확인
-- [ ] `.agents/skills/implement-backend/references`의 backend 실행 문서와 계약이 현재 프로젝트 규칙에 맞는지 확인
-- [ ] `.agents/skills/implement-frontend/references`의 frontend 실행 문서와 계약이 현재 프로젝트 규칙에 맞는지 확인
-- [ ] `.agents/skills/write-backend-tech-design-doc`의 backend TDD 템플릿이 현재 프로젝트 규칙에 맞는지 확인
-- [ ] `.agents/skills/write-frontend-tech-design-doc`의 frontend TDD 템플릿이 현재 프로젝트 규칙에 맞는지 확인
+- [ ] `.agents/skills/feature-delivery-readiness-rules`의 feature delivery 계약 조율 규칙이 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/product-requirements-planning-rules`의 제품 요구사항 기획 규칙이 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/api-contract-design-rules`의 API 계약 설계 규칙이 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/backend-code-implementation-rules`의 backend 코드 구현 규칙이 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/backend-architecture-review-rules`의 backend 리뷰 규칙이 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/frontend-code-implementation-rules`의 frontend 코드 구현 규칙이 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/frontend-architecture-review-rules`의 frontend 리뷰 규칙이 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/backend-technical-design-writing-rules`의 backend TDD 작성 규칙이 현재 프로젝트 규칙에 맞는지 확인
+- [ ] `.agents/skills/frontend-technical-design-writing-rules`의 frontend TDD 작성 규칙이 현재 프로젝트 규칙에 맞는지 확인
 - [ ] 기존 코드베이스가 있다면 `reverse-engineer-backend-docs` 적용 여부 결정
 - [ ] 프로젝트에 필요 없는 스킬은 제거 또는 수정
 
 ## 서브에이전트
 
+- [ ] `.codex/agents/feature-delivery-lead.toml` 검토
+- [ ] `.codex/agents/backend-delivery-lead.toml` 검토
+- [ ] `.codex/agents/frontend-delivery-lead.toml` 검토
+- [ ] `.codex/agents/product-planning-designer.toml` 검토
+- [ ] `.codex/agents/api-contract-designer.toml` 검토
 - [ ] `.codex/agents/backend-technical-design-writer.toml` 검토
 - [ ] `.codex/agents/frontend-technical-design-writer.toml` 검토
 - [ ] `.codex/agents/backend-implementation-engineer.toml` 검토

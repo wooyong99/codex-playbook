@@ -63,5 +63,5 @@
 아래 명령으로 기본 검증을 실행한다.
 
 ```bash
-python3 .agents/skills/implement/scripts/check-playbook.py
+python3 .agents/scripts/check-playbook.py
 ```

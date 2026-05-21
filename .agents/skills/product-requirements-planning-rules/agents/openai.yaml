@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Requirements Planning Rules"
+  short_description: "Rules for product requirements planning"
+  default_prompt: "Use $product-requirements-planning-rules to turn an implementation request into product requirements, business flow, policy, state, and screen planning artifacts."

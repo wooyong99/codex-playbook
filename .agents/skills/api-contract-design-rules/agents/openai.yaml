@@ -1,0 +1,4 @@
+interface:
+  display_name: "API Contract Design Rules"
+  short_description: "Rules for backend/frontend API contracts"
+  default_prompt: "Use $api-contract-design-rules to derive backend and frontend API contracts from product requirements planning artifacts."

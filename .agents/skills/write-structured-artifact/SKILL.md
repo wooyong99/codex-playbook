@@ -1,6 +1,6 @@
 ---
 name: write-structured-artifact
-description: Create or update project Markdown documents, Codex skills, and subagent TOML definitions with a layered structure. Use when writing or refactoring md files, SKILL.md files, new skills via skill-creator, references, contracts, or .codex/agents/*.toml files so purpose, responsibility, scope, and flow appear before low-level procedures, schemas, implementation details, or code style rules.
+description: Create or update project Markdown documents, Codex skills, and subagent TOML definitions with a layered structure. Use when writing or refactoring md files, SKILL.md files, new skills via skill-creator, references, protocols, or .codex/agents/*.toml files so purpose, responsibility, scope, and flow appear before low-level procedures, schemas, implementation details, or code style rules.
 ---
 
 # Write Structured Artifact
@@ -13,7 +13,7 @@ description: Create or update project Markdown documents, Codex skills, and suba
 
 ## 적용 대상
 
-- Markdown 문서: `*.md`, project docs, references, contracts, playbooks
+- Markdown 문서: `*.md`, project docs, references, protocols, playbooks
 - Codex skills: `.agents/skills/**/SKILL.md`
 - Skill 생성 작업: `skill-creator`로 만든 scaffold 후속 정리
 - Subagent 정의: `.codex/agents/*.toml`
@@ -110,17 +110,18 @@ You are the <Role> sub-agent for this project.
 
 규칙:
 
-- 특정 스킬, 계약 파일, 고정 Source of Truth 경로를 agent TOML에 넣지 않는다.
+- `[[skills.config]]`에는 역할 수행에 필요한 reusable rule skill만 기본 활성화할 수 있다.
+- 특정 workflow 산출물, 실행 산출물 계약, 실행 checkpoint, 고정 Source of Truth 경로를 agent TOML에 넣지 않는다.
 - 어떤 입력 파일, 출력 파일, 기준 문서를 사용할지는 호출 input이 결정하게 한다.
 - 구현자, reviewer, writer 같은 역할 경계를 명확히 한다.
-- 절차, schema, checkpoint template은 스킬 references 또는 계약 문서로 분리한다.
+- 절차, schema, output template은 skill references 또는 protocol 문서로 분리한다.
 - 사용자와 직접 대화하지 않는 경우에도 구조화된 결과 반환 의무를 명시한다.
 
 ## Refactoring Existing Artifacts
 
 기존 문서를 고칠 때는 내용을 삭제하기 전에 소유권을 먼저 판단한다.
 
-- 상위 문서에 세부 schema가 섞여 있으면 protocol 또는 contract reference로 이동한다.
+- 상위 문서에 세부 schema가 섞여 있으면 skill reference 또는 protocol 문서로 이동한다.
 - 역할 철학 문서에 workflow 절차가 섞여 있으면 스킬 workflow 문서로 이동한다.
 - 같은 내용이 여러 문서에 반복되면 단일 출처를 정하고 나머지는 링크로 대체한다.
 - 문서 맵이 있으면 새 reference 추가 후 맵을 갱신한다.
