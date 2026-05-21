@@ -25,9 +25,9 @@ feature delivery 흐름을 직접 오케스트레이션한다.
 4. API spec이 필요하면 `api-contract-designer`를 호출하고 계약 안정성을 다시 판단한다.
 5. API 계약이 stable이면 `backend-delivery-engineer`와 `frontend-delivery-engineer`를 병렬 후보로 호출한다.
 6. API 계약이 stable이 아니면 backend/frontend 구현 호출을 중단하고 blocker/open question을 보고한다.
-7. 대상 reviewer subagent의 description과 검토 경계를 기준으로 cross-cutting reviewer 추가 필요 여부를 판단한다.
+7. 보안 민감 요청이나 문서/스킬 계약 변경처럼 delivery 범위와 충돌하는 cross-cutting risk는 별도 subagent dispatch가 아니라 blocker, open question, follow-up으로 분리한다.
 8. 하위 subagent가 `dispatch_requests`를 반환하면 그 요청을 실제 subagent 호출로 실행한다.
-9. planning, API spec, backend, frontend, reviewer 결과를 분리해 최종 보고한다.
+9. planning, API spec, backend, frontend, review phase, cross-cutting risk를 분리해 최종 보고한다.
 
 ## 대상별 처리 규칙
 
@@ -35,8 +35,11 @@ feature delivery 흐름을 직접 오케스트레이션한다.
 - `api-contract-designer`: backend API와 frontend 소비 계약이 함께 바뀌거나 response/request shape가 불명확할 때 호출한다.
 - `backend-delivery-engineer`: 안정화된 API 계약과 backend 범위가 있을 때 호출한다.
 - `frontend-delivery-engineer`: 안정화된 API 계약과 frontend 범위가 있을 때 호출한다.
-- `security-policy-reviewer`: 요청, 파일 경로, diff, 계약에 secret, token, credential, 인증/인가, 민감 정보, 외부 신뢰 경계, 로그 마스킹 위험이 있으면 추가한다.
-- `documentation-governance-reviewer`: 문서 맵, 스킬, 서브에이전트 정의, README, docs 구조가 변경되면 추가한다.
+
+Cross-cutting risk는 아래처럼 처리한다.
+
+- secret, token, credential, 인증/인가, 민감 정보, 외부 신뢰 경계, 로그 마스킹 위험은 `security_sensitive_blocker` 또는 open question으로 남긴다.
+- 문서 맵, 스킬, 서브에이전트 정의, README, docs 구조 변경은 해당 artifact 작성/검증 규칙과 validation 결과로 다루고, feature delivery 완료 조건과 섞지 않는다.
 
 ## Readiness 판단
 
@@ -67,7 +70,7 @@ feature delivery 흐름을 직접 오케스트레이션한다.
 
 ```yaml
 dispatch_requests:
-  - target_agent: backend-delivery-engineer | frontend-delivery-engineer | product-planning-designer | api-contract-designer | security-policy-reviewer | documentation-governance-reviewer
+  - target_agent: backend-delivery-engineer | frontend-delivery-engineer | product-planning-designer | api-contract-designer
     reason: "<호출 사유>"
     input_artifacts:
       - "<전달할 planning/API/review 산출물 또는 사용자 입력>"
@@ -118,9 +121,12 @@ orchestration_result:
     api_contract: "<결과와 stability 판단>"
     backend_delivery: "<결과 또는 blocked 사유>"
     frontend_delivery: "<결과 또는 blocked 사유>"
-    reviewers:
-      - reviewer: "<reviewer 또는 review phase>"
+    review_phases:
+      - owner: backend-delivery-engineer | frontend-delivery-engineer
         result: pass | violation | blocked | not_run
+    cross_cutting_risks:
+      - risk_id: security_sensitive_blocker | documentation_contract_change | "<risk id>"
+        handling: blocked | open_question | follow_up | not_applicable
   open_questions:
     - "<남은 계약/정책/UI/data 불확실성>"
   follow_ups:
@@ -131,7 +137,8 @@ orchestration_result:
 
 - `backend_frontend_parallel`은 API 계약이 `stable_for_parallel`일 때만 `true`로 둔다.
 - 실제 호출하지 않은 subagent는 `executed`에 넣지 않는다.
-- reviewer 결과는 implementation evidence와 분리한다.
+- review phase 결과는 implementation evidence와 분리한다.
+- security/documentation risk는 별도 subagent 실행 결과로 꾸미지 않고 blocker/open question/follow-up으로 보고한다.
 - `open_questions`에는 추측으로 해소한 항목을 넣지 않는다.
 
 ## 안티패턴
@@ -149,7 +156,7 @@ orchestration_result:
 - `dispatch_requests`가 실제 subagent 호출로 이어졌는지 확인한다.
 - backend/frontend 병렬 실행 근거가 API 계약 안정성으로 설명되는지 확인한다.
 - 실제 호출하지 않은 subagent를 완료로 보고하지 않았는지 확인한다.
-- reviewer subagent의 description과 검토 경계를 기준으로 cross-cutting reviewer 추가 여부를 확인했는지 검증한다.
+- 보안 민감 요청과 문서/스킬 계약 변경이 실행 결과로 흡수되지 않고 blocker/open question/follow-up으로 분리됐는지 확인한다.
 
 ## 참조 Docs
 

@@ -9,8 +9,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 
 
-REQUIRED_EVAL_DOC = ROOT / "docs/evals/enterprise-agent-collaboration.md"
-ORCHESTRATION_EVAL_DOC = ROOT / "docs/evals/feature-delivery-orchestration-edge-cases.md"
+REQUIRED_EVAL_DOC = ROOT / ".agents/evals/enterprise-agent-collaboration.md"
+ORCHESTRATION_EVAL_DOC = ROOT / ".agents/evals/feature-delivery-orchestration-edge-cases.md"
 ORCHESTRATION_EVAL_SCRIPT = ROOT / ".agents/scripts/validate-feature-delivery-orchestration-evals.py"
 
 REQUIRED_EVAL_MARKERS = [
@@ -24,7 +24,7 @@ REQUIRED_EVAL_MARKERS = [
     "frontend-code-implementation-rules",
     "backend-architecture-review-rules",
     "frontend-architecture-review-rules",
-    "security-policy-reviewer",
+    "security_sensitive_blocker",
     "모호",
     "conflicting request",
     "Jira-style",
@@ -86,6 +86,8 @@ FORBIDDEN_ACTIVE_NAMES = [
     "backend-software-engineer",
     "frontend-engineering-lead",
     "frontend-software-engineer",
+    "documentation-governance-reviewer",
+    "security-policy-reviewer",
 ]
 
 
@@ -149,8 +151,8 @@ def check_orchestration_edge_cases(errors: list[str]) -> None:
 
 def check_active_references(errors: list[str]) -> None:
     paths = [
-        ROOT / "docs/evals/enterprise-agent-collaboration.md",
-        ROOT / "docs/evals/scenarios.md",
+        ROOT / ".agents/evals/enterprise-agent-collaboration.md",
+        ROOT / ".agents/evals/scenarios.md",
         ROOT / "docs/customization-checklist.md",
         ROOT / "docs/superpowers/specs/2026-05-21-agent-oriented-implementation-architecture-design.md",
         ROOT / "docs/superpowers/plans/2026-05-21-agent-oriented-implementation-architecture.md",

@@ -51,8 +51,8 @@ Violation에는 아래 항목을 포함한다.
 
 - 제품 요구사항 자체를 새로 정의하지 않는다.
 - frontend UI 규칙을 backend violation 근거로 사용하지 않는다.
-- 보안 민감 의심을 숨기지 않는다. 필요하면 security review 대상으로 분리한다.
-- 문서 구조, 스킬, 서브에이전트 계약 변경은 documentation governance review 대상으로 분리한다.
+- 보안 민감 의심을 숨기지 않는다. 필요하면 blocker 또는 open question으로 분리한다.
+- 문서 구조, 스킬, 서브에이전트 계약 변경을 backend architecture violation으로 확장하지 않는다.
 
 ## 검증
 

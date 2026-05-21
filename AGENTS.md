@@ -51,7 +51,7 @@
 
 ```text
 .
-├── .agents/      # 에이전트 스킬 및 참조 문서
+├── .agents/      # 에이전트 스킬, 참조 문서, 평가 suite
 ├── docs/         # 프로젝트 지식 시스템(백엔드/프론트엔드/PRD)
 └── AGENTS.md     # 에이전트 작업 지침서
 ```
@@ -60,8 +60,7 @@
 
 - [PRD](docs/PRD.md)
 - [Rule ID and metadata](docs/rules/README.md)
-- [Examples](docs/examples/README.md)
-- [Agent evaluation suite](docs/evals/README.md)
+- [Agent evaluation suite](.agents/evals/README.md)
 - [Superpowers working artifacts](docs/superpowers/README.md)
 - [Backend 문서 홈](docs/backend/README.md)
 - [Frontend 문서 홈](docs/frontend/README.md)

@@ -38,7 +38,7 @@
 - API 계약이 unknown, partial, conflicting이면 `api-contract-designer` 이후 구현 호출을 보류한다.
 - 업무 흐름, 정책, 상태, 화면 흐름이 비어 있으면 `product-planning-designer`를 먼저 둔다.
 - `dispatch_requests`는 실행 결과가 아니라 실제 subagent 호출 요청으로 다룬다.
-- 보안 민감 요청은 `security-policy-reviewer`를 추가하고 blocker/major 판단을 분리한다.
+- 보안 민감 요청은 별도 구현으로 진행하지 않고 `security_sensitive_blocker` 또는 open question으로 분리한다.
 - 최종 결과는 `orchestration_result` schema를 따르고, 실제 호출하지 않은 subagent는 `dispatch.executed`에 넣지 않는다.
 - 하위 subagent가 반환한 `dispatch_requests`는 `target_agent`, `reason`, `input_artifacts`, `parallel_allowed`, `return_to`를 포함한다.
 
@@ -51,7 +51,7 @@
 | FDO-03 | jira-style | 환불 승인 화면/API, acceptance criteria 일부 누락 | 610k | `feature-delivery-orchestration-rules` -> `product-planning-designer` -> `api-contract-designer` | no | 권한 정책과 API shape open question |
 | FDO-04 | slack-style | "대충 빠르게... 테스트는 나중에" | 180k | `feature-delivery-orchestration-rules` -> `backend-delivery-engineer` + `frontend-delivery-engineer` | yes | 구현 검증 evidence 요구 유지 |
 | FDO-05 | conflicting-policy | "권한 체크는 필요 없지만 관리자만 가능" | 350k | `feature-delivery-orchestration-rules` -> `product-planning-designer` -> `api-contract-designer` | no | 정책 충돌 blocker |
-| FDO-06 | security-sensitive | token을 화면과 로그에 노출 | 720k | `feature-delivery-orchestration-rules` -> `security-policy-reviewer` | no | 보안 blocker, 일반 architecture review로 대체 금지 |
+| FDO-06 | security-sensitive | token을 화면과 로그에 노출 | 720k | `feature-delivery-orchestration-rules` | no | `security_sensitive_blocker`, 일반 architecture review pass로 흡수 금지 |
 | FDO-07 | dispatch-loop | 하위 subagent가 `dispatch_requests` 반환 | 510k | `feature-delivery-orchestration-rules` -> backend/frontend engineers -> `dispatch_requests` | yes | dispatch 요청을 실제 호출로 실행 |
 | FDO-08 | frontend-shape-guess | "응답 shape는 알아서 맞춰" | 230k | `feature-delivery-orchestration-rules` -> `api-contract-designer` | no | frontend가 API response shape 임의 확정 금지 |
 | FDO-09 | sequential-dependency | backend schema 확정 후 frontend 적용 | 890k | `feature-delivery-orchestration-rules` -> `backend-delivery-engineer` | no | frontend는 backend output 대기 |

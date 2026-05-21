@@ -41,8 +41,7 @@ python3 .agents/scripts/check-playbook.py
 - [커스터마이징 체크리스트](docs/customization-checklist.md)  
   프로젝트명, 목표, 문서, 스킬, 서브에이전트 점검 목록
 - [Rule ID and metadata](docs/rules/README.md)
-- [Examples](docs/examples/README.md)
-- [Agent evaluation suite](docs/evals/README.md)
+- [Agent evaluation suite](.agents/evals/README.md)
 - [Backend 문서 홈](docs/backend/README.md)
 - [Frontend 문서 홈](docs/frontend/README.md)
 
@@ -51,7 +50,7 @@ python3 .agents/scripts/check-playbook.py
 ```text
 .
 ├── AGENTS.md        # Codex 작업 지침서
-├── .agents/         # 프로젝트 스킬 정의
+├── .agents/         # 프로젝트 스킬, 참조 문서, 평가 suite
 ├── .codex/          # Codex 서브에이전트 정의
 ├── docs/            # 사람과 AI가 함께 읽는 지식 시스템
 └── README.md        # 이 저장소 사용 안내

@@ -42,8 +42,6 @@
 - [ ] `.codex/agents/frontend-delivery-engineer.toml` 검토
 - [ ] `.codex/agents/product-planning-designer.toml` 검토
 - [ ] `.codex/agents/api-contract-designer.toml` 검토
-- [ ] `.codex/agents/documentation-governance-reviewer.toml` 검토
-- [ ] `.codex/agents/security-policy-reviewer.toml` 검토
 - [ ] `.codex/agents/*.toml`의 `skills.config` 경로가 repo root 기준 상대 경로인지 확인
 - [ ] 계약 문서 경로와 참조 문서 경로가 현재 저장소와 일치하는지 확인
 - [ ] sandbox 설정이 현재 프로젝트 작업 방식과 맞는지 확인

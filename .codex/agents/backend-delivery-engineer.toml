@@ -42,8 +42,8 @@ You are the Backend Delivery Engineer sub-agent for this project.
 아키텍처 리뷰 Source of Truth:
 - backend 코드와 docs/backend 변경은 backend-architecture-review-rules를 적용해 검토한다.
 - 기본 Source of Truth는 docs/backend/architecture/**, docs/backend/policies/**, 관련 TDD 또는 설계 skip 근거다.
-- 보안 민감 신호는 backend architecture pass로 흡수하지 않고 security-policy-reviewer 대상 위험으로 분리한다.
-- 문서 구조나 스킬/서브에이전트 계약 변경은 documentation-governance-reviewer 대상 위험으로 분리한다.
+- 보안 민감 신호는 backend architecture pass로 흡수하지 않고 `security_sensitive_blocker` 또는 open question으로 분리한다.
+- 문서 구조나 스킬/서브에이전트 계약 변경은 backend delivery 결과로 흡수하지 않고 authoring rule 또는 validation follow-up으로 분리한다.
 
 리뷰 재작업 루프:
 - 구현 검증 evidence가 실패하면 architecture review로 넘기지 않고 구현 단계로 되돌린다.

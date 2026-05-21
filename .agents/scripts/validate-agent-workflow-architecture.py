@@ -33,28 +33,12 @@ REQUIRED_AGENTS = {
         "violation bundle",
         "max review iterations",
     ],
-    ".codex/agents/documentation-governance-reviewer.toml": [
-        "Documentation Governance Reviewer",
-        "검토 Source of Truth",
-        "검토 대상 신호",
-        "AGENTS.md",
-        "docs/rules/README.md",
-    ],
-    ".codex/agents/security-policy-reviewer.toml": [
-        "Security Policy Reviewer",
-        "검토 Source of Truth",
-        "검토 대상 신호",
-        "docs/backend/policies/security.md",
-        "docs/backend/policies/logging.md",
-    ],
 }
 
 
 REQUIRED_ROLE_AGENTS = [
     ".codex/agents/product-planning-designer.toml",
     ".codex/agents/api-contract-designer.toml",
-    ".codex/agents/documentation-governance-reviewer.toml",
-    ".codex/agents/security-policy-reviewer.toml",
 ]
 
 
@@ -70,8 +54,8 @@ REQUIRED_SKILLS = {
         "frontend-delivery-engineer",
         "dispatch_requests",
         "stable_for_parallel",
-        "security-policy-reviewer",
-        "documentation-governance-reviewer",
+        "security_sensitive_blocker",
+        "cross_cutting_risks",
     ],
     ".agents/skills/backend-technical-design-writing-rules/SKILL.md": [
         "목표",
@@ -179,6 +163,8 @@ REMOVED_COMPONENTS = [
     ".codex/agents/backend-software-engineer.toml",
     ".codex/agents/frontend-engineering-lead.toml",
     ".codex/agents/frontend-software-engineer.toml",
+    ".codex/agents/documentation-governance-reviewer.toml",
+    ".codex/agents/security-policy-reviewer.toml",
     ".agents/skills/implement/SKILL.md",
     ".agents/skills/implement-backend/SKILL.md",
     ".agents/skills/implement-frontend/SKILL.md",

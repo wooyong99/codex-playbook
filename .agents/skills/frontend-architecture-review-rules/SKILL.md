@@ -52,7 +52,7 @@ Violation에는 아래 항목을 포함한다.
 - backend domain 또는 persistence 정책을 frontend violation 근거로 사용하지 않는다.
 - 제품 요구사항 자체를 새로 정의하지 않는다.
 - 접근성, 성능, 보안 민감 의심을 숨기지 않는다.
-- 문서 구조, 스킬, 서브에이전트 계약 변경은 documentation governance review 대상으로 분리한다.
+- 문서 구조, 스킬, 서브에이전트 계약 변경을 frontend architecture violation으로 확장하지 않는다.
 
 ## 검증
 

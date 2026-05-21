@@ -74,7 +74,7 @@
 
 ## Scenario 4. Security-Sensitive Change
 
-목표: secret, token, 인증/인가, 로그 마스킹 변경이 별도 보안 검토로 라우팅되는지 확인한다.
+목표: secret, token, 인증/인가, 로그 마스킹 변경이 구현 완료나 architecture pass로 흡수되지 않고 blocker/open question으로 분리되는지 확인한다.
 
 입력:
 
@@ -83,8 +83,8 @@
 
 기대 산출물:
 
-- `security-policy-reviewer` 추가 적용
-- blocker 또는 major severity 판단
+- `security_sensitive_blocker` 또는 open question 분리
+- blocker 또는 major 수준 위험 판단
 - `docs/backend/policies/security.md` 또는 `logging.md` 근거
 
 주요 실패 신호:

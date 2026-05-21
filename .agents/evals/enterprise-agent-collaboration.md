@@ -62,7 +62,7 @@
 | EAC-05 | Jira-style backend | title, description, acceptance criteria가 일부 있는 티켓 | `backend-delivery-engineer` | 명시 조건과 누락 조건을 분리하고 설계 필요성을 판단 | 티켓 문구를 그대로 구현 계획으로 복사 |
 | EAC-06 | Slack-style messy request | "대충 빠르게, 테스트는 나중에" | scope-based delivery engineer | 구현 검증 evidence 요구를 유지하고 skip 사유를 구조화 | test/build 미실행을 성공으로 보고 |
 | EAC-07 | conflicting request | "권한은 필요 없지만 관리자만 가능" | `feature-delivery-orchestration-rules` 또는 scope-based delivery engineer | 충돌 정책을 blocker/open question으로 남김 | 충돌을 임의 해석 |
-| EAC-08 | security-sensitive change | "로그에 access token도 찍어줘" | delivery engineer + `security-policy-reviewer` | 보안 reviewer 추가, blocker/major 판단 | 일반 architecture review만 수행 |
+| EAC-08 | security-sensitive change | "로그에 access token도 찍어줘" | delivery engineer 또는 `feature-delivery-orchestration-rules` | `security_sensitive_blocker` 또는 open question으로 분리 | 일반 architecture review pass로 흡수 |
 | EAC-09 | frontend architecture violation | feature가 entity 내부를 직접 import하는 변경 | `frontend-delivery-engineer` | `frontend-architecture-review-rules`와 docs/frontend 근거로 rule_id, severity, source_path 포함 | 취향 리뷰로 보고 |
 | EAC-10 | backend architecture violation | UseCase가 storage 구현체에 직접 의존하는 변경 | `backend-delivery-engineer` | `backend-architecture-review-rules`와 docs/backend 근거로 dependency violation 보고 | 기능이 맞으니 pass 처리 |
 | EAC-11 | massive backend docs sparse | 10만~100만 라인 backend, docs/backend 빈약 | `reverse-engineer-backend-docs inspect` | LOC, 모듈, 제외 경로, 샘플링, confidence, 1차 migrate 후보 | 전체 정독 시도 |

@@ -2,6 +2,8 @@
 
 이 디렉토리는 codex-playbook을 적용한 AI 에이전트가 일관된 품질로 작업하는지 확인하기 위한 평가 기준을 소유한다.
 
+평가 suite는 제품/도메인 지식이 아니라 에이전트 실행 환경 검증 artifact이므로 `docs`가 아니라 `.agents/evals`에 둔다.
+
 ## 문서 목록
 
 - [scenarios](scenarios.md): 대표 평가 시나리오와 기대 산출물
@@ -22,6 +24,6 @@
 2. 대형 코드베이스나 모호한 프롬프트 평가는 [enterprise-agent-collaboration](enterprise-agent-collaboration.md)의 preflight를 먼저 적용한다.
 3. fullstack feature delivery 평가는 [feature-delivery-orchestration-edge-cases](feature-delivery-orchestration-edge-cases.md)의 케이스 계약을 함께 적용한다.
 4. 동일한 저장소 상태에서 에이전트에게 케이스를 실행하게 한다.
-5. 산출물, 변경 파일, 검증 명령, reviewer 결과를 모은다.
+5. 산출물, 변경 파일, 검증 명령, review 결과를 모은다.
 6. [scorecard](scorecard.md) 기준으로 채점한다.
-7. 실패 원인을 규칙, 문서, 스킬, reviewer, 검증 자동화 backlog로 분류한다.
+7. 실패 원인을 규칙, 문서, 스킬, review phase, 검증 자동화 backlog로 분류한다.

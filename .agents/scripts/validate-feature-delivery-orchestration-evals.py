@@ -151,7 +151,6 @@ CASES: tuple[Case, ...] = (
         expected_preflight=("setup-project-context", "reverse-engineer-backend-docs inspect"),
         expected_routing=(
             "feature-delivery-orchestration-rules",
-            "security-policy-reviewer",
         ),
         expected_blockers=("security_sensitive_blocker",),
     ),
@@ -300,7 +299,6 @@ def route_case(case: Case) -> dict[str, object]:
         routing.append("frontend-delivery-engineer")
 
     if case.security_sensitive:
-        routing.append("security-policy-reviewer")
         blockers.append("security_sensitive_blocker")
         return {
             "preflight": tuple(preflight),
@@ -375,7 +373,7 @@ def check_case(errors: list[str], case: Case) -> None:
 
 
 def check_doc_markers(errors: list[str]) -> None:
-    doc = ROOT / "docs/evals/feature-delivery-orchestration-edge-cases.md"
+    doc = ROOT / ".agents/evals/feature-delivery-orchestration-edge-cases.md"
     if not doc.exists():
         errors.append(f"{doc.relative_to(ROOT)}: missing file")
         return
