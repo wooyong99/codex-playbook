@@ -51,6 +51,7 @@
 
 ```text
 .
+├── AGENT_ARCHITECTURE.md # 스킬과 서브에이전트 개념 모델
 ├── .agents/      # 에이전트 스킬, 참조 문서, 평가 suite
 ├── docs/         # 프로젝트 지식 시스템(백엔드/프론트엔드/PRD)
 └── AGENTS.md     # 에이전트 작업 지침서
@@ -58,6 +59,7 @@
 
 ## 문서 맵
 
+- [Agent architecture](AGENT_ARCHITECTURE.md)
 - [PRD](docs/PRD.md)
 - [Rule ID and metadata](docs/rules/README.md)
 - [Agent evaluation suite](.agents/evals/README.md)

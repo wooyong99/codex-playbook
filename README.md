@@ -36,6 +36,8 @@ python3 .agents/scripts/check-playbook.py
 
 - [AGENTS.md](AGENTS.md)
   Codex가 이 프로젝트에서 따라야 할 공통 작업 지침
+- [에이전트 아키텍처](AGENT_ARCHITECTURE.md)
+  스킬과 서브에이전트의 개념, 관계, 설계 구조
 - [적용 가이드](docs/apply-playbook.md)  
   클론 후 무엇부터 손대야 하는지 설명
 - [커스터마이징 체크리스트](docs/customization-checklist.md)  
@@ -50,6 +52,7 @@ python3 .agents/scripts/check-playbook.py
 ```text
 .
 ├── AGENTS.md        # Codex 작업 지침서
+├── AGENT_ARCHITECTURE.md # 스킬과 서브에이전트 개념 모델
 ├── .agents/         # 프로젝트 스킬, 참조 문서, 평가 suite
 ├── .codex/          # Codex 서브에이전트 정의
 ├── docs/            # 사람과 AI가 함께 읽는 지식 시스템
