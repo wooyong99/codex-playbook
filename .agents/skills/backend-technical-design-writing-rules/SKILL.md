@@ -9,11 +9,11 @@ description: 백엔드 구현 전에 아키텍처 판단, 계층 책임, 트랜�
 
 목표:
 
-backend 변경의 설계 판단을 구현자와 reviewer가 공유할 수 있는 기술설계문서로 정리한다.
+backend 변경의 설계 판단을 `backend_design_basis` payload와 필요한 기술설계문서로 정리한다.
 
 ## 성공 기준
 
-- 설계 범위와 제외 범위가 명확하다.
+- `backend_design_basis`에 설계 범위와 제외 범위가 명확하다.
 - 아키텍처 판단과 계층 책임 분리가 근거와 함께 설명된다.
 - 트랜잭션, 정합성, 실패 처리, 동시성, 검증 계획이 필요한 수준으로 다뤄진다.
 - 새 설계 문서가 생기면 `docs/backend/design/README.md` 문서 맵이 갱신된다.
@@ -29,7 +29,7 @@ backend 변경의 설계 판단을 구현자와 reviewer가 공유할 수 있는
 
 - 구현 순서를 장황하게 나열하고 설계 판단을 비워두는 것.
 - 저장소에서 확인되지 않은 architecture rule을 임의로 추가하는 것.
-- 단순 변경에 과도한 TDD를 작성해 구현 흐름을 막는 것.
+- 단순 변경에 과도한 TDD를 작성해 delivery 흐름을 막는 것.
 
 ## 금지사항
 
@@ -48,6 +48,7 @@ backend 변경의 설계 판단을 구현자와 reviewer가 공유할 수 있는
 - [Backend docs](../../../docs/backend/README.md)
 - [Backend architecture](../../../docs/backend/architecture/README.md)
 - [Backend design docs](../../../docs/backend/design/README.md)
+- [Backend stage payload contracts](../backend-stage-payload-contracts.md)
 - [Reference map](references/reference-map.md)
 - [Detailed workflow](references/backend-tdd-workflow.md)
 - [TDD template](references/backend-tdd-template.md)

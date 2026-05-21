@@ -33,6 +33,8 @@
 
 스킬은 실행 주체가 아니다. 스킬 자체가 다른 스킬이나 서브에이전트를 호출하지 않는다. 스킬은 호출자가 읽고 적용하는 작업 규약이다.
 
+Stage skill은 특정 서브에이전트 이름이나 역할 인스턴스에 의존하지 않는다. 서로 다른 stage 사이의 연결은 실행 주체가 아니라 입력/출력 payload로 표현한다. Backend stage payload의 단일 출처는 [backend-stage-payload-contracts](.agents/skills/backend-stage-payload-contracts.md), frontend stage payload의 단일 출처는 [frontend-stage-payload-contracts](.agents/skills/frontend-stage-payload-contracts.md)다.
+
 ### Subagent
 
 서브에이전트는 특정 역할과 판단 책임을 가진 실행 주체다.

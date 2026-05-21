@@ -9,11 +9,11 @@ description: 프론트엔드 구현 전에 사용자 흐름, route, component, s
 
 목표:
 
-frontend 변경의 설계 판단을 구현자와 reviewer가 공유할 수 있는 기술설계문서로 정리한다.
+frontend 변경의 설계 판단을 `frontend_design_basis` payload와 필요한 기술설계문서로 정리한다.
 
 ## 성공 기준
 
-- 설계 범위와 제외 범위가 명확하다.
+- `frontend_design_basis`에 설계 범위와 제외 범위가 명확하다.
 - 사용자 흐름, route, component 책임, state 소유권이 설명된다.
 - API, cache, loading/error, 접근성, 반응형, browser 검증 계획이 필요한 수준으로 다뤄진다.
 - 새 설계 문서가 생기면 `docs/frontend/design/README.md` 문서 맵이 갱신된다.
@@ -48,6 +48,7 @@ frontend 변경의 설계 판단을 구현자와 reviewer가 공유할 수 있�
 - [Frontend docs](../../../docs/frontend/README.md)
 - [Frontend architecture](../../../docs/frontend/architecture/README.md)
 - [Frontend design docs](../../../docs/frontend/design/README.md)
+- [Frontend stage payload contracts](../frontend-stage-payload-contracts.md)
 - [Reference map](references/reference-map.md)
 - [Detailed workflow](references/frontend-tdd-workflow.md)
 - [TDD template](references/frontend-tdd-template.md)

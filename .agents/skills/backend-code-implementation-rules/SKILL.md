@@ -9,12 +9,12 @@ description: 백엔드 코드를 요구사항과 설계 결정에 맞게 수정�
 
 목표:
 
-입력된 backend 요구사항과 설계 결정을 실제 코드 변경으로 옮기고 구현 검증 evidence를 남긴다.
+입력된 backend 요구사항과 `backend_design_basis`를 실제 코드 변경으로 옮기고 `implementation_result`를 남긴다.
 
 ## 성공 기준
 
 - 변경 파일과 변경 이유가 명확하다.
-- Source of Truth와 설계 결정이 구현에 반영된다.
+- Source of Truth와 `backend_design_basis`가 구현에 반영된다.
 - compile/test/typecheck 같은 구현 검증 evidence가 있다.
 - frontend 또는 infra로 넘길 계약 불확실성이 분리된다.
 
@@ -25,18 +25,18 @@ description: 백엔드 코드를 요구사항과 설계 결정에 맞게 수정�
 - transaction, consistency, exception, security 정책을 docs 기준으로 보존한다.
 - compile/test/typecheck 실패가 있으면 구현 완료로 보고하지 않는다.
 
-## 리뷰 재작업 입력
+## Architecture Review 재작업 입력
 
-Architecture reviewer가 violation bundle을 전달하면 아래 기준을 따른다.
+`architecture_review_result` 또는 `remediation_input`이 입력되면 [Backend stage payload contracts](../backend-stage-payload-contracts.md)의 필드를 기준으로 처리한다.
 
-- `rule_id`, `severity`, `source_path`, `violated_rule`, `affected_files`, `reason`을 먼저 확인한다.
+- violation payload의 근거와 수정 범위를 먼저 확인한다.
 - `requested_action` 범위 안에서만 수정하고, 새 설계 결정을 임의로 만들지 않는다.
 - 수정 후 `rerun_required`에 적힌 compile/test/typecheck를 다시 실행한다.
 - 같은 위반이 해결되지 않거나 설계 결정 충돌이 의심되면 구현 완료로 보고하지 않고 불확실성으로 반환한다.
 
 ## 안티패턴
 
-- 설계 산출물의 결정과 다른 구조로 구현한다.
+- `backend_design_basis`의 결정과 다른 구조로 구현한다.
 - 테스트를 맞추기 위해 domain policy를 우회한다.
 - frontend 표시 편의를 backend domain 책임으로 끌어온다.
 
@@ -58,3 +58,4 @@ Architecture reviewer가 violation bundle을 전달하면 아래 기준을 따�
 - [Backend docs](../../../docs/backend/README.md)
 - [Backend architecture](../../../docs/backend/architecture/README.md)
 - [Backend policies](../../../docs/backend/policies/README.md)
+- [Backend stage payload contracts](../backend-stage-payload-contracts.md)

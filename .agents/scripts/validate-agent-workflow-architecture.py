@@ -14,6 +14,9 @@ REQUIRED_AGENTS = {
         "backend-technical-design-writing-rules",
         "backend-code-implementation-rules",
         "backend-architecture-review-rules",
+        "진행 상황 터미널 출력",
+        "trace-skill-stage.py",
+        "summary --agent backend-delivery-engineer",
         "직접 수행",
         "아키텍처 리뷰 독립성",
         "아키텍처 리뷰 Source of Truth",
@@ -26,6 +29,9 @@ REQUIRED_AGENTS = {
         "frontend-technical-design-writing-rules",
         "frontend-code-implementation-rules",
         "frontend-architecture-review-rules",
+        "진행 상황 터미널 출력",
+        "trace-skill-stage.py",
+        "summary --agent frontend-delivery-engineer",
         "직접 수행",
         "아키텍처 리뷰 독립성",
         "아키텍처 리뷰 Source of Truth",
@@ -68,7 +74,8 @@ REQUIRED_SKILLS = {
         "목표",
         "성공 기준",
         "핵심 규칙",
-        "리뷰 재작업 입력",
+        "Architecture Review 재작업 입력",
+        "Backend stage payload contracts",
         "안티패턴",
         "금지사항",
     ],
@@ -78,6 +85,7 @@ REQUIRED_SKILLS = {
         "핵심 규칙",
         "Violation payload",
         "기본 Source of Truth 후보",
+        "Backend stage payload contracts",
         "안티패턴",
         "금지사항",
     ],
@@ -92,7 +100,8 @@ REQUIRED_SKILLS = {
         "목표",
         "성공 기준",
         "핵심 규칙",
-        "리뷰 재작업 입력",
+        "Architecture Review 재작업 입력",
+        "Frontend stage payload contracts",
         "안티패턴",
         "금지사항",
     ],
@@ -102,6 +111,7 @@ REQUIRED_SKILLS = {
         "핵심 규칙",
         "Violation payload",
         "기본 Source of Truth 후보",
+        "Frontend stage payload contracts",
         "안티패턴",
         "금지사항",
     ],
@@ -197,6 +207,114 @@ FORBIDDEN_SKILL_REFERENCE_PHRASES = [
 ]
 
 
+FORBIDDEN_STAGE_SKILL_ROLE_REFERENCES = {
+    ".agents/skills/backend-technical-design-writing-rules/SKILL.md": [
+        "backend-delivery-engineer",
+        "Backend Delivery Engineer",
+        "구현자와 reviewer",
+        "후속 구현 단계",
+        "architecture review 단계",
+    ],
+    ".agents/skills/backend-code-implementation-rules/SKILL.md": [
+        "backend-delivery-engineer",
+        "Backend Delivery Engineer",
+        "Architecture reviewer",
+        "architecture reviewer",
+        "violation_bundle",
+        "`rule_id`, `severity`, `source_path`, `violated_rule`, `affected_files`, `reason`",
+    ],
+    ".agents/skills/backend-architecture-review-rules/SKILL.md": [
+        "backend-delivery-engineer",
+        "Backend Delivery Engineer",
+        "reviewer는",
+        "구현자가",
+        "구현자는",
+    ],
+    ".agents/skills/frontend-technical-design-writing-rules/SKILL.md": [
+        "frontend-delivery-engineer",
+        "Frontend Delivery Engineer",
+        "구현자와 reviewer",
+        "후속 구현 단계",
+        "architecture review 단계",
+    ],
+    ".agents/skills/frontend-code-implementation-rules/SKILL.md": [
+        "frontend-delivery-engineer",
+        "Frontend Delivery Engineer",
+        "Architecture reviewer",
+        "architecture reviewer",
+        "violation_bundle",
+        "`rule_id`, `severity`, `source_path`, `violated_rule`, `affected_files`, `reason`",
+    ],
+    ".agents/skills/frontend-architecture-review-rules/SKILL.md": [
+        "frontend-delivery-engineer",
+        "Frontend Delivery Engineer",
+        "reviewer는",
+        "구현자가",
+        "구현자는",
+    ],
+}
+
+
+REQUIRED_SHARED_CONTRACT_REFERENCES = {
+    ".agents/skills/backend-technical-design-writing-rules/SKILL.md": [
+        "Backend stage payload contracts",
+        "backend_design_basis",
+    ],
+    ".agents/skills/backend-code-implementation-rules/SKILL.md": [
+        "Backend stage payload contracts",
+        "backend_design_basis",
+        "implementation_result",
+        "remediation_input",
+    ],
+    ".agents/skills/backend-architecture-review-rules/SKILL.md": [
+        "Backend stage payload contracts",
+        "backend_design_basis",
+        "implementation_result",
+    ],
+    ".agents/skills/frontend-technical-design-writing-rules/SKILL.md": [
+        "Frontend stage payload contracts",
+        "frontend_design_basis",
+    ],
+    ".agents/skills/frontend-code-implementation-rules/SKILL.md": [
+        "Frontend stage payload contracts",
+        "frontend_design_basis",
+        "implementation_result",
+        "remediation_input",
+    ],
+    ".agents/skills/frontend-architecture-review-rules/SKILL.md": [
+        "Frontend stage payload contracts",
+        "frontend_design_basis",
+        "implementation_result",
+    ],
+}
+
+
+REQUIRED_BACKEND_STAGE_CONTRACT_MARKERS = [
+    "backend_design_basis",
+    "implementation_result",
+    "architecture_review_result",
+    "violation payload",
+    "remediation_input",
+]
+
+
+REQUIRED_FRONTEND_STAGE_CONTRACT_MARKERS = [
+    "frontend_design_basis",
+    "implementation_result",
+    "architecture_review_result",
+    "violation payload",
+    "remediation_input",
+]
+
+
+REQUIRED_TRACE_SCRIPT_MARKERS = [
+    "스킬 진행",
+    "스킬 요약",
+    "비표시",
+    "CODEX_PLAYBOOK_TRACE_DIR",
+]
+
+
 FORBIDDEN_DOMAIN_DOC_PHRASES = [
     ".agents/skills",
     ".codex/agents",
@@ -268,6 +386,21 @@ def check_agents(errors: list[str]) -> None:
 
 
 def check_skills(errors: list[str]) -> None:
+    require_markers(
+        errors,
+        ".agents/scripts/trace-skill-stage.py",
+        REQUIRED_TRACE_SCRIPT_MARKERS,
+    )
+    require_markers(
+        errors,
+        ".agents/skills/backend-stage-payload-contracts.md",
+        REQUIRED_BACKEND_STAGE_CONTRACT_MARKERS,
+    )
+    require_markers(
+        errors,
+        ".agents/skills/frontend-stage-payload-contracts.md",
+        REQUIRED_FRONTEND_STAGE_CONTRACT_MARKERS,
+    )
     for relative, markers in REQUIRED_SKILLS.items():
         require_markers(errors, relative, markers)
         text = read(relative) or ""
@@ -277,6 +410,13 @@ def check_skills(errors: list[str]) -> None:
         for phrase in FORBIDDEN_SKILL_REFERENCE_PHRASES:
             if phrase in text:
                 errors.append(f"{relative}: forbidden execution contract phrase {phrase!r}")
+    for relative, phrases in FORBIDDEN_STAGE_SKILL_ROLE_REFERENCES.items():
+        text = read(relative) or ""
+        for phrase in phrases:
+            if phrase in text:
+                errors.append(f"{relative}: stage skill must depend on payloads, not role reference {phrase!r}")
+    for relative, markers in REQUIRED_SHARED_CONTRACT_REFERENCES.items():
+        require_markers(errors, relative, markers)
 
 
 def check_removed_components(errors: list[str]) -> None:

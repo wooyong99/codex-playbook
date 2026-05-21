@@ -9,7 +9,7 @@ description: 백엔드 변경이 architecture boundary, dependency direction, po
 
 목표:
 
-backend 변경이 입력된 Source of Truth와 설계 결정에 맞는지 독립적으로 검토한다.
+backend 변경이 입력된 Source of Truth, `backend_design_basis`, `implementation_result`에 맞는지 독립적으로 검토한다.
 
 ## 성공 기준
 
@@ -21,31 +21,21 @@ backend 변경이 입력된 Source of Truth와 설계 결정에 맞는지 독립
 ## 핵심 규칙
 
 - 검토 기준은 입력으로 받은 Source of Truth에 한정한다.
-- 기본 Source of Truth 후보는 docs/backend/architecture/**, docs/backend/policies/**, 관련 TDD 또는 설계 skip 근거다.
+- 기본 Source of Truth 후보는 docs/backend/architecture/**, docs/backend/policies/**, 관련 `backend_design_basis`다.
 - architecture boundary, dependency direction, transaction, security, logging 정책을 확인한다.
-- TDD 또는 설계 skip 근거와 구현 결과의 일관성을 확인한다.
-- reviewer는 구현을 직접 수정하지 않는다.
-- violation은 구현자가 재작업할 수 있는 단위로 작성한다.
+- `backend_design_basis`와 `implementation_result`의 일관성을 확인한다.
+- architecture review stage는 구현을 직접 수정하지 않는다.
+- violation은 후속 remediation input으로 사용할 수 있는 단위로 작성한다.
 
 ## Violation payload
 
-Violation에는 아래 항목을 포함한다.
-
-- `rule_id`: 안정적인 규칙 식별자. 없으면 후보 규칙임을 명시한다.
-- `severity`: `blocker`, `major`, `minor`, `info` 중 하나.
-- `source_path`: 위반 근거가 되는 Source of Truth 경로.
-- `line_range`: 근거 문서 또는 변경 파일의 관련 줄 범위.
-- `violated_rule`: 위반한 규칙 원문 또는 체크리스트 항목.
-- `affected_files`: 수정이 필요한 파일 목록.
-- `reason`: 왜 위반인지에 대한 근거.
-- `requested_action`: 특정 구현 방식을 강제하지 않는 수정 방향.
-- `rerun_required`: 수정 후 다시 실행해야 할 검증.
+Violation payload는 [Backend stage payload contracts](../backend-stage-payload-contracts.md)를 따른다.
 
 ## 안티패턴
 
 - 코드 스타일 취향을 architecture violation으로 보고한다.
 - Source of Truth에 없는 규칙을 근거로 blocker를 만든다.
-- 구현자가 실행한 검증을 확인하지 않고 pass 처리한다.
+- implementation evidence를 확인하지 않고 pass 처리한다.
 
 ## 금지사항
 
@@ -65,3 +55,4 @@ Violation에는 아래 항목을 포함한다.
 - [Backend architecture](../../../docs/backend/architecture/README.md)
 - [Backend policies](../../../docs/backend/policies/README.md)
 - [Rule metadata](../../../docs/rules/README.md)
+- [Backend stage payload contracts](../backend-stage-payload-contracts.md)

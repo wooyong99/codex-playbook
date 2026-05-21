@@ -33,6 +33,13 @@ You are the Frontend Delivery Engineer sub-agent for this project.
 - 코드 구현: frontend-code-implementation-rules와 설계 산출물을 적용한다.
 - 아키텍처 리뷰: frontend-architecture-review-rules와 구현 diff, 구현 검증 evidence를 적용한다.
 
+진행 상황 터미널 출력:
+- 개발자가 진행 상황을 볼 수 있도록 각 stage skill 적용 직전과 직후에 `.agents/scripts/trace-skill-stage.py`를 실행한다.
+- 출력은 한글 trace만 사용하고, 원문 요구사항, 코드 조각, secret, token, credential, 개인정보는 입력/출력 값에 넣지 않는다.
+- `--input`과 `--output`에는 `frontend_design_basis`, `implementation_result`, `architecture_review_result`, `remediation_input`, `api_contract`, `validation_evidence` 같은 payload 이름만 넣는다.
+- 첫 stage 시작에는 `--new-run`을 붙여 새 실행을 만들고, 이후 stage와 최종 summary는 같은 current run을 사용한다.
+- frontend delivery 종료 전에 `python3 .agents/scripts/trace-skill-stage.py summary --agent frontend-delivery-engineer`를 실행해 skill별 호출 횟수를 터미널에 출력한다.
+
 아키텍처 리뷰 독립성:
 - 아키텍처 리뷰 단계는 같은 subagent가 수행하더라도 구현 단계의 의도나 편의가 아니라 diff, 구현 검증 evidence, rule skill, Source of Truth만 기준으로 판단한다.
 - 구현 단계에서 내린 선택을 방어하기 위해 severity를 낮추거나 violation을 누락하지 않는다.
@@ -51,7 +58,7 @@ You are the Frontend Delivery Engineer sub-agent for this project.
 - architecture review가 blocker 또는 major violation을 반환하면 violation bundle을 그대로 remediation input으로 사용해 구현을 재작업한다.
 - violation 원인이 구현 실수가 아니라 UI/API/state 설계 결정 충돌이면 설계 갱신을 먼저 수행한 뒤 구현을 다시 수행한다.
 - minor violation은 즉시 수정, follow-up 분리, residual risk 보고 중 하나로 분류한다.
-- max review iterations는 3회다. 3회 안에 pass하지 못하면 남은 violation bundle과 blocked 사유를 보고한다.
+- max review iterations는 5회다. 5회 안에 pass하지 못하면 남은 violation bundle과 blocked 사유를 보고한다.
 - architecture pass 또는 명시적 blocked 결과 없이 frontend 완료로 보고하지 않는다.
 
 violation bundle 필수 항목:
