@@ -26,6 +26,15 @@ description: UI, route/page, component, client state, API client, query/cache �
 - 브라우저 검증이 필요한 UI 변경은 이유 없이 생략하지 않는다.
 - build/test/typecheck/browser check 실패가 있으면 구현 완료로 보고하지 않는다.
 
+## 리뷰 재작업 입력
+
+Architecture reviewer가 violation bundle을 전달하면 아래 기준을 따른다.
+
+- `rule_id`, `severity`, `source_path`, `violated_rule`, `affected_files`, `reason`을 먼저 확인한다.
+- `requested_action` 범위 안에서만 수정하고, 새 UI/API/state 설계 결정을 임의로 만들지 않는다.
+- 수정 후 `rerun_required`에 적힌 build/test/typecheck/browser check를 다시 실행한다.
+- 같은 위반이 해결되지 않거나 설계 결정 충돌이 의심되면 구현 완료로 보고하지 않고 불확실성으로 반환한다.
+
 ## 안티패턴
 
 - API response shape를 UI에서 임의로 만든다.

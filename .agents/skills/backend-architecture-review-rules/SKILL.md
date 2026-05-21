@@ -24,6 +24,21 @@ backend 변경이 입력된 Source of Truth와 설계 결정에 맞는지 독립
 - architecture boundary, dependency direction, transaction, security, logging 정책을 확인한다.
 - TDD 또는 설계 skip 근거와 구현 결과의 일관성을 확인한다.
 - reviewer는 구현을 직접 수정하지 않는다.
+- violation은 구현자가 재작업할 수 있는 단위로 작성한다.
+
+## Violation payload
+
+Violation에는 아래 항목을 포함한다.
+
+- `rule_id`: 안정적인 규칙 식별자. 없으면 후보 규칙임을 명시한다.
+- `severity`: `blocker`, `major`, `minor`, `info` 중 하나.
+- `source_path`: 위반 근거가 되는 Source of Truth 경로.
+- `line_range`: 근거 문서 또는 변경 파일의 관련 줄 범위.
+- `violated_rule`: 위반한 규칙 원문 또는 체크리스트 항목.
+- `affected_files`: 수정이 필요한 파일 목록.
+- `reason`: 왜 위반인지에 대한 근거.
+- `requested_action`: 특정 구현 방식을 강제하지 않는 수정 방향.
+- `rerun_required`: 수정 후 다시 실행해야 할 검증.
 
 ## 안티패턴
 

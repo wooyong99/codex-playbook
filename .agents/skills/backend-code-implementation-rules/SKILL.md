@@ -25,6 +25,15 @@ description: 백엔드 코드를 요구사항과 설계 결정에 맞게 수정�
 - transaction, consistency, exception, security 정책을 docs 기준으로 보존한다.
 - compile/test/typecheck 실패가 있으면 구현 완료로 보고하지 않는다.
 
+## 리뷰 재작업 입력
+
+Architecture reviewer가 violation bundle을 전달하면 아래 기준을 따른다.
+
+- `rule_id`, `severity`, `source_path`, `violated_rule`, `affected_files`, `reason`을 먼저 확인한다.
+- `requested_action` 범위 안에서만 수정하고, 새 설계 결정을 임의로 만들지 않는다.
+- 수정 후 `rerun_required`에 적힌 compile/test/typecheck를 다시 실행한다.
+- 같은 위반이 해결되지 않거나 설계 결정 충돌이 의심되면 구현 완료로 보고하지 않고 불확실성으로 반환한다.
+
 ## 안티패턴
 
 - 설계 산출물의 결정과 다른 구조로 구현한다.
