@@ -19,7 +19,7 @@ Excluded:
 - Project-level product requirements owned by [PRD](../PRD.md)
 - Backend architecture rules owned by [Backend docs](../backend/README.md)
 - Frontend architecture rules owned by [Frontend docs](../frontend/README.md)
-- Review routing rules owned by [Review routing](../review/README.md)
+- Review scope and Source of Truth owned by the relevant reviewer subagent or review rule skill
 
 ## Document Map
 

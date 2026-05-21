@@ -9,40 +9,43 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 REQUIRED_AGENTS = {
-    ".codex/agents/feature-delivery-lead.toml": [
-        "Feature Delivery Lead",
-        "product-planning-designer",
-        "api-contract-designer",
-        "backend-delivery-lead",
-        "frontend-delivery-lead",
-        "feature-delivery-readiness-rules",
-        "product-requirements-planning-rules",
-        "api-contract-design-rules",
-        "병렬",
-    ],
-    ".codex/agents/backend-delivery-lead.toml": [
-        "Backend Delivery Lead",
-        "backend-technical-design-writer",
-        "backend-implementation-engineer",
-        "backend-architecture-reviewer",
+    ".codex/agents/backend-delivery-engineer.toml": [
+        "Backend Delivery Engineer",
         "backend-technical-design-writing-rules",
         "backend-code-implementation-rules",
         "backend-architecture-review-rules",
+        "직접 수행",
+        "아키텍처 리뷰 독립성",
+        "아키텍처 리뷰 Source of Truth",
         "리뷰 재작업 루프",
         "violation bundle",
         "max review iterations",
     ],
-    ".codex/agents/frontend-delivery-lead.toml": [
-        "Frontend Delivery Lead",
-        "frontend-technical-design-writer",
-        "frontend-implementation-engineer",
-        "frontend-architecture-reviewer",
+    ".codex/agents/frontend-delivery-engineer.toml": [
+        "Frontend Delivery Engineer",
         "frontend-technical-design-writing-rules",
         "frontend-code-implementation-rules",
         "frontend-architecture-review-rules",
+        "직접 수행",
+        "아키텍처 리뷰 독립성",
+        "아키텍처 리뷰 Source of Truth",
         "리뷰 재작업 루프",
         "violation bundle",
         "max review iterations",
+    ],
+    ".codex/agents/documentation-governance-reviewer.toml": [
+        "Documentation Governance Reviewer",
+        "검토 Source of Truth",
+        "검토 대상 신호",
+        "AGENTS.md",
+        "docs/rules/README.md",
+    ],
+    ".codex/agents/security-policy-reviewer.toml": [
+        "Security Policy Reviewer",
+        "검토 Source of Truth",
+        "검토 대상 신호",
+        "docs/backend/policies/security.md",
+        "docs/backend/policies/logging.md",
     ],
 }
 
@@ -50,24 +53,25 @@ REQUIRED_AGENTS = {
 REQUIRED_ROLE_AGENTS = [
     ".codex/agents/product-planning-designer.toml",
     ".codex/agents/api-contract-designer.toml",
-    ".codex/agents/backend-technical-design-writer.toml",
-    ".codex/agents/backend-implementation-engineer.toml",
-    ".codex/agents/backend-architecture-reviewer.toml",
-    ".codex/agents/frontend-technical-design-writer.toml",
-    ".codex/agents/frontend-implementation-engineer.toml",
-    ".codex/agents/frontend-architecture-reviewer.toml",
     ".codex/agents/documentation-governance-reviewer.toml",
     ".codex/agents/security-policy-reviewer.toml",
 ]
 
 
 REQUIRED_SKILLS = {
-    ".agents/skills/feature-delivery-readiness-rules/SKILL.md": [
-        "목표",
-        "성공 기준",
-        "핵심 규칙",
-        "안티패턴",
-        "금지사항",
+    ".agents/skills/feature-delivery-orchestration-rules/SKILL.md": [
+        "목적",
+        "적용 대상",
+        "작업 흐름",
+        "Readiness 판단",
+        "Dispatch 루프",
+        "orchestration_result",
+        "backend-delivery-engineer",
+        "frontend-delivery-engineer",
+        "dispatch_requests",
+        "stable_for_parallel",
+        "security-policy-reviewer",
+        "documentation-governance-reviewer",
     ],
     ".agents/skills/backend-technical-design-writing-rules/SKILL.md": [
         "목표",
@@ -89,6 +93,7 @@ REQUIRED_SKILLS = {
         "성공 기준",
         "핵심 규칙",
         "Violation payload",
+        "기본 Source of Truth 후보",
         "안티패턴",
         "금지사항",
     ],
@@ -112,6 +117,7 @@ REQUIRED_SKILLS = {
         "성공 기준",
         "핵심 규칙",
         "Violation payload",
+        "기본 Source of Truth 후보",
         "안티패턴",
         "금지사항",
     ],
@@ -133,17 +139,12 @@ REQUIRED_SKILLS = {
 
 
 REQUIRED_SKILL_CONFIGS = {
-    ".codex/agents/feature-delivery-lead.toml": [
-        "feature-delivery-readiness-rules/SKILL.md",
-        "product-requirements-planning-rules/SKILL.md",
-        "api-contract-design-rules/SKILL.md",
-    ],
-    ".codex/agents/backend-delivery-lead.toml": [
+    ".codex/agents/backend-delivery-engineer.toml": [
         "backend-technical-design-writing-rules/SKILL.md",
         "backend-code-implementation-rules/SKILL.md",
         "backend-architecture-review-rules/SKILL.md",
     ],
-    ".codex/agents/frontend-delivery-lead.toml": [
+    ".codex/agents/frontend-delivery-engineer.toml": [
         "frontend-technical-design-writing-rules/SKILL.md",
         "frontend-code-implementation-rules/SKILL.md",
         "frontend-architecture-review-rules/SKILL.md",
@@ -154,28 +155,21 @@ REQUIRED_SKILL_CONFIGS = {
     ".codex/agents/api-contract-designer.toml": [
         "api-contract-design-rules/SKILL.md",
     ],
-    ".codex/agents/backend-technical-design-writer.toml": [
-        "backend-technical-design-writing-rules/SKILL.md",
-    ],
-    ".codex/agents/backend-implementation-engineer.toml": [
-        "backend-code-implementation-rules/SKILL.md",
-    ],
-    ".codex/agents/backend-architecture-reviewer.toml": [
-        "backend-architecture-review-rules/SKILL.md",
-    ],
-    ".codex/agents/frontend-technical-design-writer.toml": [
-        "frontend-technical-design-writing-rules/SKILL.md",
-    ],
-    ".codex/agents/frontend-implementation-engineer.toml": [
-        "frontend-code-implementation-rules/SKILL.md",
-    ],
-    ".codex/agents/frontend-architecture-reviewer.toml": [
-        "frontend-architecture-review-rules/SKILL.md",
-    ],
 }
 
 
 REMOVED_COMPONENTS = [
+    ".codex/agents/feature-delivery-lead.toml",
+    ".codex/agents/backend-delivery-lead.toml",
+    ".codex/agents/frontend-delivery-lead.toml",
+    "docs/review/README.md",
+    ".agents/skills/feature-delivery-readiness-rules/SKILL.md",
+    ".codex/agents/backend-technical-design-writer.toml",
+    ".codex/agents/backend-implementation-engineer.toml",
+    ".codex/agents/backend-architecture-reviewer.toml",
+    ".codex/agents/frontend-technical-design-writer.toml",
+    ".codex/agents/frontend-implementation-engineer.toml",
+    ".codex/agents/frontend-architecture-reviewer.toml",
     ".codex/agents/implementation-orchestrator.toml",
     ".codex/agents/infra-implementation-engineer.toml",
     ".codex/agents/fullstack-implementation-orchestrator.toml",
@@ -268,6 +262,23 @@ def check_agents(errors: list[str]) -> None:
                 errors.append(f"{relative}: missing skills.config for {skill_path!r}")
         if "[[skills.config]]" not in text:
             errors.append(f"{relative}: missing [[skills.config]] block")
+        for line in text.splitlines():
+            stripped = line.strip()
+            if not stripped.startswith("path = "):
+                continue
+            raw_path = stripped.split("=", 1)[1].strip().strip('"')
+            if ".agents/skills/" not in raw_path:
+                continue
+            if raw_path.startswith("/"):
+                errors.append(f"{relative}: skills.config path must be repo-relative {raw_path!r}")
+                continue
+            skill_path = ROOT / raw_path
+            resolved = skill_path.resolve()
+            if ROOT not in resolved.parents:
+                errors.append(f"{relative}: skills.config path escapes repository {raw_path!r}")
+                continue
+            if not resolved.exists():
+                errors.append(f"{relative}: skills.config path does not exist {raw_path!r}")
 
 
 def check_skills(errors: list[str]) -> None:
@@ -290,14 +301,13 @@ def check_removed_components(errors: list[str]) -> None:
 def check_docs(errors: list[str]) -> None:
     require_markers(
         errors,
-        "docs/review/README.md",
-        ["Reviewer Ownership", "workflow orchestration", "implementation task decomposition"],
-    )
-    require_markers(
-        errors,
         "AGENTS.md",
         ["Superpowers working artifacts"],
     )
+    for path in [ROOT / "AGENTS.md", ROOT / "README.md", ROOT / "docs/superpowers/README.md"]:
+        text = path.read_text(encoding="utf-8")
+        if "docs/review/README.md" in text or "Review routing" in text:
+            errors.append(f"{path.relative_to(ROOT)}: central review routing doc reference remains")
     for root in ["docs/backend", "docs/frontend"]:
         for path in (ROOT / root).rglob("*.md"):
             text = path.read_text(encoding="utf-8")

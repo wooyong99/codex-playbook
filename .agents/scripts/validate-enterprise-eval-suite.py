@@ -2,6 +2,7 @@
 """Validate enterprise-scale agent collaboration evaluation coverage."""
 
 from pathlib import Path
+import subprocess
 import sys
 
 
@@ -9,18 +10,20 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 REQUIRED_EVAL_DOC = ROOT / "docs/evals/enterprise-agent-collaboration.md"
+ORCHESTRATION_EVAL_DOC = ROOT / "docs/evals/feature-delivery-orchestration-edge-cases.md"
+ORCHESTRATION_EVAL_SCRIPT = ROOT / ".agents/scripts/validate-feature-delivery-orchestration-evals.py"
 
 REQUIRED_EVAL_MARKERS = [
     "setup-project-context",
     "reverse-engineer-backend-docs inspect",
     "10만~100만",
-    "feature-delivery-lead",
-    "backend-delivery-lead",
-    "frontend-delivery-lead",
-    "backend-implementation-engineer",
-    "frontend-implementation-engineer",
-    "backend-architecture-reviewer",
-    "frontend-architecture-reviewer",
+    "feature-delivery-orchestration-rules",
+    "backend-delivery-engineer",
+    "frontend-delivery-engineer",
+    "backend-code-implementation-rules",
+    "frontend-code-implementation-rules",
+    "backend-architecture-review-rules",
+    "frontend-architecture-review-rules",
     "security-policy-reviewer",
     "모호",
     "conflicting request",
@@ -31,52 +34,33 @@ REQUIRED_EVAL_MARKERS = [
     "census",
     "sampling",
     "confidence",
+    "feature-delivery-orchestration-edge-cases",
 ]
 
 AGENT_MARKERS = {
-    ".codex/agents/feature-delivery-lead.toml": [
-        "backend-delivery-lead",
-        "frontend-delivery-lead",
-        "product-planning-designer",
-        "api-contract-designer",
-    ],
-    ".codex/agents/backend-delivery-lead.toml": [
-        "backend-implementation-engineer",
-        "backend-architecture-reviewer",
+    ".codex/agents/backend-delivery-engineer.toml": [
+        "backend-code-implementation-rules",
+        "backend-architecture-review-rules",
         "구현 검증 evidence",
         "architecture review 판정",
     ],
-    ".codex/agents/frontend-delivery-lead.toml": [
-        "frontend-implementation-engineer",
-        "frontend-architecture-reviewer",
+    ".codex/agents/frontend-delivery-engineer.toml": [
+        "frontend-code-implementation-rules",
+        "frontend-architecture-review-rules",
         "구현 검증 evidence",
         "architecture review 판정",
-    ],
-    ".codex/agents/backend-implementation-engineer.toml": [
-        "독립적으로 실행 가능한 역할 subagent",
-        "구현 검증 evidence",
-        "architecture pass/violation 판정",
-    ],
-    ".codex/agents/frontend-implementation-engineer.toml": [
-        "독립적으로 실행 가능한 역할 subagent",
-        "구현 검증 evidence",
-        "architecture pass/violation 판정",
-    ],
-    ".codex/agents/backend-technical-design-writer.toml": [
-        "독립적으로 실행 가능한 역할 subagent",
-    ],
-    ".codex/agents/frontend-technical-design-writer.toml": [
-        "독립적으로 실행 가능한 역할 subagent",
-    ],
-    ".codex/agents/backend-architecture-reviewer.toml": [
-        "독립적으로 실행 가능한 역할 subagent",
-    ],
-    ".codex/agents/frontend-architecture-reviewer.toml": [
-        "독립적으로 실행 가능한 역할 subagent",
     ],
 }
 
 SKILL_MARKERS = {
+    ".agents/skills/feature-delivery-orchestration-rules/SKILL.md": [
+        "product-planning-designer",
+        "api-contract-designer",
+        "backend-delivery-engineer",
+        "frontend-delivery-engineer",
+        "dispatch_requests",
+        "stable_for_parallel",
+    ],
     ".agents/skills/setup-project-context/SKILL.md": [
         "사용자에게 필수 프로젝트 사실을 질문",
         "임의 생성",
@@ -140,6 +124,29 @@ def check_eval_doc(errors: list[str]) -> None:
         )
 
 
+def check_orchestration_edge_cases(errors: list[str]) -> None:
+    if not ORCHESTRATION_EVAL_DOC.exists():
+        errors.append(f"{ORCHESTRATION_EVAL_DOC.relative_to(ROOT)}: missing file")
+        return
+    if not ORCHESTRATION_EVAL_SCRIPT.exists():
+        errors.append(f"{ORCHESTRATION_EVAL_SCRIPT.relative_to(ROOT)}: missing file")
+        return
+
+    result = subprocess.run(
+        [sys.executable, str(ORCHESTRATION_EVAL_SCRIPT)],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        details = (result.stdout + result.stderr).strip()
+        errors.append(
+            "feature delivery orchestration eval validation failed"
+            + (f": {details}" if details else "")
+        )
+
+
 def check_active_references(errors: list[str]) -> None:
     paths = [
         ROOT / "docs/evals/enterprise-agent-collaboration.md",
@@ -147,7 +154,6 @@ def check_active_references(errors: list[str]) -> None:
         ROOT / "docs/customization-checklist.md",
         ROOT / "docs/superpowers/specs/2026-05-21-agent-oriented-implementation-architecture-design.md",
         ROOT / "docs/superpowers/plans/2026-05-21-agent-oriented-implementation-architecture.md",
-        ROOT / ".codex/agents/feature-delivery-lead.toml",
     ]
     for path in paths:
         if not path.exists():
@@ -161,6 +167,7 @@ def check_active_references(errors: list[str]) -> None:
 def main() -> int:
     errors: list[str] = []
     check_eval_doc(errors)
+    check_orchestration_edge_cases(errors)
     for relative, markers in AGENT_MARKERS.items():
         require_markers(errors, relative, markers)
     for relative, markers in SKILL_MARKERS.items():

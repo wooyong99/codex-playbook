@@ -60,7 +60,6 @@
 
 - [PRD](docs/PRD.md)
 - [Rule ID and metadata](docs/rules/README.md)
-- [Review routing](docs/review/README.md)
 - [Examples](docs/examples/README.md)
 - [Agent evaluation suite](docs/evals/README.md)
 - [Superpowers working artifacts](docs/superpowers/README.md)

@@ -21,6 +21,7 @@ backend 변경이 입력된 Source of Truth와 설계 결정에 맞는지 독립
 ## 핵심 규칙
 
 - 검토 기준은 입력으로 받은 Source of Truth에 한정한다.
+- 기본 Source of Truth 후보는 docs/backend/architecture/**, docs/backend/policies/**, 관련 TDD 또는 설계 skip 근거다.
 - architecture boundary, dependency direction, transaction, security, logging 정책을 확인한다.
 - TDD 또는 설계 skip 근거와 구현 결과의 일관성을 확인한다.
 - reviewer는 구현을 직접 수정하지 않는다.
@@ -51,6 +52,7 @@ Violation에는 아래 항목을 포함한다.
 - 제품 요구사항 자체를 새로 정의하지 않는다.
 - frontend UI 규칙을 backend violation 근거로 사용하지 않는다.
 - 보안 민감 의심을 숨기지 않는다. 필요하면 security review 대상으로 분리한다.
+- 문서 구조, 스킬, 서브에이전트 계약 변경은 documentation governance review 대상으로 분리한다.
 
 ## 검증
 

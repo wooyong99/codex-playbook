@@ -21,6 +21,7 @@ frontend 변경이 입력된 Source of Truth와 설계 결정에 맞는지 독�
 ## 핵심 규칙
 
 - 검토 기준은 입력으로 받은 Source of Truth에 한정한다.
+- 기본 Source of Truth 후보는 docs/frontend/architecture/**, docs/frontend/conventions/**, docs/frontend/performance/**, docs/frontend/ui-ux/**, 관련 TDD 또는 설계 skip 근거다.
 - routing, component responsibility, state ownership, API/cache, performance, UI/UX 규칙을 확인한다.
 - TDD 또는 설계 skip 근거와 구현 결과의 일관성을 확인한다.
 - reviewer는 구현을 직접 수정하지 않는다.
@@ -51,6 +52,7 @@ Violation에는 아래 항목을 포함한다.
 - backend domain 또는 persistence 정책을 frontend violation 근거로 사용하지 않는다.
 - 제품 요구사항 자체를 새로 정의하지 않는다.
 - 접근성, 성능, 보안 민감 의심을 숨기지 않는다.
+- 문서 구조, 스킬, 서브에이전트 계약 변경은 documentation governance review 대상으로 분리한다.
 
 ## 검증
 

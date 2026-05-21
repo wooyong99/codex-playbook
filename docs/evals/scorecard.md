@@ -42,7 +42,7 @@ blockers:
 strengths:
   - 변경 범위가 명확함
 gaps:
-  - frontend-architecture-reviewer 라우팅 미적용
+  - frontend architecture review 단계 미적용
 backlog:
   - rule_id 후보 등록 필요
 artifacts:

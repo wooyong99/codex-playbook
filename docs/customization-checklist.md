@@ -24,7 +24,7 @@
 ## 스킬
 
 - [ ] `.agents/skills/setup-project-context`가 현재 프로젝트에도 맞는지 확인
-- [ ] `.agents/skills/feature-delivery-readiness-rules`의 feature delivery 계약 조율 규칙이 현재 프로젝트 규칙과 맞는지 확인
+- [ ] `.agents/skills/feature-delivery-orchestration-rules`의 feature delivery subagent 실행 흐름이 현재 프로젝트 규칙과 맞는지 확인
 - [ ] `.agents/skills/product-requirements-planning-rules`의 제품 요구사항 기획 규칙이 현재 프로젝트 규칙과 맞는지 확인
 - [ ] `.agents/skills/api-contract-design-rules`의 API 계약 설계 규칙이 현재 프로젝트 규칙과 맞는지 확인
 - [ ] `.agents/skills/backend-code-implementation-rules`의 backend 코드 구현 규칙이 현재 프로젝트 규칙과 맞는지 확인
@@ -38,19 +38,13 @@
 
 ## 서브에이전트
 
-- [ ] `.codex/agents/feature-delivery-lead.toml` 검토
-- [ ] `.codex/agents/backend-delivery-lead.toml` 검토
-- [ ] `.codex/agents/frontend-delivery-lead.toml` 검토
+- [ ] `.codex/agents/backend-delivery-engineer.toml` 검토
+- [ ] `.codex/agents/frontend-delivery-engineer.toml` 검토
 - [ ] `.codex/agents/product-planning-designer.toml` 검토
 - [ ] `.codex/agents/api-contract-designer.toml` 검토
-- [ ] `.codex/agents/backend-technical-design-writer.toml` 검토
-- [ ] `.codex/agents/frontend-technical-design-writer.toml` 검토
-- [ ] `.codex/agents/backend-implementation-engineer.toml` 검토
-- [ ] `.codex/agents/frontend-implementation-engineer.toml` 검토
-- [ ] `.codex/agents/backend-architecture-reviewer.toml` 검토
-- [ ] `.codex/agents/frontend-architecture-reviewer.toml` 검토
 - [ ] `.codex/agents/documentation-governance-reviewer.toml` 검토
 - [ ] `.codex/agents/security-policy-reviewer.toml` 검토
+- [ ] `.codex/agents/*.toml`의 `skills.config` 경로가 repo root 기준 상대 경로인지 확인
 - [ ] 계약 문서 경로와 참조 문서 경로가 현재 저장소와 일치하는지 확인
 - [ ] sandbox 설정이 현재 프로젝트 작업 방식과 맞는지 확인
 

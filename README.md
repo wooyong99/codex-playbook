@@ -10,6 +10,10 @@ Codex와 사람이 함께 사용할 수 있도록 정리한 프로젝트 플레�
 - 기술설계문서(TDD) 작성 규칙
 - 프로젝트 맞춤형 스킬과 서브에이전트 정의
 
+## 목적
+
+codex-playbook은 사람과 AI 에이전트가 같은 작업 기준, 문서 구조, 검증 규칙을 공유하도록 돕는 플레이북 템플릿이다.
+
 ## 이 저장소로 무엇을 할 수 있나
 
 - 새 프로젝트에 코딩 규칙과 문서 구조를 빠르게 깔 수 있다.
@@ -37,7 +41,6 @@ python3 .agents/scripts/check-playbook.py
 - [커스터마이징 체크리스트](docs/customization-checklist.md)  
   프로젝트명, 목표, 문서, 스킬, 서브에이전트 점검 목록
 - [Rule ID and metadata](docs/rules/README.md)
-- [Review routing](docs/review/README.md)
 - [Examples](docs/examples/README.md)
 - [Agent evaluation suite](docs/evals/README.md)
 - [Backend 문서 홈](docs/backend/README.md)

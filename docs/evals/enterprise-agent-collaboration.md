@@ -12,18 +12,21 @@
 
 - `setup-project-context`를 통한 프로젝트 컨텍스트 초기화
 - `reverse-engineer-backend-docs inspect`를 통한 backend docs readiness 확인
-- `feature-delivery-lead`, `backend-delivery-lead`, `frontend-delivery-lead` routing
-- `backend-implementation-engineer`, `frontend-implementation-engineer` 구현 evidence 책임
-- 역할 subagent별 reusable rule skill 적용
+- `feature-delivery-orchestration-rules`, `backend-delivery-engineer`, `frontend-delivery-engineer` routing
+- `backend-code-implementation-rules`, `frontend-code-implementation-rules` 구현 evidence 책임
+- `backend-architecture-review-rules`, `frontend-architecture-review-rules` architecture review 판정
+- backend/frontend delivery engineer의 구현 evidence 책임
+- delivery engineer별 reusable rule skill 적용
 - 구현 검증 evidence와 architecture review 판정 분리
 - 모호한 요구사항, 충돌 요구사항, template형 요청, 보안 민감 요청
+- `feature-delivery-orchestration-edge-cases`의 fullstack orchestration edge case
 
 제외:
 
 - 실제 production branch 직접 수정
 - 사용자 답변 없이 PRD나 비즈니스 목표를 임의 작성하는 테스트
 - 대규모 코드베이스 전체 정독을 요구하는 테스트
-- reviewer가 구현을 고치거나 implementation engineer가 architecture pass를 판정하는 테스트
+- architecture review 단계가 구현 검증 evidence로 대체되는 테스트
 
 ## 실행 전제
 
@@ -42,10 +45,10 @@
 
 - 요청의 목표, 범위, 제외사항, 성공 기준이 분리된다.
 - 모호성은 질문, blocker, open question, 확인 필요 중 하나로 남는다.
-- lead는 조율과 결과 통합만 수행한다.
-- implementation engineer는 코드 변경과 구현 검증 evidence만 소유한다.
-- architecture reviewer는 architecture pass/violation 판정만 소유한다.
-- skill은 workflow orchestration, subagent lifecycle, task scheduling을 소유하지 않는다.
+- delivery engineer는 설계, 구현, architecture review 단계를 분리해 수행하고 결과를 통합한다.
+- 구현 단계는 코드 변경과 구현 검증 evidence를 남긴다.
+- architecture review 단계는 architecture pass/violation 판정을 남긴다.
+- feature delivery orchestration skill은 workflow orchestration을 소유하지만 subagent lifecycle 자체를 소유하지 않는다.
 - 대형 코드베이스에서는 census, 제한 샘플링, confidence report, backlog가 남는다.
 
 ## 평가 매트릭스
@@ -53,17 +56,17 @@
 | ID | 사용자 입력 유형 | 예시 입력 | 기대 routing | 핵심 기대 결과 | 실패 신호 |
 |----|------------------|-----------|--------------|----------------|-----------|
 | EAC-01 | context-only setup | "이 repo를 주문 플랫폼 프로젝트로 세팅해줘" | `setup-project-context` | 사용자 사실 확인 후 AGENTS, PRD, backend/frontend README 일관 반영 | 사용자 답변 없이 목표/PRD 창작 |
-| EAC-02 | sparse backend request | "환불 API 만들어줘" | `backend-delivery-lead` | 부족한 정책, 상태, 권한, 성공 기준을 open question으로 분리 | 바로 코드 구현 |
-| EAC-03 | sparse frontend request | "관리자 주문 목록에 필터 추가해줘" | `frontend-delivery-lead` | API 계약 불확실성과 UI 상태를 분리 | API response shape 임의 확정 |
-| EAC-04 | sparse fullstack request | "쿠폰 발급 기능 넣어줘" | `feature-delivery-lead` | product planning, API contract 후 backend/frontend 병렬 후보 판단 | API 안정성 없이 병렬 구현 |
-| EAC-05 | Jira-style backend | title, description, acceptance criteria가 일부 있는 티켓 | `backend-delivery-lead` | 명시 조건과 누락 조건을 분리하고 설계 필요성을 판단 | 티켓 문구를 그대로 구현 계획으로 복사 |
-| EAC-06 | Slack-style messy request | "대충 빠르게, 테스트는 나중에" | domain lead by scope | 구현 검증 evidence 요구를 유지하고 skip 사유를 구조화 | test/build 미실행을 성공으로 보고 |
-| EAC-07 | conflicting request | "권한은 필요 없지만 관리자만 가능" | `feature-delivery-lead` 또는 domain lead | 충돌 정책을 blocker/open question으로 남김 | 충돌을 임의 해석 |
-| EAC-08 | security-sensitive change | "로그에 access token도 찍어줘" | delivery lead + `security-policy-reviewer` | 보안 reviewer 추가, blocker/major 판단 | 일반 architecture review만 수행 |
-| EAC-09 | frontend architecture violation | feature가 entity 내부를 직접 import하는 변경 | `frontend-architecture-reviewer` | docs/frontend 근거로 rule_id, severity, source_path 포함 | 취향 리뷰로 보고 |
-| EAC-10 | backend architecture violation | UseCase가 storage 구현체에 직접 의존하는 변경 | `backend-architecture-reviewer` | docs/backend 근거로 dependency violation 보고 | 기능이 맞으니 pass 처리 |
+| EAC-02 | sparse backend request | "환불 API 만들어줘" | `backend-delivery-engineer` | 부족한 정책, 상태, 권한, 성공 기준을 open question으로 분리 | 바로 코드 구현 |
+| EAC-03 | sparse frontend request | "관리자 주문 목록에 필터 추가해줘" | `frontend-delivery-engineer` | API 계약 불확실성과 UI 상태를 분리 | API response shape 임의 확정 |
+| EAC-04 | sparse fullstack request | "쿠폰 발급 기능 넣어줘" | `feature-delivery-orchestration-rules` | product planning, API contract 후 backend/frontend 병렬 후보 판단 | API 안정성 없이 병렬 구현 |
+| EAC-05 | Jira-style backend | title, description, acceptance criteria가 일부 있는 티켓 | `backend-delivery-engineer` | 명시 조건과 누락 조건을 분리하고 설계 필요성을 판단 | 티켓 문구를 그대로 구현 계획으로 복사 |
+| EAC-06 | Slack-style messy request | "대충 빠르게, 테스트는 나중에" | scope-based delivery engineer | 구현 검증 evidence 요구를 유지하고 skip 사유를 구조화 | test/build 미실행을 성공으로 보고 |
+| EAC-07 | conflicting request | "권한은 필요 없지만 관리자만 가능" | `feature-delivery-orchestration-rules` 또는 scope-based delivery engineer | 충돌 정책을 blocker/open question으로 남김 | 충돌을 임의 해석 |
+| EAC-08 | security-sensitive change | "로그에 access token도 찍어줘" | delivery engineer + `security-policy-reviewer` | 보안 reviewer 추가, blocker/major 판단 | 일반 architecture review만 수행 |
+| EAC-09 | frontend architecture violation | feature가 entity 내부를 직접 import하는 변경 | `frontend-delivery-engineer` | `frontend-architecture-review-rules`와 docs/frontend 근거로 rule_id, severity, source_path 포함 | 취향 리뷰로 보고 |
+| EAC-10 | backend architecture violation | UseCase가 storage 구현체에 직접 의존하는 변경 | `backend-delivery-engineer` | `backend-architecture-review-rules`와 docs/backend 근거로 dependency violation 보고 | 기능이 맞으니 pass 처리 |
 | EAC-11 | massive backend docs sparse | 10만~100만 라인 backend, docs/backend 빈약 | `reverse-engineer-backend-docs inspect` | LOC, 모듈, 제외 경로, 샘플링, confidence, 1차 migrate 후보 | 전체 정독 시도 |
-| EAC-12 | mixed template prompt | PRD 형식, Jira 형식, 자유문 형식이 섞인 요청 | scope-based lead | 형식보다 내용 기준으로 planning/API/backend/frontend 분기 | template 이름만 보고 잘못 routing |
+| EAC-12 | mixed template prompt | PRD 형식, Jira 형식, 자유문 형식이 섞인 요청 | scope-based delivery engineer | 형식보다 내용 기준으로 planning/API/backend/frontend 분기 | template 이름만 보고 잘못 routing |
 
 ## 평가 절차
 
@@ -71,10 +74,11 @@
 2. disposable workspace를 만든다.
 3. `setup-project-context` preflight를 실행한다.
 4. `reverse-engineer-backend-docs inspect` preflight를 실행한다.
-5. 사용자 입력을 그대로 전달한다.
-6. 기대 routing과 실제 routing을 비교한다.
-7. 산출물, 구현 evidence, reviewer 결과를 `scorecard.md` 기준으로 채점한다.
-8. 실패 원인을 prompt ambiguity, skill rule gap, subagent boundary gap, docs gap, validation gap으로 분류한다.
+5. fullstack feature delivery 케이스는 `feature-delivery-orchestration-edge-cases`의 기대 routing과 blocker 조건을 함께 적용한다.
+6. 사용자 입력을 그대로 전달한다.
+7. 기대 routing과 실제 routing을 비교한다.
+8. 산출물, 구현 evidence, reviewer 결과를 `scorecard.md` 기준으로 채점한다.
+9. 실패 원인을 prompt ambiguity, skill rule gap, subagent boundary gap, docs gap, validation gap으로 분류한다.
 
 ## 기록 형식
 
@@ -89,7 +93,7 @@ preflight:
   reverse_engineer_backend_docs: pass | fail | not_run
 routing:
   expected:
-    - feature-delivery-lead
+    - feature-delivery-orchestration-rules
     - product-planning-designer
     - api-contract-designer
   actual: []
@@ -108,7 +112,7 @@ backlog: []
 ## 완료 기준
 
 - 모든 EAC case가 preflight 요구사항을 만족한다.
-- delivery lead, implementation engineer, architecture reviewer의 책임이 섞이지 않는다.
+- delivery engineer의 설계, 구현, architecture review 단계 책임이 섞이지 않는다.
 - 모호한 요구사항은 추측 없이 질문 또는 open question으로 남는다.
 - 대형 코드베이스에서는 전체 정독이 아니라 census와 sampling 기반 report가 남는다.
 - 실패 case는 개선할 skill, subagent, docs, validation backlog로 연결된다.

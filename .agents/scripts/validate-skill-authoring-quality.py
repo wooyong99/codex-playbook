@@ -11,7 +11,7 @@ SKILLS_DIR = ROOT / ".agents/skills"
 
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$")
 ROLE_COUPLING_RE = re.compile(
-    r"(delivery-lead|implementation-engineer|technical-design-writer|"
+    r"(delivery-lead|delivery-engineer|implementation-engineer|technical-design-writer|"
     r"architecture-reviewer|software-engineer|product-planning-designer|"
     r"api-contract-designer)"
 )

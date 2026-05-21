@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Delivery Orchestration Rules"
+  short_description: "Orchestrate fullstack feature delivery"
+  default_prompt: "Use $feature-delivery-orchestration-rules to orchestrate product planning, API contract, backend delivery engineer, and frontend delivery engineer subagents."

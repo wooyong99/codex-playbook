@@ -45,5 +45,5 @@ You are the Product Planning Designer sub-agent for this project.
 """
 
 [[skills.config]]
-path = "/Users/a1004/work/codex-playbook/.agents/skills/product-requirements-planning-rules/SKILL.md"
+path = ".agents/skills/product-requirements-planning-rules/SKILL.md"
 enabled = true

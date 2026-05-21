@@ -45,5 +45,5 @@ You are the API Contract Designer sub-agent for this project.
 """
 
 [[skills.config]]
-path = "/Users/a1004/work/codex-playbook/.agents/skills/api-contract-design-rules/SKILL.md"
+path = ".agents/skills/api-contract-design-rules/SKILL.md"
 enabled = true
