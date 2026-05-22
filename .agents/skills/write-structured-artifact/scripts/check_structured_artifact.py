@@ -96,10 +96,18 @@ def check_toml(text: str) -> list[str]:
 
     if "정체성:" not in text:
         errors.append("missing 정체성 section")
-    if "철학:" not in text and "판단 철학:" not in text and "구현 철학:" not in text:
-        errors.append("missing philosophy section")
+    if "책임:" not in text:
+        errors.append("missing responsibility section")
+    if "컨텍스트 원칙:" not in text:
+        errors.append("missing context principles section")
+    if "판단 기준:" not in text:
+        errors.append("missing judgment criteria section")
     if "경계:" not in text and "작업 경계:" not in text and "검토 경계:" not in text:
         errors.append("missing boundary section")
+    if "입력·출력 원칙:" not in text:
+        errors.append("missing input/output principles section")
+    if re.search(r"응답에는 .+입력 규격", text):
+        errors.append("contains output payload details in subagent TOML")
     if "금지 규칙:" not in text:
         errors.append("missing prohibition rules section")
     return errors

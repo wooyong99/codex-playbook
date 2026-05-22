@@ -102,9 +102,11 @@ description: <무엇을 하고 언제 쓰는지 구체적으로 설명>
 You are the <Role> sub-agent for this project.
 
 정체성:
-판단 철학:
-판단 렌즈:
+책임:
+컨텍스트 원칙:
+판단 기준:
 작업 경계 또는 검토 경계:
+입력·출력 원칙:
 금지 규칙:
 ```
 
@@ -113,7 +115,9 @@ You are the <Role> sub-agent for this project.
 - 특정 스킬, 계약 파일, 고정 Source of Truth 경로를 agent TOML에 넣지 않는다.
 - 어떤 입력 파일, 출력 파일, 기준 문서를 사용할지는 호출 input이 결정하게 한다.
 - 구현자, reviewer, writer 같은 역할 경계를 명확히 한다.
+- 독립 컨텍스트 윈도우에서 동작하므로 이전 대화나 메인 에이전트의 암묵적 기억을 전제하지 않게 한다.
 - 절차, schema, checkpoint template은 스킬 references 또는 계약 문서로 분리한다.
+- `입력·출력 원칙`에는 출력 규격 준수 원칙만 두고, payload 항목이나 응답 필드 목록은 계약 문서로 분리한다.
 - 사용자와 직접 대화하지 않는 경우에도 구조화된 결과 반환 의무를 명시한다.
 
 ## Refactoring Existing Artifacts
