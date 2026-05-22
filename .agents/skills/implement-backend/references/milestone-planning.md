@@ -2,7 +2,7 @@
 
 이 문서는 `implement-backend`가 backend 요구사항을 어떤 마일스톤 단위로 나누는지 정의한다.
 
-실행 중 D/A/B 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 저장 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)가 소유한다.
+실행 중 design/implementation/review 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 저장 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)가 소유한다.
 
 ## 계획 모델
 
@@ -14,7 +14,7 @@ backend 마일스톤은 하나의 검증 가능한 서버 동작을 끝까지 �
 - 주 도메인 책임이 하나다.
 - 주요 트랜잭션 또는 정합성 경계가 하나다.
 - compile/test 명령 한 묶음으로 성공 여부를 판단할 수 있다.
-- D/A/B 루프가 과도하게 커지기 전에 끝난다.
+- design/implementation/review 루프가 과도하게 커지기 전에 끝난다.
 
 ## 계획 산출물
 
@@ -59,7 +59,7 @@ backend 마일스톤은 하나의 검증 가능한 서버 동작을 끝까지 �
 - 예상 변경 파일이 12개를 넘는다.
 - DB 마이그레이션이 2개 이상이거나 서로 다른 Aggregate의 스키마를 바꾼다.
 - 인증/권한, 외부 연동, 비동기 이벤트/outbox, batch/scheduler 변경이 핵심 기능 변경과 섞여 있다.
-- 한 번의 backend B 검토 대상이 10개 파일을 넘는다.
+- 한 번의 backend architecture review 대상이 10개 파일을 넘는다.
 
 분할이 어렵다면 하나의 큰 마일스톤으로 강행하지 않고 `M{n}-backend-a`, `M{n}-backend-b` 같은 하위 마일스톤으로 나눈다. 데이터 정합성 때문에 원자성이 필요한 경우에만 큰 마일스톤을 허용한다.
 

@@ -1,6 +1,6 @@
 # Frontend Orchestration Boundaries
 
-이 문서는 `implement-frontend`에서 메인 에이전트와 frontend D/A/B 서브에이전트가 무엇을 책임지고 무엇을 책임지지 않는지 정의한다.
+이 문서는 `implement-frontend`에서 메인 에이전트와 frontend 역할 서브에이전트가 무엇을 책임지고 무엇을 책임지지 않는지 정의한다.
 
 실행 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 규격은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)와 역할별 계약 문서가 소유한다.
 
@@ -8,20 +8,20 @@
 
 `implement-frontend`는 메인 에이전트가 전체 흐름을 조율하고, 서브에이전트가 독립적인 전문 역할을 수행하는 구조다.
 
-- 메인 에이전트는 요구사항을 분해하고 D/A/B를 호출한다.
+- 메인 에이전트는 요구사항을 분해하고 Frontend Design Writer, Frontend Implementation Engineer, Frontend Architecture Reviewer를 호출한다.
 - 메인 에이전트는 이전 output을 읽고 다음 역할의 input으로 재구성한다.
-- D/A/B는 서로 호출하지 않는다.
-- D/A/B는 전달받은 input과 계약 문서 기준으로만 작업한다.
-- B의 통과는 frontend 아키텍처 기준 준수 통과를 뜻하며, 기능 정확성·접근성·성능 전체를 보증하지 않는다.
+- 서브에이전트는 서로 호출하지 않는다.
+- 서브에이전트는 전달받은 input과 계약 문서 기준으로만 작업한다.
+- Frontend Architecture Reviewer의 통과는 frontend 아키텍처 기준 준수 통과를 뜻하며, 기능 정확성·접근성·성능 전체를 보증하지 않는다.
 
 ## 참여 주체
 
 | 주체 | 핵심 책임 | 책임이 아닌 것 |
 |------|-----------|----------------|
-| 메인 에이전트 | 요구사항 분석, 마일스톤 분할, Source of Truth 선별, input 작성, output 검증, 다음 단계 라우팅, 사용자 보고 | D/A/B의 전문 판단 대체 |
-| Agent D `frontend-technical-design-writer` | frontend 설계 판단, TDD 작성 또는 스킵 근거 작성 | 구현, 리뷰, 다음 input 작성 |
-| Agent A `frontend-implementation-engineer` | frontend 코드 작성·수정, build/test/browser 검증 실행, 구현 output 작성 | architecture review 판정 |
-| Agent B `frontend-architecture-reviewer` | 입력된 Source of Truth와 TDD 결정 기준으로 frontend 변경 파일 검토 | 기능 QA, 시각 QA, backend 검토 |
+| 메인 에이전트 | 요구사항 분석, 마일스톤 분할, Source of Truth 선별, input 작성, output 검증, 다음 단계 라우팅, 사용자 보고 | 서브에이전트의 전문 판단 대체 |
+| Frontend Design Writer `frontend-technical-design-writer` | frontend 설계 판단, TDD 작성 또는 스킵 근거 작성 | 구현, 리뷰, 다음 input 작성 |
+| Frontend Implementation Engineer `frontend-implementation-engineer` | frontend 코드 작성·수정, build/test/browser 검증 실행, 구현 output 작성 | architecture review 판정 |
+| Frontend Architecture Reviewer `frontend-architecture-reviewer` | 입력된 Source of Truth와 TDD 결정 기준으로 frontend 변경 파일 검토 | 기능 QA, 시각 QA, backend 검토 |
 
 서브에이전트 정의 파일은 역할, 판단 철학, 기본 금지사항을 제공한다.
 
@@ -66,6 +66,6 @@
 ## 이 문서가 소유하지 않는 것
 
 - 마일스톤 분할 수치와 계획 기준: [milestone-planning.md](milestone-planning.md)
-- D/A/B 호출 순서와 반복 종료 기준: [milestone-execution-workflow.md](milestone-execution-workflow.md)
+- frontend 역할 호출 순서와 반복 종료 기준: [milestone-execution-workflow.md](milestone-execution-workflow.md)
 - `.agents/runs/{run_id}` 파일 구조와 검증 절차: [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)
-- 역할별 YAML schema, 결과 신호, 체크포인트 판단 기준: 각 `*-contract.md`
+- 역할별 Markdown artifact 섹션, 결과 신호, 체크포인트 판단 기준: 각 `*-contract.md`

@@ -9,13 +9,13 @@
 | 계층 | 문서 | 목적 |
 |------|------|------|
 | L0 | [../SKILL.md](../SKILL.md) | 스킬의 목적, 적용 범위, 운영 모델 |
-| L1 | [orchestration-boundaries.md](orchestration-boundaries.md) | 메인 에이전트와 D/A/B의 책임 경계 |
+| L1 | [orchestration-boundaries.md](orchestration-boundaries.md) | 메인 에이전트와 frontend 역할 서브에이전트의 책임 경계 |
 | L1 | [milestone-planning.md](milestone-planning.md) | frontend 마일스톤을 나누는 기준 |
 | L1 | [milestone-execution-workflow.md](milestone-execution-workflow.md) | frontend 마일스톤 실행 흐름 |
 | L2 | [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md) | run artifact 저장 위치, 결과 신호, 검증·복구 규칙 |
-| L3 | [frontend-technical-design-writer-contract.md](frontend-technical-design-writer-contract.md) | D 입출력 계약 |
-| L3 | [frontend-implementation-engineer-contract.md](frontend-implementation-engineer-contract.md) | A 입출력 계약 |
-| L3 | [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md) | B 입출력 계약 |
+| L3 | [frontend-technical-design-writer-contract.md](frontend-technical-design-writer-contract.md) | Frontend Design Writer 호출 계약 |
+| L3 | [frontend-implementation-engineer-contract.md](frontend-implementation-engineer-contract.md) | Frontend Implementation Engineer 호출 계약 |
+| L3 | [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md) | Frontend Architecture Reviewer 호출 계약 |
 
 ## 전체 모델
 
@@ -43,12 +43,12 @@ Main agent
 
 ## 문서별 소유권
 
-- `SKILL.md`: 스킬의 public entrypoint. 세부 YAML schema나 파일명 규칙을 소유하지 않는다.
+- `SKILL.md`: 스킬의 public entrypoint. 세부 Markdown artifact 섹션이나 파일명 규칙을 소유하지 않는다.
 - `orchestration-boundaries.md`: 누가 무엇을 판단하고 무엇을 판단하지 않는지 소유한다.
 - `milestone-planning.md`: frontend 작업을 어떤 단위로 나눌지 소유한다.
-- `milestone-execution-workflow.md`: D/A/B 호출 순서와 output-to-input 변환 책임을 소유한다.
+- `milestone-execution-workflow.md`: design/implementation/review 호출 순서와 output-to-input 변환 책임을 소유한다.
 - `input-output-checkpoint-protocol.md`: `.agents/runs/{run_id}` 하위 파일 구조와 검증·복구 절차를 소유한다.
-- `*-contract.md`: 역할별 input schema, output schema, 결과 신호, 체크포인트 판단 기준을 소유한다.
+- `*-contract.md`: 역할별 Case, Markdown input/output 섹션, 결과 신호, 체크포인트 판단 기준을 소유한다.
 
 ## 변경 가이드
 

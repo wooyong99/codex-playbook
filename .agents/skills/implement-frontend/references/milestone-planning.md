@@ -2,7 +2,7 @@
 
 이 문서는 `implement-frontend`가 frontend 요구사항을 어떤 마일스톤 단위로 나누는지 정의한다.
 
-실행 중 D/A/B 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 저장 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)가 소유한다.
+실행 중 design/implementation/review 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 저장 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)가 소유한다.
 
 ## 계획 모델
 
@@ -15,7 +15,7 @@ frontend 마일스톤은 하나의 사용자 흐름 또는 하나의 화면 책�
 - 주요 상태 소유권 또는 API/cache 경계가 하나다.
 - loading/error/empty/success 상태를 함께 검증할 수 있다.
 - build/test 또는 브라우저 검증 한 묶음으로 성공 여부를 판단할 수 있다.
-- D/A/B 루프가 과도하게 커지기 전에 끝난다.
+- design/implementation/review 루프가 과도하게 커지기 전에 끝난다.
 
 ## 계획 산출물
 
@@ -61,7 +61,7 @@ frontend 마일스톤은 하나의 사용자 흐름 또는 하나의 화면 책�
 - 예상 변경 파일이 12개를 넘는다.
 - API client 계약, query key/cache 정책, 전역 상태 구조가 핵심 UI 변경과 섞여 있다.
 - responsive layout, 접근성, 성능 최적화가 기능 구현과 크게 섞여 있다.
-- 한 번의 frontend B 검토 대상이 10개 파일을 넘는다.
+- 한 번의 frontend architecture review 대상이 10개 파일을 넘는다.
 
 분할이 어렵다면 하나의 큰 마일스톤으로 강행하지 않고 `M{n}-frontend-a`, `M{n}-frontend-b` 같은 하위 마일스톤으로 나눈다. 사용자가 한 번에 체감하는 원자적 흐름일 때만 큰 마일스톤을 허용한다.
 
