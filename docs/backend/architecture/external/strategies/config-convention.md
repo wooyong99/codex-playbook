@@ -1,190 +1,95 @@
 # Config / Properties 컨벤션
 
----
+이 문서는 Provider별 설정값과 HTTP client bean을 구성하는 전략을 정리한다.
 
-## 언제 사용하는가
+## 목적
 
-- `external` 단위에서 Config / Properties 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+- Provider별 baseUrl, timeout, 인증 값을 외부 설정으로 분리한다.
+- Provider 전용 HTTP client bean을 구성한다.
+- 환경별 외부 시스템 연결 설정을 코드 변경 없이 바꿀 수 있게 한다.
 
-## 코드 위치
+## 적용 범위
 
-- `external` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+- `{Provider}Properties`
+- `{Provider}Config`
+- `@ConfigurationProperties`
+- Provider 전용 HTTP client bean
+- auto configuration 등록
 
-## 구조
+## 책임
 
-- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+- Provider 설정 prefix와 property 구조를 정의한다.
+- HTTP client bean 이름과 qualifier를 고정한다.
+- timeout과 인증 정보 기본값 정책을 정의한다.
 
-## 핵심 원칙
+## 전체 흐름
 
-**Provider 단위로 HTTP 클라이언트 빈을 `@Qualifier`로 명명해 분리 구성하고, 연결 설정은 `@ConfigurationProperties`로 바인딩한다.**
-
-HTTP 클라이언트를 Provider별로 분리해야 타임아웃·인터셉터·baseUrl이 서로 간섭하지 않는다. 설정값은 코드 리터럴 대신 외부 구성 파일(`application.yml`)로 주입해 환경별 베이스 URL·타임아웃을 손쉽게 전환할 수 있어야 한다.
-
----
-
-## 코드에서 관찰된 규칙
-
-1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
-
-## 네이밍 규칙
-
-| 항목 | 패턴 | 예시 |
-|------|------|------|
-| Config 클래스 | `{Provider}Config` | `GiftCardConfig`, `BiscuitLinkConfig` |
-| Properties 클래스 | `{Provider}Properties` | `GiftCardProperties`, `BiscuitLinkProperties` |
-| `@ConfigurationProperties` prefix | `{provider}.service` (lower-dot 또는 kebab-case) | `giftcard.service`, `biscuit-link.service` |
-| HTTP 클라이언트 빈 이름 | `{provider}ServiceRestClient` 또는 `{provider}ServiceClient` | `giftCardServiceRestClient`, `biscuitLinkServiceClient` |
-| `@Qualifier` 값 | 빈 이름과 동일 | `@Qualifier("giftCardServiceRestClient")` |
-
-> `{Provider}ServiceConfig` / `{Provider}ServiceProperties` 형식의 `Service` 접미사는 사용하지 않는다.
-
----
-
-## Properties 클래스
-
-**규칙: `data class`로 선언하고 `baseUrl`·`apiKey`·`connectTimeout`·`readTimeout`을 기본 필드로 둔다.**
-
-`@ConfigurationProperties` 바인딩에 Kotlin `data class`를 사용하면 불변성과 기본값이 자연스럽게 표현된다. 타임아웃은 `Duration`으로 받아 `application.yml`에서 `PT5S` / `30s` 표기를 지원한다.
-
-```kotlin
-// ✅ data class + Duration + 합리적 기본값 (GiftCardProperties 실제 구현)
-@ConfigurationProperties(prefix = "giftcard.service")
-data class GiftCardProperties(
-    val baseUrl: String = "http://localhost:8082",
-    val apiKey: String = "",
-    val connectTimeout: Duration = Duration.ofSeconds(5),
-    val readTimeout: Duration = Duration.ofSeconds(30),
-)
-
-// ✅ kebab-case prefix도 허용 (BiscuitLinkProperties 실제 구현)
-@ConfigurationProperties(prefix = "biscuit-link.service")
-data class BiscuitLinkProperties(
-    val baseUrl: String = "http://localhost:8083",
-    val apiKey: String = "",
-    val connectTimeout: Duration = Duration.ofSeconds(5),
-    val readTimeout: Duration = Duration.ofSeconds(30),
-)
+```text
+application.yml
+  -> {Provider}Properties
+    -> {Provider}Config
+      -> @Bean("{provider}ServiceRestClient")
+        -> {Provider}ApiClient
 ```
 
-```kotlin
-// ❌ 일반 class + Long(ms) → 단위 실수 유발, application.yml 가독성 저하
-@ConfigurationProperties("giftcard.service")
-class GiftCardProperties {
-    var baseUrl: String = ""
-    var connectTimeoutMs: Long = 5000
-}
-```
+## 세부 규칙
 
-- Provider가 API 키를 요구하면 `apiKey` 필드를 추가하고 기본값은 빈 문자열로 둔다(운영에서 환경 변수로 주입).
-- 기본값은 **로컬 개발 환경**을 기준으로 적는다(예: `http://localhost:8082`).
-- **민감 정보(실제 apiKey 값)를 기본값에 채우지 않는다.**
+### 네이밍
 
----
+| 항목 | 패턴 |
+|------|------|
+| Config 클래스 | `{Provider}Config` |
+| Properties 클래스 | `{Provider}Properties` |
+| properties prefix | `{provider}.service` 또는 kebab-case |
+| HTTP client bean | `{provider}ServiceRestClient` 또는 `{provider}ServiceClient` |
+| Qualifier | HTTP client bean 이름과 동일 |
 
-## Config 클래스
+- `{Provider}ServiceConfig`, `{Provider}ServiceProperties`처럼 `Service` 접미사를 붙이지 않는다.
 
-**규칙: `@Configuration` + `@EnableConfigurationProperties`로 Properties를 활성화하고, `@Bean`으로 HTTP 클라이언트 빈을 생성한다.**
+### Properties
 
-```kotlin
-// ✅ Properties 활성화 + RestClient 빈 생성 (GiftCardConfig 실제 구현)
-@Configuration
-@EnableConfigurationProperties(GiftCardProperties::class)
-class GiftCardConfig {
+- Properties는 `@ConfigurationProperties`가 붙은 `data class`로 선언한다.
+- 기본 필드는 `baseUrl`, `connectTimeout`, `readTimeout`이다.
+- 인증이 필요하면 `apiKey`, `clientId`, `secret` 같은 Provider 전용 필드를 추가한다.
+- timeout은 `Duration`을 사용한다.
+- 기본값은 로컬 개발 환경 기준으로 둔다.
+- 실제 운영 secret을 기본값에 넣지 않는다.
 
-    @Bean("giftCardServiceRestClient")
-    fun giftCardServiceRestClient(properties: GiftCardProperties): RestClient =
-        RestClient.builder()
-            .baseUrl(properties.baseUrl)
-            .requestFactory(
-                SimpleClientHttpRequestFactory().apply {
-                    setConnectTimeout(properties.connectTimeout)
-                    setReadTimeout(properties.readTimeout)
-                }
-            )
-            .build()
-}
+### Config
 
-// ✅ defaultHeader가 필요한 Provider (BiscuitLinkConfig 실제 구현)
-@Configuration
-@EnableConfigurationProperties(BiscuitLinkProperties::class)
-class BiscuitLinkConfig {
+- Config는 `@Configuration`으로 선언한다.
+- `@EnableConfigurationProperties({Provider}Properties::class)`로 Properties를 활성화한다.
+- Provider 전용 HTTP client bean을 만든다.
+- baseUrl, default header, timeout은 Properties에서 읽는다.
 
-    @Bean("biscuitLinkServiceClient")
-    fun biscuitLinkRestClient(properties: BiscuitLinkProperties): RestClient =
-        RestClient.builder()
-            .baseUrl(properties.baseUrl)
-            .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-            .requestFactory(
-                SimpleClientHttpRequestFactory().apply {
-                    setConnectTimeout(properties.connectTimeout)
-                    setReadTimeout(properties.readTimeout)
-                }
-            )
-            .build()
-}
-```
+### Timeout
 
-```kotlin
-// ❌ Properties 활성화 누락, 하드코딩 URL
-@Configuration
-class GiftCardConfig {
-    @Bean
-    fun giftCardServiceRestClient(): RestClient =
-        RestClient.builder().baseUrl("http://localhost:8082").build()
-}
-```
+- `connectTimeout`과 `readTimeout`을 모두 설정한다.
+- connect timeout은 짧게, read timeout은 API 특성에 맞게 둔다.
+- 무한 대기 기본값에 의존하지 않는다.
 
-### 타임아웃 정책
+### AutoConfiguration
 
-- `connectTimeout`: 5초 전후(로컬/사내 서비스 기준).
-- `readTimeout`: 30초 전후. 배치·결제 승인 등 응답이 긴 API는 Provider 단위로 별도 조정한다.
-- 타임아웃은 반드시 설정한다. 기본값(무한 대기)은 장애 시 스레드 풀을 고갈시킨다.
-
----
-
-## AutoConfiguration 등록
-
-**규칙: external 모듈은 `ExternalAutoConfiguration` + `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`를 통해 Config가 자동 등록되도록 유지한다.**
-
-신규 Provider Config가 `im.bigs.ecommerce.*` 패키지 안에 있다면 컴포넌트 스캔만으로 주워간다.
-
----
-
-## 의존 및 책임 경계
-
-- 허용되는 의존: `external` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
-- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
-
-## 관련 정책 / 상위 규칙
-
-- [external guidelines](../external-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
-- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+- external 모듈이 자동 등록을 사용하면 `ExternalAutoConfiguration`과 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`를 함께 관리한다.
+- 신규 Provider Config가 자동 등록 대상에 포함되는지 확인한다.
 
 ## 금지 규칙
 
-- HTTP 클라이언트를 Config 없이 ApiClient 내부에서 직접 생성하지 않는다.
-- Properties 없이 `@Value("${...}")`로 개별 값을 주입받지 않는다.
-- 타임아웃 설정을 생략하지 않는다.
-- 두 Provider가 같은 HTTP 클라이언트 빈을 공유하지 않는다. 빈 이름은 Provider별로 유일하게 둔다.
-- 하드코딩된 baseUrl을 Config에 남기지 않는다. Properties 기본값을 사용한다.
-- 민감 정보(실제 apiKey 값)를 Properties 기본값에 채우지 않는다.
+- HTTP client를 Config 없이 ApiClient 내부에서 직접 생성하지 않는다.
+- Properties 없이 `@Value`로 개별 값을 흩어 주입하지 않는다.
+- timeout 설정을 생략하지 않는다.
+- 두 Provider가 같은 HTTP client bean을 공유하지 않는다.
+- 하드코딩된 운영 baseUrl을 코드에 남기지 않는다.
+- 민감 정보 실제 값을 Properties 기본값에 채우지 않는다.
 
----
+## 예외와 경계
 
-## 안티패턴
+- Provider가 여러 baseUrl을 쓰면 기능별 Properties 또는 client bean 분리를 검토한다.
+- local mock만 사용하는 Provider는 실 HTTP client bean이 불필요할 수 있다.
+- 프로젝트가 별도 secret manager를 사용하면 Properties에는 secret key 참조만 둔다.
 
-- 없음
+## 완료 기준
 
-## 체크 리스트
-
-- [ ] Properties가 `@ConfigurationProperties(prefix = "...")` `data class`로 선언됐는가?
-- [ ] `baseUrl`·`connectTimeout`·`readTimeout`이 기본 필드로 포함되고 `Duration` 타입인가?
-- [ ] `apiKey` 등 인증 필드가 있을 경우 기본값이 빈 문자열인가?
-- [ ] Config가 `@Configuration` + `@EnableConfigurationProperties`를 명시했는가?
-- [ ] HTTP 클라이언트 빈 이름이 Provider 전용 패턴(`{provider}ServiceRestClient` 등)인가?
-- [ ] `connectTimeout` / `readTimeout`이 모두 설정됐는가?
-- [ ] 민감정보 기본값이 Properties에 노출되지 않는가?
-
-## 예시 코드
-
-- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.
+- Provider 설정이 `@ConfigurationProperties`로 바인딩된다.
+- ApiClient가 Provider 전용 HTTP client bean을 qualifier로 주입받는다.
+- timeout과 민감 정보 기본값 정책이 명확하다.

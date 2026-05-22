@@ -1,150 +1,82 @@
 # ErrorCode 컨벤션
 
----
+이 문서는 외부 API error code를 Provider enum으로 관리하고 Port ErrorCode로 번역하는 전략을 정리한다.
 
-## 언제 사용하는가
+## 목적
 
-- `external` 단위에서 ErrorCode 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+- 외부 error code 문자열 비교를 한곳에 모은다.
+- 외부 code와 Port ErrorCode 번역을 명시적으로 관리한다.
+- 외부 API code 추가 시 누락을 컴파일 단계에서 찾기 쉽게 한다.
 
-## 코드 위치
+## 적용 범위
 
-- `external` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+- `{Provider}ErrorCode`
+- `{Provider}{Function}ErrorCode`
+- `fromCode(code: String)`
+- Adapter 내부 `toPortErrorCode()`
 
-## 구조
+## 책임
 
-- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+- 외부 error code 문자열을 Provider enum으로 표현한다.
+- 미매핑 외부 code의 fallback 정책을 둔다.
+- Port ErrorCode 번역을 Adapter 경계에 둔다.
 
-## 핵심 원칙
+## 전체 흐름
 
-**외부 API 비즈니스 에러코드는 Provider 전용 enum으로 정의하고, `toPortErrorCode()`로 Port ErrorCode로 번역한다.**
-
-외부 에러코드 문자열을 Adapter에서 직접 비교하면 외부 API 변경에 취약해지고 번역 로직이 분산된다. `{Provider}ErrorCode` enum이 외부 코드와 Port ErrorCode 간의 단일 번역 테이블 역할을 담당한다.
-
----
-
-## 코드에서 관찰된 규칙
-
-1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
-
-## 네이밍 규칙
-
-| 항목 | 패턴 | 예시 |
-|------|------|------|
-| 기본 ErrorCode | `{Provider}ErrorCode` | `GiftCardErrorCode`, `BiscuitLinkErrorCode` |
-| 기능별 ErrorCode | `{Provider}{Function}ErrorCode` | `GiftCardAccountVerifyErrorCode` |
-| 조회 메서드 | `fromCode(code: String)` (companion object) | 전 Provider 동일 |
-| 번역 메서드 | `toPortErrorCode()` (private extension function) | Adapter 파일 내 정의 |
-
----
-
-## 파일 위치
-
-**규칙: ErrorCode enum은 DTO 파일과 분리해 `{Provider}ErrorCode.kt`로 독립 관리한다.**
-
-에러코드를 DTO 파일에 포함하면 순수 데이터 홀더 역할이 흐려진다. Provider 패키지에 별도 파일로 둔다. 기능별로 에러코드 집합이 완전히 다른 경우 `{Provider}{Function}ErrorCode`로 분리한다.
-
----
-
-## enum 구조
-
-**규칙: enum 항목은 `code` 필드를 갖고, `fromCode()`로 외부 코드 문자열을 enum으로 변환한다.**
-
-```kotlin
-// ✅ 기본 구조
-enum class GiftCardErrorCode(val code: String) {
-    GIFT_CARD_NOT_FOUND("GIFT_CARD_NOT_FOUND"),
-    GIFT_CARD_PIN_NOT_USABLE("GIFT_CARD_PIN_NOT_USABLE"),
-    ;
-    companion object {
-        fun fromCode(code: String): GiftCardErrorCode? = entries.find { it.code == code }
-    }
-}
-
-// ✅ 에러코드 집합이 다른 API는 기능별로 분리
-enum class GiftCardAccountVerifyErrorCode(val code: String) {
-    HOLDER_MISMATCH("HOLDER_MISMATCH"),
-    ACCOUNT_NOT_FOUND("ACCOUNT_NOT_FOUND"),
-    ACCOUNT_SUSPENDED("ACCOUNT_SUSPENDED"),
-    SERVICE_UNAVAILABLE("SERVICE_UNAVAILABLE"),
-    ;
-    companion object {
-        fun fromCode(code: String): GiftCardAccountVerifyErrorCode? = entries.find { it.code == code }
-    }
-}
+```text
+{Provider}ApiException.code
+  -> {Provider}ErrorCode.fromCode(code)
+    -> Adapter private toPortErrorCode()
+      -> Port ErrorCode
 ```
 
-- `fromCode()`는 매핑되지 않는 코드를 `null`로 반환한다. 호출부(Adapter)에서 null을 폴백 ErrorCode로 처리한다.
+## 세부 규칙
 
----
+### 네이밍
 
-## Port ErrorCode 번역
+| 항목 | 패턴 |
+|------|------|
+| 기본 ErrorCode | `{Provider}ErrorCode` |
+| 기능별 ErrorCode | `{Provider}{Function}ErrorCode` |
+| 조회 메서드 | `fromCode(code: String)` |
+| 번역 메서드 | `toPortErrorCode()` |
 
-**규칙: Adapter 내 `toPortErrorCode()` private extension function에서 enum 항목을 Port ErrorCode로 매핑하고, `null`(미매핑)은 폴백 코드로 처리한다.**
+### 파일 위치
 
-```kotlin
-// ✅ enum 기반 번역
-} catch (e: GiftCardApiException) {
-    val externalErrorCode = GiftCardErrorCode.fromCode(e.code)
-    ValidateResult(
-        status = ValidateStatus.INVALID,
-        errorCode = externalErrorCode.toPortErrorCode(),
-        code = e.code,
-        message = e.message,
-    )
-}
+- ErrorCode enum은 DTO 파일과 분리해 `{Provider}ErrorCode.kt`로 둔다.
+- 기능별 code 집합이 완전히 다르면 `{Provider}{Function}ErrorCode.kt`로 분리할 수 있다.
 
-private fun GiftCardErrorCode?.toPortErrorCode(): ErrorCode =
-    when (this) {
-        GiftCardErrorCode.GIFT_CARD_NOT_FOUND      -> ErrorCode.NOT_FOUND
-        GiftCardErrorCode.GIFT_CARD_PIN_NOT_USABLE -> ErrorCode.NOT_USABLE
-        null                                       -> ErrorCode.UNAVAILABLE
-    }
-```
+### enum 구조
 
-```kotlin
-// ❌ 에러코드 문자열 직접 비교 → 외부 코드 변경에 취약, 번역 로직 분산
-if (e.code == "GIFT_CARD_NOT_FOUND") { ErrorCode.NOT_FOUND }
-else if (e.code == "GIFT_CARD_PIN_NOT_USABLE") { ErrorCode.NOT_USABLE }
-```
+- enum 항목은 외부 code 문자열을 담는 `code` 필드를 가진다.
+- `fromCode()`는 매핑되지 않는 코드를 `null`로 반환한다.
+- `fromCode()`에서 예외를 던지지 않는다.
 
-- `when` 분기에 모든 enum 항목을 명시해 미매핑 케이스를 컴파일 시점에 강제한다. `else` 사용을 금지한다.
-- `toPortErrorCode()`는 Adapter 파일 내 private extension function으로 둔다. ErrorCode enum 파일에 Port 의존성이 생기지 않도록 한다.
+### Port ErrorCode 번역
 
----
-
-## 의존 및 책임 경계
-
-- 허용되는 의존: `external` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
-- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
-
-## 관련 정책 / 상위 규칙
-
-- [external guidelines](../external-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
-- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+- Port ErrorCode 번역은 Adapter 파일 안의 private extension으로 둔다.
+- `when` 분기에 모든 enum 항목을 명시한다.
+- `else`를 사용하지 않는다.
+- `null`은 fallback Port ErrorCode로 처리한다.
+- ErrorCode enum 파일이 application Port 타입에 의존하지 않게 한다.
 
 ## 금지 규칙
 
-- 외부 에러코드 문자열을 Adapter에서 직접 비교하지 않는다. enum의 `fromCode()`를 경유한다.
-- `fromCode()`에서 예외를 던지지 않는다. `null`을 반환하고 호출부가 폴백을 처리한다.
-- 에러코드 enum을 DTO 파일 안에 포함하지 않는다. 별도 파일로 분리한다.
-- `toPortErrorCode()`에서 `else` 분기를 사용하지 않는다. 신규 에러코드 추가 시 컴파일 오류로 누락을 감지한다.
-- `toPortErrorCode()`를 ErrorCode enum 파일에 정의하지 않는다. Port 계층 의존성이 external enum에 침투한다.
+- 외부 error code 문자열을 Adapter에서 직접 비교하지 않는다.
+- `fromCode()`에서 예외를 던지지 않는다.
+- ErrorCode enum을 DTO 파일 안에 포함하지 않는다.
+- `toPortErrorCode()`에서 `else` 분기를 사용하지 않는다.
+- `toPortErrorCode()`를 ErrorCode enum 파일에 정의하지 않는다.
+- 미매핑 code fallback 없이 null을 그대로 방치하지 않는다.
 
----
+## 예외와 경계
 
-## 안티패턴
+- 외부 code가 불안정하면 raw code를 Port Result의 `code` 필드에 함께 보존한다.
+- Port가 별도 ErrorCode를 갖지 않는 단순 연동이면 status와 raw code만 반환할 수 있다.
+- 여러 API가 같은 code 의미를 공유하면 Provider 공통 enum을 재사용할 수 있다.
 
-- 없음
+## 완료 기준
 
-## 체크 리스트
-
-- [ ] ErrorCode enum이 `{Provider}ErrorCode.kt` 별도 파일로 분리됐는가?
-- [ ] enum 항목이 `code` 필드와 `fromCode()` companion을 갖추고 있는가?
-- [ ] Adapter에서 외부 에러코드 문자열을 직접 비교하지 않고 `fromCode()`를 경유하는가?
-- [ ] `toPortErrorCode()`에서 `else` 없이 모든 enum 항목을 `when`으로 명시했는가?
-- [ ] `null`(미매핑 코드)을 폴백 ErrorCode로 처리하는가?
-- [ ] `toPortErrorCode()`가 Adapter 파일 내 private extension function으로 정의됐는가?
-
-## 예시 코드
-
-- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.
+- 외부 error code가 Provider enum으로 표현된다.
+- Adapter가 `fromCode()`와 `toPortErrorCode()`를 거쳐 Port ErrorCode를 반환한다.
+- 신규 enum 추가 시 번역 누락을 코드 리뷰나 컴파일에서 발견할 수 있다.

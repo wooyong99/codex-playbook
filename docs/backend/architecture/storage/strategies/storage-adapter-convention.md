@@ -1,245 +1,101 @@
 # Storage Adapter 컨벤션
 
----
+이 문서는 application 저장소 Port를 storage 구현체로 연결하는 `Storage Adapter` 전략을 정리한다.
 
-## 언제 사용하는가
+## 목적
 
-- `storage` 단위에서 Storage Adapter 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+- application Port 뒤에 JPA와 QueryDsl 구현 세부사항을 숨긴다.
+- 단순 CRUD와 복잡 쿼리 책임을 분리한다.
+- Entity와 Domain 변환 책임을 storage 경계 안에 둔다.
 
-## 코드 위치
+## 적용 범위
 
-- `storage` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+- `{Entity}Adapter`
+- `{Entity}JpaRepository`
+- `{Entity}QueryDslRepository`
+- `{Entity}Entity`
+- `{Entity}Extension.kt`
 
-## 구조
+QueryDsl 쿼리 작성 규칙은 [querydsl-convention](querydsl-convention.md)이 소유한다.
 
-- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+## 책임
 
-## 핵심 원칙
+- application Port 인터페이스를 구현한다.
+- 단순 저장과 조회는 JpaRepository에 위임한다.
+- 복잡한 검색, Projection, pagination은 QueryDslRepository에 위임한다.
+- 모든 반환값을 Domain 객체 또는 application Port 타입으로 변환한다.
 
-**Port 구현체는 `{Entity}Adapter`로 작성하고, JpaRepository와 QueryDslRepository에 위임한다. 모든 반환값은 도메인 객체로 변환하고, JPA Entity는 인프라 계층 밖으로 노출하지 않는다.**
+## 전체 흐름
 
-단순 CRUD는 `{Entity}JpaRepository`, 복잡 쿼리는 `{Entity}QueryDslRepository`로 역할을 분리한다. 도메인 ↔ Entity 변환은 `{Entity}Extension.kt`에서만 수행하며 Entity나 Domain 클래스 내부에 변환 로직을 두지 않는다.
-
-> QueryDsl 쿼리 작성 규칙은 [querydsl-convention.md](querydsl-convention.md) 참고
-
----
-
-## 코드에서 관찰된 규칙
-
-1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
-
-## 네이밍 규칙
-
-| 구성 요소 | 패턴 | 예시 |
-|-----------|------|------|
-| Adapter | `{Entity}Adapter` | `FsNodeAdapter` |
-| JpaRepository | `{Entity}JpaRepository` | `FsNodeJpaRepository` |
-| QueryDslRepository | `{Entity}QueryDslRepository` | `FsNodeQueryDslRepository` |
-| JPA Entity | `{Entity}Entity` | `FsNodeEntity` |
-| 변환 파일 | `{Entity}Extension.kt` | `FsNodeExtension.kt` |
-
----
-
-## Adapter 구조
-
-**규칙: Port 구현체는 `@Repository`로 선언하고, JpaRepository와 QueryDslRepository에 위임한다.**
-
-```kotlin
-@Repository
-class FsNodeAdapter(
-    private val jpaRepository: FsNodeJpaRepository,
-    private val queryDslRepository: FsNodeQueryDslRepository,
-) : FsNodeRepository {
-
-    override fun save(fsNode: FsNode): FsNode =
-        jpaRepository.save(fsNode.toEntity()).toDomain()
-
-    override fun findById(id: Long): FsNode? =
-        jpaRepository.findById(id).orElse(null)?.toDomain()
-
-    override fun findAll(): List<FsNode> =
-        jpaRepository.findAll().map { it.toDomain() }
-
-    override fun search(condition: FsNodeSearchCondition, pageable: Pageable): Page<FsNode> =
-        queryDslRepository.search(condition, pageable)
-}
+```text
+application Port
+  -> {Entity}Adapter
+    -> {Entity}JpaRepository
+    -> {Entity}QueryDslRepository
+    -> {Entity}Extension.toDomain()
+    -> {Entity}Extension.toEntity()
 ```
 
-- `@Repository`로 선언한다.
-- application 계층의 Port 인터페이스를 구현한다.
-- 단순 CRUD는 `JpaRepository`, 복잡한 쿼리는 `QueryDslRepository`에 위임한다.
-- 모든 반환값은 도메인 객체로 변환한다 — JPA Entity를 외부로 노출하지 않는다.
+## 세부 규칙
 
----
+### 네이밍
 
-## Repository 분리
-
-**규칙: JpaRepository는 CRUD와 단순 조회, QueryDslRepository는 복잡한 쿼리와 Projection을 담당한다.**
-
-### JpaRepository
-
-```kotlin
-interface FsNodeJpaRepository : JpaRepository<FsNodeEntity, Long> {
-    fun findByNameAndParentId(name: String, parentId: Long?): FsNodeEntity?
-    fun existsByNameAndParentId(name: String, parentId: Long?): Boolean
-}
-```
-
-| 사용 기준 | 예시 |
+| 구성 요소 | 패턴 |
 |-----------|------|
-| 저장 / 삭제 | `save()`, `delete()`, `deleteById()` |
-| ID 기반 단건 조회 | `findById()` |
-| 단순 조건 조회 (Spring Data 메서드명 쿼리) | `findByNameAndParentId()` |
-| 존재 여부 확인 | `existsByNameAndParentId()` |
+| Adapter | `{Entity}Adapter` |
+| JpaRepository | `{Entity}JpaRepository` |
+| QueryDslRepository | `{Entity}QueryDslRepository` |
+| JPA Entity | `{Entity}Entity` |
+| 변환 파일 | `{Entity}Extension.kt` |
 
-### QueryDslRepository
+### Adapter 구조
 
-| 사용 기준 | 예시 |
-|-----------|------|
-| 동적 조건 검색 | 검색 필터 조합, 다중 조건 |
-| 페이지네이션 + 정렬 | 2-step 조인 페이지네이션 |
-| Projection (일부 필드만 조회) | DTO 직접 조회 |
-| 복잡한 조인 | 다중 테이블 조인, 서브쿼리 |
-| 집계 쿼리 | `groupBy`, `having`, 통계 |
+- Adapter는 `@Repository`로 선언한다.
+- Adapter는 application 계층의 Port 인터페이스를 구현한다.
+- Adapter는 JpaRepository와 QueryDslRepository를 생성자 주입받는다.
+- Adapter는 JPA Entity를 그대로 반환하지 않고 Domain 또는 Port Result로 변환한다.
 
----
+### Repository 분리
 
-## JPA Entity 작성
+- JpaRepository는 저장, 삭제, ID 기반 조회, 단순 조건 조회, 존재 여부 확인만 담당한다.
+- QueryDslRepository는 동적 조건 검색, 복잡한 조인, Projection, 집계, pagination을 담당한다.
+- 단순 Spring Data 메서드명 쿼리가 길어지면 QueryDslRepository로 옮긴다.
 
-**규칙: Entity는 순수 JPA 매핑에만 집중한다. 비즈니스 로직을 포함하지 않는다.**
+### Entity 작성
 
-```kotlin
-@Entity
-@Table(name = "fs_node")
-class FsNodeEntity(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
-
-    @Column(nullable = false)
-    val name: String,
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    val type: FsNodeType,
-
-    val parentId: Long?,
-
-    @Column(nullable = false)
-    val size: Long,
-)
-```
-
-### BaseEntity — 공통 감사(Audit) 필드
-
-생성/수정 시각이 필요한 Entity는 `BaseEntity`를 상속한다.
-
-```kotlin
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener::class)
-abstract class BaseEntity(
-    @CreatedDate @Column(updatable = false)
-    var createdAt: LocalDateTime = LocalDateTime.now(),
-    @LastModifiedDate
-    var updatedAt: LocalDateTime = LocalDateTime.now(),
-)
-```
-
-### Entity 작성 규칙
-
-- `class`로 선언한다 (`data class` 아님 — JPA 프록시 호환).
+- Entity는 JPA 매핑에만 집중한다.
+- Entity는 `class`로 선언하고 `data class`로 만들지 않는다.
 - `@Column(nullable = false)`로 NOT NULL 제약을 명시한다.
-- Enum은 `@Enumerated(EnumType.STRING)`을 사용한다 (순서 변경에 안전).
-- 연관관계 매핑은 `@ManyToOne(fetch = LAZY)`를 기본으로 한다.
-- `@OneToMany`는 필요한 경우에만 선언한다 (불필요한 양방향 매핑 지양).
-- `FetchType.EAGER`를 사용하지 않는다.
+- Enum은 `@Enumerated(EnumType.STRING)`을 사용한다.
+- 연관관계는 `FetchType.LAZY`를 기본으로 한다.
+- 생성/수정 시간이 필요하면 `BaseEntity` 같은 공통 감사 필드를 사용한다.
 
----
+### Domain 변환
 
-## 도메인-엔티티 변환
-
-**규칙: 변환 로직은 `{Entity}Extension.kt`에 Extension 함수로 작성한다. Entity나 Domain 클래스 내부에 변환 로직을 두지 않는다.**
-
-변환은 레이어 간 매핑(인프라 관심사)이지, 엔티티나 도메인 객체 자신의 책임이 아니다.
-
-```kotlin
-// FsNodeExtension.kt
-fun FsNodeEntity.toDomain(): FsNode = FsNode.reconstitute(
-    id = id,
-    name = name,
-    path = path,
-    type = type,
-    parentId = parentId,
-    size = size,
-    uploadedAt = uploadedAt,
-)
-
-fun FsNode.toEntity(): FsNodeEntity = FsNodeEntity(
-    id = id,
-    name = name,
-    path = path,
-    type = type,
-    parentId = parentId,
-    size = size,
-    uploadedAt = uploadedAt,
-)
-```
-
-- `toDomain()`은 도메인 모델의 `reconstitute()` 팩토리 메서드를 사용한다 (DB 복원이므로 생성 시점 검증 생략).
-
----
-
-## 의존 및 책임 경계
-
-- 허용되는 의존: `storage` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
-- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
-
-## 관련 정책 / 상위 규칙
-
-- [storage guidelines](../storage-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
-- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+- 변환 로직은 `{Entity}Extension.kt`의 extension function으로 작성한다.
+- `toDomain()`은 domain 모델의 `reconstitute()`를 사용한다.
+- `toEntity()`는 storage Entity 생성을 담당한다.
+- Entity나 Domain 클래스 내부에 변환 메서드를 넣지 않는다.
 
 ## 금지 규칙
 
-- JPA Entity를 인프라 계층 밖으로 반환하지 않는다 — 반드시 `toDomain()`으로 변환.
-- Entity에 비즈니스 로직을 두지 않는다.
-- Entity나 Domain 클래스 내부에 변환 로직을 두지 않는다 — `{Entity}Extension.kt` 사용.
+- JPA Entity를 storage 밖으로 반환하지 않는다.
+- Entity에 비즈니스 로직을 넣지 않는다.
+- Entity나 Domain 클래스 내부에 변환 로직을 넣지 않는다.
 - `@OneToMany`를 불필요하게 선언하지 않는다.
 - `FetchType.EAGER`를 사용하지 않는다.
-- `open-in-view: true`를 사용하지 않는다.
+- `open-in-view: true`에 의존하지 않는다.
+- 단순 Repository에 복잡한 동적 조건과 Projection을 계속 추가하지 않는다.
 
----
+## 예외와 경계
 
-## 안티패턴
+- 단일 조회가 단순하지만 성능 튜닝이 필요하면 QueryDslRepository로 옮길 수 있다.
+- Entity와 Domain 구조가 거의 같아도 변환 책임은 분리한다.
+- 저장소 구현 기술이 JPA가 아니면 실제 기술명에 맞추되 Port 외부 노출 금지 원칙은 유지한다.
 
-- 없음
+## 완료 기준
 
-## 체크 리스트
-
-### Adapter
-- [ ] 클래스명이 `{Entity}Adapter`인가?
-- [ ] `@Repository`로 선언했는가?
-- [ ] application 계층의 Port 인터페이스를 구현하는가?
-- [ ] 모든 반환값이 도메인 객체인가? (JPA Entity 미노출)
-
-### JpaRepository
-- [ ] `JpaRepository<{Entity}Entity, Long>`을 상속하는가?
-- [ ] 단순 조회(Spring Data 메서드명 쿼리)만 선언했는가?
-- [ ] 복잡한 쿼리는 QueryDslRepository에 위임했는가?
-
-### Entity
-- [ ] `class`로 선언했는가? (`data class` 아님)
-- [ ] `@Column(nullable = false)`로 NOT NULL 명시했는가?
-- [ ] Enum에 `@Enumerated(EnumType.STRING)`을 사용하는가?
-- [ ] 연관관계가 `FetchType.LAZY`인가?
-- [ ] 감사 필드가 필요하면 `BaseEntity`를 상속하는가?
-- [ ] 비즈니스 로직이 없는가?
-
-### 변환
-- [ ] `{Entity}Extension.kt`에 `toDomain()` / `toEntity()`가 있는가?
-- [ ] `toDomain()`이 도메인 모델의 `reconstitute()`를 사용하는가?
-- [ ] Entity나 Domain 클래스 내부에 변환 로직이 없는가?
-
-## 예시 코드
-
-- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.
+- Adapter가 application Port를 구현하고 저장 기술 세부사항을 숨긴다.
+- JpaRepository와 QueryDslRepository의 책임이 분리되어 있다.
+- Entity와 Domain 변환이 `{Entity}Extension.kt`에 모여 있다.
+- storage 밖으로 JPA Entity가 노출되지 않는다.

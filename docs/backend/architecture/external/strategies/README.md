@@ -1,29 +1,44 @@
 # External Strategies
 
-이 프로젝트에서 `external` 단위에 실제로 사용 중인 구현 전략 요약.
+이 문서는 `external` 단위의 역할형 전략 문서 맵을 소유한다.
 
-## 핵심 전략
+## 목적
 
-- Adapter는 application Port만 구현하고 외부 예외를 내부 Result/ErrorCode로 번역한다.
-- ApiClient는 HTTP 호출과 Provider 예외 변환을 캡슐화한다.
-- Provider별 DTO, Exception, ErrorCode, Config, Properties, Mock Adapter를 같은 경계에 둔다.
-- Mock Adapter는 `local` 프로필에서 실 외부 시스템 의존을 대체한다.
+- external 내부 컴포넌트의 책임을 전략별로 분리한다.
+- Adapter, ApiClient, DTO, Exception, ErrorCode, Config, Mock Adapter의 선택 기준을 한곳에서 찾게 한다.
+- 레거시 템플릿 대신 현재 전략 문서의 용어를 기준으로 external 구조를 설명한다.
 
-## 근거가 된 코드 패턴
+## 적용 범위
 
-- `{Provider}{Function}Adapter`, `Mock{Function}Adapter` - 실 Adapter와 로컬 Mock 분리
-- `{Provider}ApiClient`, `{Provider}Dtos` - 외부 API 호출과 스키마 캡슐화
-- `{Provider}ErrorCode`, `{Provider}Exception` - 외부 오류의 내부 표현 번역
-- `{Provider}Config`, `{Provider}Properties` - Provider별 HTTP 클라이언트 설정
+- outbound Port 구현과 외부 API 호출
+- Provider DTO, 예외 계층, 외부 error code 번역
+- Provider별 HTTP client 설정, 호출 로깅, local mock
 
-## 세부 문서
+## 전략 문서
 
-- [adapter-convention](adapter-convention.md) - Outbound Port 구현 Adapter를 작성할 때
-- [api-client-convention](api-client-convention.md) - HTTP 호출과 예외 변환을 작성할 때
-- [api-client-http-client](api-client-http-client.md) - Provider 전용 HTTP 클라이언트를 구성할 때
-- [api-client-logging](api-client-logging.md) - 외부 API 호출 로그를 남길 때
-- [dto-convention](dto-convention.md) - 외부 요청/응답 DTO를 작성할 때
-- [exception-convention](exception-convention.md) - Provider 예외 계층을 작성할 때
-- [errorcode-convention](errorcode-convention.md) - 외부 에러코드를 내부 ErrorCode로 번역할 때
-- [config-convention](config-convention.md) - Config/Properties를 작성할 때
-- [mock-adapter-convention](mock-adapter-convention.md) - 로컬 Mock Adapter를 작성할 때
+| 전략 | 문서 | 책임 |
+|------|------|------|
+| Adapter | [adapter-convention](adapter-convention.md) | Outbound Port 구현과 외부 예외의 Port Result 변환 |
+| ApiClient | [api-client-convention](api-client-convention.md) | HTTP 호출, Provider 예외 변환, token 처리 |
+| ApiClient HTTP Client | [api-client-http-client](api-client-http-client.md) | Provider 전용 HTTP client 주입 방식 |
+| ApiClient Logging | [api-client-logging](api-client-logging.md) | 외부 API 호출 로그와 민감 정보 차단 |
+| DTO | [dto-convention](dto-convention.md) | 외부 요청/응답 스키마 표현 |
+| Exception | [exception-convention](exception-convention.md) | Provider 예외 계층 |
+| ErrorCode | [errorcode-convention](errorcode-convention.md) | 외부 error code와 Port ErrorCode 번역 |
+| Config | [config-convention](config-convention.md) | Provider properties와 HTTP client bean 구성 |
+| Mock Adapter | [mock-adapter-convention](mock-adapter-convention.md) | local profile에서 실제 외부 호출 대체 |
+
+## 공통 의존 흐름
+
+```text
+application Port
+  -> {Provider}{Function}Adapter
+    -> {Provider}ApiClient
+      -> {Provider}Dtos
+      -> {Provider}Exception
+    -> {Provider}ErrorCode
+    -> Port Result
+
+local profile
+  -> Mock{Function}Adapter
+```

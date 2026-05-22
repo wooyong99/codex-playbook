@@ -8,10 +8,10 @@
 
 ## 책임
 
-- application 계층이 선언한 Outbound Port를 구현한다.
-- 외부 API 응답·오류·스키마를 내부 Port Result와 ErrorCode로 번역한다.
+- application 계층이 선언한 outbound Port를 구현한다.
+- 외부 API 응답, 오류, 스키마를 내부 Port Result와 ErrorCode로 번역한다.
 - Provider별 구성 요소를 한 경계 안에 모아 외부 변경 영향을 격리한다.
-- 로컬 개발용 Mock Adapter로 실 외부 시스템 의존을 분리한다.
+- 로컬 개발용 Mock Adapter로 실제 외부 시스템 의존을 분리한다.
 
 ## 의존 경계
 
@@ -24,6 +24,7 @@
 - 외부 시스템 변경은 Adapter와 ApiClient 경계 안에서 흡수한다.
 - 외부 예외는 Provider 전용 예외 계층을 거쳐 내부 표현으로 번역한다.
 - 한 Provider의 Adapter, ApiClient, DTO, ErrorCode, Exception, Config, Mock은 한 패키지 경계 안에 둔다.
+- 로깅과 설정은 Provider별로 분리해 장애 범위와 민감 정보 노출을 제어한다.
 
 ## 관련 정책
 
@@ -37,12 +38,8 @@
 - 외부 DTO를 Port 입력/출력 타입으로 노출하지 않는다.
 - 여러 Provider가 같은 패키지를 공유하지 않는다.
 - Mock Adapter가 실제 외부 호출이나 실 credentials에 의존하지 않는다.
-
-## 안티패턴
-
-- 외부 API 스키마 변경이 application Command/Result 변경으로 이어진다.
-- Provider별 설정과 DTO가 공용 패키지에 섞여 변경 영향 범위를 파악하기 어렵다.
-- ApiClient 로깅에서 토큰, 개인정보, 원문 payload를 그대로 남긴다.
+- ApiClient 로깅에서 토큰, 개인정보, 원문 payload를 그대로 남기지 않는다.
+- Provider별 설정과 DTO를 공용 패키지에 섞지 않는다.
 
 ## 주요 컴포넌트
 
@@ -57,6 +54,12 @@
 ## 전략 문서
 
 - [Strategies](./strategies/README.md)
+
+## 완료 기준
+
+- 외부 시스템별 변경 영향이 Provider 패키지 경계 안에 갇혀 있다.
+- application Port에는 외부 DTO와 HTTP 예외가 노출되지 않는다.
+- 로컬 개발에서 실제 외부 시스템 없이 주요 흐름을 재현할 수 있다.
 
 ## Playbook compatibility
 

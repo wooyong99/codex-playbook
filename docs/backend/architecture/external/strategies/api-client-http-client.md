@@ -1,78 +1,72 @@
 # ApiClient HTTP 클라이언트 컨벤션
 
----
+이 문서는 ApiClient가 Provider 전용 HTTP client bean을 주입받아 사용하는 전략을 정리한다.
 
-## 언제 사용하는가
+## 목적
 
-- `external` 단위에서 ApiClient HTTP 클라이언트 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+- Provider별 baseUrl, timeout, header, interceptor 설정을 분리한다.
+- ApiClient가 HTTP client를 직접 생성하지 않게 한다.
+- 외부 호출 설정 변경의 영향을 Provider 경계 안에 둔다.
 
-## 코드 위치
+## 적용 범위
 
-- `external` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+- Provider 전용 HTTP client bean
+- `@Qualifier` 기반 주입
+- ApiClient의 HTTP client 사용 방식
 
-## 구조
+HTTP client bean 생성은 [config-convention](config-convention.md)이 소유한다.
 
-- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+## 책임
 
-## 핵심 원칙
+- ApiClient가 사용할 HTTP client 주입 방식을 정의한다.
+- Provider별 HTTP client 재사용 원칙을 정의한다.
+- 메서드 내부 client 생성과 공용 client 공유를 금지한다.
 
-**ApiClient는 Provider 전용 HTTP 클라이언트 빈을 `@Qualifier`로 주입받아 재사용한다.**
+## 전체 흐름
 
-이 문서는 [api-client-convention.md](api-client-convention.md) "HTTP 클라이언트 사용" 섹션의 프로젝트별 세부 구현을 정의한다. HTTP 클라이언트 유형과 빈 구성 방식은 프로젝트마다 다를 수 있다.
-
----
-
-## 코드에서 관찰된 규칙
-
-1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
-
-## 사용 HTTP 클라이언트
-
-> {이 프로젝트에서 사용하는 HTTP 클라이언트를 기술한다. 예: `RestClient`, `RestTemplate`, `WebClient`}
-
----
-
-## 빈 주입 방식
-
-**규칙: {빈 주입 방식 결론}**
-
-> {Provider 전용 빈을 어떻게 등록하고 주입받는지 기술한다. 코드 예시 포함}
-
-```kotlin
-// 예시 작성
+```text
+{Provider}Config
+  -> @Bean("{provider}ServiceRestClient")
+    -> {Provider}ApiClient(@Qualifier)
+      -> external endpoint
 ```
 
-> 빈 구성은 [config-convention.md](config-convention.md) 참고
+## 세부 규칙
 
----
+### HTTP client 선택
 
-## 의존 및 책임 경계
+- 프로젝트 기본 HTTP client는 Provider별 Config 문서에서 정한다.
+- 같은 Provider 안에서는 하나의 client bean을 재사용한다.
+- Provider마다 baseUrl, timeout, header가 다르면 별도 bean을 둔다.
 
-- 허용되는 의존: `external` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
-- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+### 빈 주입 방식
 
-## 관련 정책 / 상위 규칙
+- ApiClient는 생성자에서 `@Qualifier`로 Provider 전용 bean을 주입받는다.
+- qualifier 값은 Config의 bean 이름과 동일해야 한다.
+- 여러 Provider가 같은 bean을 공유하지 않는다.
 
-- [external guidelines](../external-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
-- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+### 사용 위치
+
+- HTTP client는 ApiClient에서만 직접 사용한다.
+- Adapter는 ApiClient를 통해 외부 호출을 수행한다.
+- Mock Adapter는 HTTP client를 주입받지 않는다.
 
 ## 금지 규칙
 
-- 메서드 내부에서 HTTP 클라이언트를 매번 재생성하지 않는다.
-- {프로젝트별 추가 금지 규칙을 기술한다}
+- 메서드 내부에서 HTTP client를 매번 생성하지 않는다.
+- Provider별 qualifier 없이 타입만으로 HTTP client를 주입받지 않는다.
+- 두 Provider가 같은 HTTP client bean을 공유하지 않는다.
+- Adapter나 Service가 HTTP client를 직접 주입받지 않는다.
+- Mock Adapter가 HTTP client를 주입받지 않는다.
 
----
+## 예외와 경계
 
-## 안티패턴
+- Provider가 여러 baseUrl을 사용하면 기능별 client bean을 둘 수 있다.
+- 단일 Provider의 모든 API가 같은 baseUrl과 timeout을 쓰면 하나의 client bean을 공유한다.
+- HTTP client 종류가 `RestClient`, `RestTemplate`, `WebClient` 중 무엇이든 Provider 전용 bean 원칙을 유지한다.
 
-- 없음
+## 완료 기준
 
-## 체크 리스트
-
-- [ ] HTTP 클라이언트 빈을 `@Qualifier`로 주입받았는가?
-- [ ] 메서드 내부에서 클라이언트를 재생성하지 않는가?
-- [ ] 빈이 [config-convention.md](config-convention.md)에 따라 올바르게 구성됐는가?
-
-## 예시 코드
-
-- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.
+- ApiClient가 Provider 전용 HTTP client bean을 qualifier로 주입받는다.
+- client 생성과 timeout 설정이 Config로 분리되어 있다.
+- 외부 호출 코드 안에 client 생성 코드가 반복되지 않는다.

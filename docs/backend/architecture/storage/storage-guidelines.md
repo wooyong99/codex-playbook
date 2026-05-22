@@ -11,7 +11,7 @@
 - application 계층이 선언한 저장소 Port를 구현한다.
 - 인프라 모델과 도메인 모델을 분리하고 반환 전 도메인 객체로 변환한다.
 - 단순 CRUD와 복잡 쿼리를 역할별 컴포넌트로 나눈다.
-- 인프라 모델 변경 시 DDL 변경을 함께 관리한다.
+- Entity 변경과 DDL 변경을 같은 변경 단위로 관리한다.
 
 ## 의존 경계
 
@@ -22,8 +22,9 @@
 ## 핵심 원칙
 
 - storage 단위는 저장 기술을 캡슐화하고 application에는 Port 계약만 드러낸다.
-- DB 스키마 변경이 domain 모델로 전파되지 않도록 인프라 모델과 도메인 모델을 분리한다.
-- 조회 복잡도는 단순 저장소와 복잡 쿼리 저장소를 분리해 관리한다.
+- DB 스키마 변경이 domain 모델로 전파되지 않도록 Entity와 Domain을 분리한다.
+- 조회 복잡도는 JpaRepository와 QueryDslRepository를 분리해 관리한다.
+- DDL은 Entity 변경과 함께 갱신해 스키마 불일치를 막는다.
 
 ## 관련 정책
 
@@ -36,12 +37,8 @@
 - 인프라 모델에 비즈니스 로직을 넣지 않는다.
 - Domain 클래스나 Entity 클래스 내부에 양방향 변환 로직을 넣지 않는다.
 - 단순 Repository에 복잡한 동적 쿼리와 Projection 조합을 계속 누적하지 않는다.
-
-## 안티패턴
-
-- DDL 변경 없이 Entity만 수정한다.
-- QueryDsl/JPA 세부 구현이 application Port 시그니처로 드러난다.
-- 변환 책임이 Adapter, Entity, Domain에 흩어져 변경 지점이 늘어난다.
+- DDL 변경 없이 Entity만 수정하지 않는다.
+- QueryDsl/JPA 세부 구현을 application Port 시그니처로 노출하지 않는다.
 
 ## 주요 컴포넌트
 
@@ -50,10 +47,17 @@
 - 복잡 쿼리 저장소: `{Entity}QueryDslRepository`
 - 변환 컴포넌트: `{Entity}Extension`
 - 인프라 모델: `{Entity}Entity`
+- DDL 파일: `sql/{domain}/{table}.sql`
 
 ## 전략 문서
 
 - [Strategies](./strategies/README.md)
+
+## 완료 기준
+
+- application은 저장 기술이 아니라 Port 인터페이스에 의존한다.
+- storage 반환 타입에 JPA Entity나 QueryDsl 타입이 노출되지 않는다.
+- Entity 변경과 DDL 변경이 같은 변경 단위로 설명된다.
 
 ## Playbook compatibility
 
