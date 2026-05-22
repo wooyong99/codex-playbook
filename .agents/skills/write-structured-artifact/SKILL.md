@@ -105,7 +105,7 @@ You are the <Role> sub-agent for this project.
 판단 철학:
 판단 렌즈:
 작업 경계 또는 검토 경계:
-엄격한 제약:
+금지 규칙:
 ```
 
 규칙:

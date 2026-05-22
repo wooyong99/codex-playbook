@@ -100,8 +100,8 @@ def check_toml(text: str) -> list[str]:
         errors.append("missing philosophy section")
     if "경계:" not in text and "작업 경계:" not in text and "검토 경계:" not in text:
         errors.append("missing boundary section")
-    if "엄격한 제약:" not in text:
-        errors.append("missing strict constraints section")
+    if "금지 규칙:" not in text:
+        errors.append("missing prohibition rules section")
     return errors
 
 
