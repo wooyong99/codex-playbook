@@ -142,6 +142,13 @@
 
 ## 11. 리스크와 미결정 사항
 - {risk or open question}
+
+## 12. 완료 체크리스트
+- [ ] 사용자 흐름, 라우팅, 폴더 구조가 실제 frontend architecture 문서와 충돌하지 않는다.
+- [ ] 컴포넌트 책임, 상태 소유권, API client/hook, cache invalidation이 서로 연결된다.
+- [ ] loading, empty, error, permission, recovery UI 상태가 필요한 수준으로 정의되어 있다.
+- [ ] 성능, 접근성, 반응형 기준이 구현 범위와 검증 계획에 반영되어 있다.
+- [ ] 새 TDD 추가·삭제·이름 변경이 `docs/frontend/design/README.md`에 반영되었다.
 ````
 
 ## 섹션별 작성 기준
@@ -154,6 +161,7 @@
 - 캐싱 전략: query key, stale policy, invalidation, optimistic update 여부를 포함한다.
 - 에러 처리: 사용자 피드백과 복구 전략까지 포함한다.
 - 성능과 UX: 렌더링, 접근성, 반응형, perceived latency를 필요한 수준만 다룬다.
+- 완료 체크리스트: 화면 흐름, 상태/API/cache/error/UX 판단과 문서 맵 반영을 최종 확인한다.
 
 ## 저장 규칙
 
