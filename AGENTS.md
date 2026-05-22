@@ -62,6 +62,6 @@
 
 - [PRD](docs/PRD.md)
 - [Rule ID and metadata](docs/rules/README.md)
-- [Agent evaluation suite](docs/evals/README.md)
+- [Agent evaluation suite](.agents/evals/README.md)
 - [Backend 문서 홈](docs/backend/README.md)
 - [Frontend 문서 홈](docs/frontend/README.md)
