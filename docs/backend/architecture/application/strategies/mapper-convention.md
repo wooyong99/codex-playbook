@@ -15,6 +15,7 @@
 - 여러 Domain 객체를 조합해 application 결과 DTO를 구성하는 로직
 
 HTTP Request/Response DTO 변환은 app 계층이 소유한다. 외부 API DTO 번역은 external adapter가 소유한다.
+하위 컴포넌트 간 DTO 생성 기준은 [component-dto-convention](component-dto-convention.md)을 따른다.
 
 ## 책임
 
@@ -42,7 +43,7 @@ UseCase implementation
 ### 의존성
 
 - Mapper는 Port를 주입받지 않는다.
-- Mapper는 Service, Handler, Strategy를 호출하지 않는다.
+- Mapper는 Service, Strategy를 호출하지 않는다.
 - Mapper는 Domain 객체와 application DTO에만 의존한다.
 
 ### 사용 위치
@@ -50,14 +51,17 @@ UseCase implementation
 - UseCase 구현체는 결과 반환 전에 Mapper를 호출한다.
 - Service는 Domain 객체 반환을 기본으로 하고, DTO 변환은 UseCase 구현체에서 Mapper로 처리한다.
 - 단순 변환이라도 일관성을 위해 Mapper에 둔다.
+- 예외 승인 내부 DTO 변환도 Mapper 또는 해당 내부 DTO 소유 컴포넌트의 private 변환으로 제한한다.
 
 ## 금지 규칙
 
 - Mapper에 Port, repository, 외부 API client를 주입하지 않는다.
-- Mapper가 Service, Handler, Strategy를 호출하지 않는다.
+- Mapper가 Service, Strategy를 호출하지 않는다.
 - Mapper에서 데이터 조회, 저장, 외부 호출, 상태 변경을 수행하지 않는다.
 - Mapper에 비즈니스 규칙 검증이나 정책 판단을 넣지 않는다.
 - UseCase 구현체 파일 하단에 `private` 변환 함수를 추가해 Mapper를 우회하지 않는다.
+- Service, Validator, Strategy 전용 DTO 체인을 만들기 위해 Mapper를 사용하지 않는다.
+- Mapper가 app 계층 Response DTO, 외부 API DTO, persistence Entity 변환을 application 내부 변환처럼 소유하지 않는다.
 
 ## 예외와 경계
 

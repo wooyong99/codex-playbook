@@ -14,6 +14,8 @@
 - 같은 입력을 정책별로 다르게 처리하는 application 로직
 - 구현체 위치가 의존성에 따라 application 또는 infrastructure로 갈릴 수 있는 전략
 
+하위 컴포넌트 간 DTO 생성 기준은 [component-dto-convention](component-dto-convention.md)을 따른다.
+
 ## 책임
 
 - 특정 정책 유형을 자신이 처리할 수 있는지 판단한다.
@@ -49,6 +51,12 @@ Service / Coordinator
 - DB 조회가 필요하면 storage 또는 관련 infrastructure 구현체로 둔다.
 - 외부 API 호출이 필요하면 external 구현체로 둔다.
 
+### DTO 경계
+
+- Strategy 입력은 정책 판단에 필요한 Domain 객체, Domain value, UseCase `Command`, primitive로 둔다.
+- 정책 알고리즘 결과가 업무 개념이면 Domain value 또는 예외 승인 내부 outcome으로 표현한다.
+- Strategy 선택과 실행만을 위한 Strategy 전용 DTO를 만들지 않는다.
+
 ## 금지 규칙
 
 - 확장 가능성이 낮은 단순 분기를 성급하게 Strategy로 분리하지 않는다.
@@ -56,6 +64,8 @@ Service / Coordinator
 - Strategy가 aggregate 저장, 트랜잭션 경계, 전체 command 처리를 소유하지 않는다.
 - Strategy 선택을 호출 측의 복잡한 `when` 분기로 흩뜨리지 않는다.
 - Strategy 인터페이스에 외부 API DTO, JPA Entity, framework 타입을 노출하지 않는다.
+- Strategy 호출을 위해 `StrategyCommand`, `StrategyContextDto`, `StrategyResultDto`를 만들지 않는다.
+- Strategy가 UseCase `Result`나 app 계층 Response DTO를 반환하지 않는다.
 
 ## 예외와 경계
 

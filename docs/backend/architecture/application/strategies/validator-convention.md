@@ -15,6 +15,7 @@
 - 여러 Service 또는 UseCase 구현체에서 공유되는 규칙 검증
 
 입력 형식 검증은 Command 생성 시점이 담당한다. Domain 불변식은 Domain 객체가 담당한다.
+하위 컴포넌트 간 DTO 생성 기준은 [component-dto-convention](component-dto-convention.md)을 따른다.
 
 ## 책임
 
@@ -51,6 +52,12 @@ Service / Facade / Coordinator
 - 중간에 Port 조회, Strategy 선택, 외부 호출이 필요하면 public 메서드를 분리한다.
 - 생성, 수정, 삭제처럼 적용 규칙이 다르면 메서드를 분리한다.
 
+### DTO 경계
+
+- Validator는 이미 조회된 Domain 객체, Domain value, UseCase `Command`, primitive를 받을 수 있다.
+- Validator 호출만을 위해 별도 검증 DTO를 만들지 않는다.
+- Validator는 DTO를 반환하지 않고 성공 또는 application 예외로 결과를 표현한다.
+
 ## 금지 규칙
 
 - Validator에 Port, repository, 외부 API client, messaging client를 주입하지 않는다.
@@ -58,6 +65,8 @@ Service / Facade / Coordinator
 - Validator가 Domain 객체 상태를 변경하지 않는다.
 - 여러 Validator를 순서대로 호출만 하는 UseCase 전용 Validator를 만들지 않는다.
 - 입력 형식 검증, 존재 여부 확인, 비즈니스 규칙 검증을 하나의 숨겨진 검증 메서드로 뭉치지 않는다.
+- Validator 호출을 위해 `ValidatorCommand`, `ValidationRequest`, `ValidationResultDto`를 만들지 않는다.
+- Validator가 UseCase `Result`나 app 계층 Response DTO를 반환하지 않는다.
 
 ## 예외와 경계
 

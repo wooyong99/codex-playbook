@@ -23,7 +23,7 @@ external -> application -> domain
 ## 문서 구조
 
 - [app](./app/app-guidelines.md) - HTTP 표현 계층 경계와 Controller/DTO 전략을 확인할 때
-- [application](./application/application-guidelines.md) - UseCase, Flow, Validator, Handler, Policy 경계를 확인할 때
+- [application](./application/application-guidelines.md) - UseCase, Facade, Coordinator, Service, Validator, Strategy 경계를 확인할 때
 - [domain](./domain/domain-guidelines.md) - 도메인 모델, 불변식, 도메인 예외 경계를 확인할 때
 - [storage](./storage/storage-guidelines.md) - 저장소 Adapter, Entity, DDL, QueryDsl 전략을 확인할 때
 - [external](./external/external-guidelines.md) - 외부 API Adapter, ApiClient, Mock 전략을 확인할 때

@@ -11,7 +11,7 @@
 - 외부 요청을 받아 Domain 객체와 Port를 조합해 유스케이스를 완성한다.
 - Domain 로직이 인프라 구현 세부사항에 오염되지 않도록 경계를 유지한다.
 - 데이터 일관성 단위를 결정하고 트랜잭션 범위를 의미 단위로 제한한다.
-- UseCase, Facade, Coordinator, Service, Validator, Strategy, Handler, Port, Mapper 같은 역할을 프로젝트 복잡도에 맞게 배치한다.
+- UseCase, Facade, Coordinator, Service, Validator, Strategy, Port, Mapper 같은 역할을 프로젝트 복잡도에 맞게 배치한다.
 
 ## 의존 경계
 
@@ -38,7 +38,7 @@
 - 트랜잭션 안에서 외부 API 호출, 파일 I/O, 장기 계산을 수행하지 않는다.
 - Validator가 데이터를 직접 조회하거나 형식 검증과 존재 여부 검증을 섞지 않는다.
 - UseCase가 다른 UseCase를 직접 호출해 진입점끼리 결합하지 않는다.
-- Facade, Coordinator, Service, Validator, Handler, Strategy 역할을 이름만 분리하고 같은 책임을 중복 구현하지 않는다.
+- Facade, Coordinator, Service, Validator, Strategy 역할을 이름만 분리하고 같은 책임을 중복 구현하지 않는다.
 - 트랜잭션 경계를 불필요하게 넓혀 DB 커넥션 점유 시간을 늘리지 않는다.
 
 ## 주요 컴포넌트
@@ -48,7 +48,6 @@
 - Transaction Coordinator: Coordinator
 - Aggregate Command Processor: Service
 - Rule Checker: Validator
-- Reusable Boundary Logic: Handler
 - Strategy: Strategy
 - Assembler: Mapper
 - Outbound contract: Port interface
