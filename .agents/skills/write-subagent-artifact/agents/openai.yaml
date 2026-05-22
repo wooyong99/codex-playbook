@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Subagent Artifact"
+  short_description: "Create structured subagent TOML"
+  default_prompt: "Use $write-subagent-artifact to create or update a Codex subagent TOML with role identity, boundaries, judgment criteria, and output principles."

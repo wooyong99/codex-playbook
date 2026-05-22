@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Skill Artifact"
+  short_description: "Create structured Codex skills"
+  default_prompt: "Use $write-skill-artifact to create or update a Codex skill folder, SKILL.md, references, scripts, assets, and agents/openai.yaml metadata."
