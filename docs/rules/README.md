@@ -54,6 +54,8 @@ applies_to:
 
 에이전트가 규칙 위반을 보고할 때는 사람이 읽는 `rule` 문자열과 함께 안정적인 `rule_id`를 반드시 남긴다.
 
+Reviewer는 호출 input으로 전달받은 Source of Truth만 기준으로 위반을 보고한다. reviewer 서브에이전트 TOML이나 전역 review routing 문서는 고정 Source of Truth를 소유하지 않는다.
+
 ```yaml
 violations:
   - rule_id: BACKEND-APP-DTO-001
