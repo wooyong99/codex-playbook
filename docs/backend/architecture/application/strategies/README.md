@@ -1,28 +1,46 @@
 # Application Strategies
 
-이 프로젝트에서 `application` 단위에 실제로 사용 중인 구현 전략 요약.
+이 문서는 `application` 단위의 역할형 전략 문서 맵을 소유한다.
 
-## 핵심 전략
+## 목적
 
-- UseCase는 외부 요청의 진입점이며 Flow 조합과 결과 반환을 담당한다.
-- Flow는 재사용 가능한 업무 흐름과 트랜잭션 경계를 캡슐화한다.
-- Validator, Handler, Policy, EventHandler, Mapper는 책임이 실제로 분리될 때만 둔다.
-- Port는 application이 소유하고 infrastructure 단위가 구현한다.
-- 패키지는 도메인/역할 기준으로 구성하되 실제 코드 탐색성이 우선이다.
+- application 내부 컴포넌트의 책임을 전략별로 분리한다.
+- `UseCase`, `Facade`, `Coordinator`, `Service`, `Validator`, `Strategy`, `Handler`, `Port`, `Mapper`의 선택 기준을 한곳에서 찾게 한다.
+- 레거시 명칭 대신 현재 전략 문서의 용어를 기준으로 application 구조를 설명한다.
 
-## 근거가 된 코드 패턴
+## 적용 범위
 
-- `UseCase`, `Flow`, `Validator`, `Handler`, `Policy`, `EventHandler`, `Mapper` - application 내부 역할 분리
-- `Port` interface - infrastructure 구현과 application 경계 분리
-- `Command`, `Result` - 외부 계약과 도메인 행위 사이의 입출력 계약
+- 외부 진입 계약과 UseCase 구현체 책임
+- aggregate command 처리, 트랜잭션 조합, 이벤트 및 외부 시스템 연동
+- 규칙 검증, 정책 분기, 경계 보호, Port 추상화, DTO 변환
 
-## 세부 문서
+## 전략 문서
 
-- [package-structure](package-structure.md) - application 패키지 구조를 정할 때
-- [use-case-convention](use-case-convention.md) - UseCase 진입점을 작성할 때
-- [flow-convention](flow-convention.md) - 재사용 가능한 업무 흐름을 분리할 때
-- [validator-convention](validator-convention.md) - 조회된 데이터 기반 규칙 검증을 분리할 때
-- [handler-convention](handler-convention.md) - 경계 보호나 공통 조율 로직을 분리할 때
-- [policy-convention](policy-convention.md) - 확장 가능한 행위 분기를 외부화할 때
-- [event-handler-convention](event-handler-convention.md) - 커밋 후 부수 효과를 처리할 때
-- [mapper-convention](mapper-convention.md) - 도메인 결과를 외부 응답으로 조립할 때
+| 전략 | 문서 | 책임 |
+|------|------|------|
+| UseCase | [use-case-convention](use-case-convention.md) | 외부 호출자가 의존하는 추상 인터페이스 계약 |
+| Facade | [facade-convention](facade-convention.md) | 여러 도메인 또는 하위 컴포넌트 뒤의 복잡도 은닉 |
+| Coordinator | [coordinator-convention](coordinator-convention.md) | 여러 트랜잭션 흐름, 이벤트, 외부 시스템 호출 조합 |
+| Service | [service-convention](service-convention.md) | aggregate command의 원자적 처리 |
+| Validator | [validator-convention](validator-convention.md) | 조회된 데이터 기반 비즈니스 규칙 검증 |
+| Strategy | [strategy-convention](strategy-convention.md) | 정책별 처리 방식 캡슐화 |
+| Handler | [handler-convention](handler-convention.md) | 여러 개념 영역에서 재사용되는 로직과 경계 보호 |
+| Port | [port-convention](port-convention.md) | repository, external system 등 외부 자원 추상 인터페이스 |
+| Mapper | [mapper-convention](mapper-convention.md) | application 내부 DTO와 Domain 객체 간 변환 |
+
+## 공통 의존 흐름
+
+```text
+app / event / CLI
+  -> UseCase interface
+    -> Facade | Coordinator | Service
+      -> Validator
+      -> Strategy
+      -> Handler
+      -> Port interface
+      -> Mapper
+        -> Domain
+
+storage / external
+  -> Port implementation
+```

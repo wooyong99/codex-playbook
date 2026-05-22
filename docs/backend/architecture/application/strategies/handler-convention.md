@@ -1,121 +1,71 @@
 # Handler 컨벤션
 
-> **[로컬 컨벤션]** 이 문서는 이 프로젝트의 [구현 전략](README.md)에서 **ACL / Coordinator** 역할을 담당하는 `Handler` 컴포넌트의 컨벤션이다.
-> 다른 프로젝트에서는 동일한 역할을 `Facade`, `ApplicationService`, `DomainService` 등으로 구현할 수 있다.
+이 문서는 여러 개념 영역에서 재사용되는 로직과 경계 보호를 담당하는 `Handler` 전략을 정리한다.
 
-## 언제 사용하는가
+## 목적
 
-- `application` 단위에서 Handler 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+- 여러 Service, Facade, Coordinator에서 반복되는 조합 로직을 한곳에 모은다.
+- 한 개념 영역이 다른 개념 영역의 Port나 세부 모델에 직접 결합되지 않게 한다.
+- application 내부의 재사용 로직과 anti-corruption 경계를 명확히 한다.
 
-## 코드 위치
+## 적용 범위
 
-- `application` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+- 파일 첨부, 알림, 공통 ACL처럼 여러 개념 영역에서 반복되는 application 로직
+- 다른 도메인 Port 접근을 감싸야 하는 경계 보호 로직
+- 여러 Port 또는 domain 객체를 조합하지만 독립 UseCase는 아닌 로직
 
-## 구조
+하나의 aggregate command 원자성은 [service-convention](service-convention.md)이 소유한다. 여러 트랜잭션 조합은 [coordinator-convention](coordinator-convention.md)이 소유한다.
 
-- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+## 책임
 
-## 보편 개념
+- 재사용되는 application 로직을 캡슐화한다.
+- 다른 개념 영역의 Port 변경이 Service나 Coordinator에 직접 전파되지 않도록 막는다.
+- 필요한 Port와 Domain 객체를 조합하되 UseCase 구현체를 호출하지 않는다.
 
-**Anti-Corruption Layer / Cross-domain Coordinator**는 두 가지 역할을 담당한다. 첫째, 여러 도메인 영역에서 반복되는 공통 로직을 하나의 재사용 단위로 추출한다. 둘째, 한 도메인의 흐름 단위가 다른 도메인의 인프라에 직접 접근하는 것을 차단하여 도메인 간 결합을 방지한다. 단순 위임이나 단일 Port 호출만을 위해 이 역할의 컴포넌트를 만들지 않는다.
+## 전체 흐름
 
----
-
-## 핵심 원칙
-
-- Handler는 도메인 간 경계를 보호한다. Flow가 다른 도메인에 직접 접근하면 도메인 간 결합이 생기고, Handler가 그 경계를 차단하는 ACL 역할을 한다.
-- 재사용이 확인된 로직만 Handler로 추출한다. 한 Flow에서만 사용하는 로직을 Handler로 올리면 불필요한 간접 계층이 생긴다.
-- 단일 Port 호출은 Handler를 거치지 않는다. 단순한 위임에 Handler를 만들면 코드 경로만 길어진다.
-
----
-
-## 코드에서 관찰된 규칙
-
-**여러 도메인에서 재사용되는 로직은 Handler로 추출한다. 단일 Port 호출이라면 Flow에서 직접 호출한다.**
-
-Handler는 Flow가 다른 개념 영역에 접근할 때 ACL(Anti-Corruption Layer) 역할을 한다.
-다른 도메인 Port의 변경이 Flow에 전파되지 않도록 경계를 차단한다.
-
----
-
-## 예시
-
-```kotlin
-@Component
-class AttachedFileHandler(
-    private val fileStorage: FileStorage,
-    private val fsNodeRepository: FsNodeRepository,
-) {
-    fun replace(targetId: Long, name: String, bytes: ByteArray): FsNode { ... }
-    fun store(name: String, bytes: ByteArray): FsNode { ... }
-    fun delete(fsNodeId: Long) { ... }
-}
+```text
+Service / Facade / Coordinator
+  -> Handler
+    -> Port
+    -> Domain
 ```
 
-UseCase에서의 사용:
+## 세부 규칙
 
-```kotlin
-@Service
-class UpdateProductUseCase(
-    private val productRepository: ProductRepository,
-    private val attachedFileHandler: AttachedFileHandler,
-    private val productMapper: ProductDtoMapper,
-) {
-    fun updateImage(command: UpdateProductImage.Command): UpdateProductImage.Result {
-        val product = productRepository.findById(command.productId)
-            ?: throw CoreException(TenantErrorCode.TENANT_NOT_FOUND)
+### 추출 기준
 
-        val fsNode = attachedFileHandler.replace(
-            targetId = product.id, name = command.fileName, bytes = command.bytes,
-        )
+- 여러 개념 영역에서 같은 로직이 반복되면 Handler로 추출한다.
+- 다른 개념 영역의 Port 접근이 필요하면 Handler로 경계를 만든다.
+- 여러 Port 또는 domain 객체 조합이 재사용되면 Handler로 추출한다.
 
-        product.updateImagePath(fsNode.path)
-        productRepository.save(product)
-        return productMapper.toResult(product)
-    }
-}
-```
+### 의존성
 
----
+- Handler는 Port와 Domain 객체를 사용할 수 있다.
+- Handler는 UseCase, Facade, Coordinator, Service를 호출하지 않는다.
+- Handler는 다른 Handler를 연쇄 호출하지 않는 것을 기본값으로 한다.
 
-## 추출 판단 기준
+### 사용 위치
 
-- 여러 도메인에서 재사용, 여러 Port/Service 조합 → Handler로 추출
-- Flow에서 다른 개념 영역 Port 접근 필요 → Handler로 추출 (ACL)
-- 여러 도메인에서 재사용, 단일 Port 호출 → Flow에서 직접 호출
-- Flow 하나에서만 사용 → Flow의 private 메서드로 유지
-
----
-
-## 의존 및 책임 경계
-
-- 허용되는 의존: `application` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
-- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
-
-## 관련 정책 / 상위 규칙
-
-- [application guidelines](../application-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
-- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+- Service는 command 처리 중 필요한 재사용 로직을 Handler에 위임할 수 있다.
+- Coordinator는 단계 조합 중 필요한 경계 보호 로직을 Handler에 위임할 수 있다.
+- Facade는 조회 또는 결과 조합 중 반복되는 접근 로직을 Handler에 위임할 수 있다.
 
 ## 금지 규칙
 
-- Flow 하나에서만 사용되는 로직을 Handler로 추출하지 않는다 — Flow의 `private` 메서드로 유지한다.
-- 여러 도메인에서 재사용되더라도 **단일 Port 호출**만 필요한 경우 Handler를 만들지 않는다 — Flow에서 직접 호출한다.
-- Handler가 UseCase나 Flow를 호출하지 않는다 — 의존 방향은 Handler → Port / Domain 까지만 허용된다.
+- 단일 Port 호출만 감싸는 Handler를 만들지 않는다.
+- Handler가 UseCase, Facade, Coordinator, Service를 호출하지 않는다.
+- 한 Service에서만 쓰이는 로직을 Handler로 추출하지 않는다.
+- Handler에 도메인 불변식이나 aggregate 상태 변경 규칙을 직접 구현하지 않는다.
+- Handler를 여러 Handler의 연쇄 호출 구조로 만들지 않는다.
 
----
+## 예외와 경계
 
-## 안티패턴
+- 한 Service에서만 쓰이는 로직은 Service의 private 메서드로 유지한다.
+- 비즈니스 불변식은 Handler가 아니라 Domain 또는 Validator가 담당한다.
 
-- 없음
+## 완료 기준
 
-## 체크 리스트
-
-- [ ] `@Component`로 선언했는가?
-- [ ] 해당 개념 도메인 패키지 루트에 flat 배치됐는가?
-- [ ] Flow 하나에서만 사용되는 로직을 불필요하게 Handler로 추출하지 않았는가?
-- [ ] Flow에서 다른 개념 영역 Port를 직접 주입하지 않고 이 Handler를 통해 접근하는가?
-
-## 예시 코드
-
-- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.
+- Handler는 재사용 또는 경계 보호 목적이 분명하다.
+- Handler가 UseCase 구현체를 호출하지 않는다.
+- 다른 개념 영역 Port 접근이 Service나 Coordinator에 직접 흩어져 있지 않다.

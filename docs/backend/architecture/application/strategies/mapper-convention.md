@@ -1,128 +1,71 @@
 # Mapper 컨벤션
 
-> **[로컬 컨벤션]** 이 문서는 이 프로젝트의 [구현 전략](README.md)에서 **Assembler** 역할을 담당하는 `Mapper` 컴포넌트의 컨벤션이다.
-> 다른 프로젝트에서는 동일한 역할을 `Assembler`, `Converter`, `DtoFactory` 등으로 구현할 수 있다.
+이 문서는 application 내부 DTO와 Domain 객체 사이의 변환을 담당하는 `Mapper` 전략을 정리한다.
 
-## 언제 사용하는가
+## 목적
 
-- `application` 단위에서 Mapper 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+- application DTO와 Domain 객체 사이의 변환 규칙을 한곳에 모은다.
+- UseCase 구현체에 인라인 매핑이 흩어지지 않게 한다.
+- 변환 책임과 비즈니스 판단 책임을 분리한다.
 
-## 코드 위치
+## 적용 범위
 
-- `application` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+- `Command` 또는 내부 DTO를 Domain 생성 입력으로 변환하는 로직
+- Domain 객체를 `Result` 또는 내부 DTO로 변환하는 로직
+- 여러 Domain 객체를 조합해 application 결과 DTO를 구성하는 로직
 
-## 구조
+HTTP Request/Response DTO 변환은 app 계층이 소유한다. 외부 API DTO 번역은 external adapter가 소유한다.
 
-- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+## 책임
 
-## 보편 개념
+- `Application DTO -> Domain` 변환을 수행한다.
+- `Domain -> Application DTO` 변환을 수행한다.
+- 변환에 필요한 단순 필드 조합과 포맷 조립만 담당한다.
 
-**Result Assembler**는 Domain 객체를 외부 응답(Result/DTO)으로 변환하는 책임을 하나의 컴포넌트에 집중시킨다. 진입점(UseCase) 내부에 인라인 매핑이 산재하면 변환 규칙을 추적하고 수정하기 어려워진다. 이 역할의 컴포넌트는 순수 변환만 수행하며, 비즈니스 로직과 변환 로직을 섞지 않는다.
+## 전체 흐름
 
----
-
-## 핵심 원칙
-
-- 변환 로직은 한 곳에 모인다. UseCase 파일 곳곳에 인라인 매핑이 산재하면 변환 규칙을 추적하고 수정하기 어렵다.
-- Mapper는 일관성 원칙을 따른다. 단순한 변환이더라도 Mapper로 분리하면 모든 변환이 예측 가능한 위치에 있다.
-- 변환과 비즈니스 로직을 섞지 않는다. Mapper는 순수 변환만 수행하고, 조건 분기가 필요하면 호출 측에서 판단한 뒤 Mapper에 넘긴다.
-
----
-
-## 코드에서 관찰된 규칙
-
-**도메인 객체를 Result DTO로 변환하는 책임은 Mapper 클래스에 위임한다.**
-UseCase에서 직접 인라인 매핑하거나, UseCase 파일 하단에 변환 함수를 추가하지 않는다.
-
----
-
-## 예시
-
-```kotlin
-// mapper/MenuCatalogDtoMapper.kt
-@Component
-class MenuCatalogDtoMapper {
-
-    fun toCreateResult(menuCatalog: MenuCatalog): CreateMenuCatalog.Result =
-        CreateMenuCatalog.Result(
-            id = menuCatalog.id,
-            parentId = menuCatalog.parentId,
-            name = menuCatalog.name,
-            path = menuCatalog.path,
-            icon = menuCatalog.icon,
-            displayOrder = menuCatalog.displayOrder,
-            active = menuCatalog.active,
-            createdAt = menuCatalog.createdAt,
-            updatedAt = menuCatalog.updatedAt,
-        )
-
-    fun toGetResult(menuCatalog: MenuCatalog): GetMenuCatalog.Result =
-        GetMenuCatalog.Result(
-            id = menuCatalog.id,
-            parentId = menuCatalog.parentId,
-            name = menuCatalog.name,
-            path = menuCatalog.path,
-            icon = menuCatalog.icon,
-            displayOrder = menuCatalog.displayOrder,
-            active = menuCatalog.active,
-            createdAt = menuCatalog.createdAt,
-            updatedAt = menuCatalog.updatedAt,
-        )
-}
+```text
+UseCase implementation
+  -> Mapper
+    -> Application DTO
+    -> Domain
 ```
 
----
+## 세부 규칙
 
-## 의존 및 책임 경계
+### 변환 방향
 
-- 허용되는 의존: `application` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
-- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
+- Command 또는 내부 DTO에서 Domain 생성 입력을 만든다.
+- Domain 객체에서 Result 또는 내부 DTO를 만든다.
+- 여러 Domain 객체를 하나의 Result로 조립할 수 있다.
 
-## 관련 정책 / 상위 규칙
+### 의존성
 
-- [application guidelines](../application-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
-- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+- Mapper는 Port를 주입받지 않는다.
+- Mapper는 Service, Handler, Strategy를 호출하지 않는다.
+- Mapper는 Domain 객체와 application DTO에만 의존한다.
+
+### 사용 위치
+
+- UseCase 구현체는 결과 반환 전에 Mapper를 호출한다.
+- Service는 Domain 객체 반환을 기본으로 하고, DTO 변환은 UseCase 구현체에서 Mapper로 처리한다.
+- 단순 변환이라도 일관성을 위해 Mapper에 둔다.
 
 ## 금지 규칙
 
-```kotlin
-// ❌ UseCase 내 인라인 매핑
-fun create(command: CreateMenuCatalog.Command): CreateMenuCatalog.Result {
-    val saved = menuCatalogRepository.save(...)
-    return CreateMenuCatalog.Result(id = saved.id, ...)  // 직접 생성 금지
-}
+- Mapper에 Port, repository, 외부 API client를 주입하지 않는다.
+- Mapper가 Service, Handler, Strategy를 호출하지 않는다.
+- Mapper에서 데이터 조회, 저장, 외부 호출, 상태 변경을 수행하지 않는다.
+- Mapper에 비즈니스 규칙 검증이나 정책 판단을 넣지 않는다.
+- UseCase 구현체 파일 하단에 `private` 변환 함수를 추가해 Mapper를 우회하지 않는다.
 
-// ❌ UseCase 파일 하단에 internal/private 변환 함수 추가
-internal fun MenuCatalog.toResult() = CreateMenuCatalog.Result(...)
+## 예외와 경계
 
-// ✅ Mapper에 위임
-fun create(command: CreateMenuCatalog.Command): CreateMenuCatalog.Result {
-    val saved = menuCatalogRepository.save(...)
-    return menuCatalogDtoMapper.toCreateResult(saved)
-}
-```
+- 조건에 따라 다른 비즈니스 판단이 필요하면 호출 측에서 판단한 뒤 Mapper에 넘긴다.
+- 변환 중 데이터 조회가 필요하면 Mapper가 아니라 호출 측 또는 Service 책임으로 분리한다.
 
----
+## 완료 기준
 
-## 추출 판단 기준
-
-- 같은 도메인 객체를 여러 Result 타입으로 변환 → Mapper 하나에서 메서드로 통합
-- 여러 도메인 객체를 조합하여 Result 구성 → Mapper
-- 단일 UseCase에서만 사용하는 단순 변환이더라도 → Mapper (일관성 원칙)
-
----
-
-## 안티패턴
-
-- 없음
-
-## 체크 리스트
-
-- [ ] `@Component`로 선언했는가?
-- [ ] `mapper/{Entity}DtoMapper.kt`로 `mapper/` 서브패키지에 위치하는가?
-- [ ] UseCase 파일 내부에 인라인 매핑이 남아있지 않는가?
-- [ ] UseCase 파일 하단에 `internal`/`private` 변환 함수를 추가하지 않았는가?
-
-## 예시 코드
-
-- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.
+- application DTO와 Domain 사이의 변환이 Mapper에 모여 있다.
+- Mapper는 조회, 저장, 외부 호출, 상태 변경을 수행하지 않는다.
+- UseCase 구현체에 인라인 DTO 조립이 남아 있지 않다.
