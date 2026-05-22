@@ -33,8 +33,8 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 - backend: 서버 API, UseCase, domain, application, storage, external integration, DB/schema, backend policy, `docs/backend/**`
 - frontend: UI, page/widget/feature/entity, client state, API client, query key/cache, rendering performance, UI/UX, `docs/frontend/**`
 - fullstack: API 계약과 UI가 함께 바뀌거나 backend 결과를 frontend가 소비해야 하는 사용자 흐름
-- 문서 구조 변경은 구현 흐름에 끼워 넣지 않고 `documentation-governance-reviewer` 검토 대상으로 분리한다.
-- 보안 민감 변경은 영역과 무관하게 `security-policy-reviewer`를 추가한다.
+- 문서 구조 변경은 구현 흐름에 끼워 넣지 않고 별도 문서 작업으로 분리한다.
+- 보안 민감 변경은 backend 정책 영향 여부를 명시한다.
 
 ## 프로세스
 
@@ -72,3 +72,11 @@ description: 구현·리팩토링 요청을 backend/frontend/fullstack 영역으
 - 변경 파일 목록과 검증 결과 요약
 - 호출된 reviewer별 통과 여부와 남은 위반
 - backend/frontend 계약 불확실성
+
+## 검증
+
+라우터 규약, 참조 문서, 영역별 실행 스킬 경계를 수정한 뒤에는 아래 검증을 수행한다.
+
+- `python3 .agents/skills/implement/scripts/validate-context-checkpoints.py`
+- `python3 .agents/skills/implement/scripts/check-playbook.py`
+- `python3 .agents/skills/write-structured-artifact/scripts/check_structured_artifact.py .agents/skills/implement/SKILL.md .agents/skills/implement/references/*.md`

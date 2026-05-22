@@ -54,7 +54,7 @@ description: 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 �
 - 메인 에이전트는 각 서브에이전트 호출 전에 input artifact를 저장한다.
 - 서브에이전트는 자기 역할의 output artifact와 checkpoint snapshot을 저장한다.
 - 메인 에이전트는 output을 검증하고, 다음 서브에이전트의 input artifact로 재구성한다.
-- B 또는 supplemental reviewer가 blocker/major 위반을 반환하면 같은 A 인스턴스에 수정 작업을 맡긴다.
+- B가 blocker/major 위반을 반환하면 같은 A 인스턴스에 수정 작업을 맡긴다.
 
 ```text
 Backend request
@@ -72,7 +72,6 @@ Backend request
 - Agent D: `backend-technical-design-writer`
 - Agent A: `backend-implementation-engineer`
 - Agent B: `backend-architecture-reviewer`
-- Supplemental reviewer: 문서 구조 또는 보안 민감 변경이 포함될 때만 추가
 
 역할별 상세 책임은 [references/orchestration-boundaries.md](references/orchestration-boundaries.md)가 소유한다.
 
@@ -82,7 +81,15 @@ Backend request
 2. [milestone-planning.md](references/milestone-planning.md)에 따라 마일스톤을 나눈다.
 3. [input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)에 따라 run 경로를 준비한다.
 4. [milestone-execution-workflow.md](references/milestone-execution-workflow.md)에 따라 D/A/B 루프를 실행한다.
-5. 모든 필수 reviewer가 통과하면 backend 마일스톤을 완료한다.
+5. `backend-architecture-reviewer`가 통과하면 backend 마일스톤을 완료한다.
+
+## 검증
+
+backend 실행 규약, 계약 문서, 서브에이전트 정의를 수정한 뒤에는 아래 검증을 수행한다.
+
+- `python3 .agents/skills/implement/scripts/validate-context-checkpoints.py`
+- `python3 /Users/a1004/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/implement-backend`
+- `python3 .agents/skills/write-structured-artifact/scripts/check_structured_artifact.py .agents/skills/implement-backend/SKILL.md .agents/skills/implement-backend/references/*.md`
 
 ## 완료 기준
 

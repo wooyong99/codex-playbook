@@ -71,28 +71,7 @@
 - docs/frontend를 읽지 않음
 - rule metadata 누락
 
-## Scenario 4. Security-Sensitive Change
-
-목표: secret, token, 인증/인가, 로그 마스킹 변경이 별도 보안 검토로 라우팅되는지 확인한다.
-
-입력:
-
-- 설정 파일에 credential-like 값 추가
-- 로그에 token 또는 개인정보가 포함되는 변경
-
-기대 산출물:
-
-- `security-policy-reviewer` 추가 적용
-- blocker 또는 major severity 판단
-- `docs/backend/policies/security.md` 또는 `logging.md` 근거
-
-주요 실패 신호:
-
-- 보안 민감 신호를 일반 아키텍처 검토만으로 통과
-- secret-like 값을 예시라며 허용
-- source_path 누락
-
-## Scenario 5. Large Codebase Reverse Engineering
+## Scenario 4. Large Codebase Reverse Engineering
 
 목표: 20만~100만 라인 코드베이스에서 전체 정독 없이 문서화 계획을 만들 수 있는지 확인한다.
 
@@ -115,7 +94,7 @@
 - 근거 하나로 전체 규칙 일반화
 - 미분석 영역을 명시하지 않음
 
-## Scenario 6. Context Checkpoint Recovery
+## Scenario 5. Context Checkpoint Recovery
 
 목표: 긴 작업에서 checkpoint artifact를 남기고 재호출 시 같은 상태에서 이어갈 수 있는지 확인한다.
 

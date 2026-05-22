@@ -22,15 +22,12 @@
 | Agent D `backend-technical-design-writer` | backend 설계 판단, TDD 작성 또는 스킵 근거 작성 | 구현, 리뷰, 다음 input 작성 |
 | Agent A `backend-implementation-engineer` | backend 코드 작성·수정, 검증 실행, 구현 output 작성 | architecture review 판정 |
 | Agent B `backend-architecture-reviewer` | 입력된 Source of Truth와 TDD 결정 기준으로 backend 변경 파일 검토 | 기능 QA, 성능 튜닝 제안, frontend 검토 |
-| Supplemental reviewers | 문서 구조 또는 보안 민감 변경에 대한 보조 검토 | backend B의 기본 아키텍처 검토 대체 |
 
 서브에이전트 정의 파일은 역할, 판단 철학, 기본 금지사항을 제공한다.
 
 - [backend-technical-design-writer.toml](../../../../.codex/agents/backend-technical-design-writer.toml)
 - [backend-implementation-engineer.toml](../../../../.codex/agents/backend-implementation-engineer.toml)
 - [backend-architecture-reviewer.toml](../../../../.codex/agents/backend-architecture-reviewer.toml)
-- [documentation-governance-reviewer.toml](../../../../.codex/agents/documentation-governance-reviewer.toml)
-- [security-policy-reviewer.toml](../../../../.codex/agents/security-policy-reviewer.toml)
 
 ## 메인 에이전트 책임
 
@@ -61,8 +58,6 @@
 
 - frontend 변경은 `implement-backend`에서 직접 구현하지 않는다.
 - backend와 frontend가 함께 필요한 경우 backend API 계약, 도메인 상태, 저장, 외부 연동을 먼저 안정화한다.
-- 문서 구조 변경은 `documentation-governance-reviewer`를 추가한다.
-- secret, token, 인증/인가, 로그, 외부 연동 설정 변경은 `security-policy-reviewer`를 추가한다.
 - 계약 문서의 예시 문구를 프로젝트 사실처럼 복사하지 않는다.
 - Source of Truth에 없는 기준, 개인 선호, 숨은 팀 관행은 reviewer 위반 근거가 될 수 없다.
 

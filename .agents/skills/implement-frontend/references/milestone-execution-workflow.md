@@ -28,7 +28,7 @@ Main agent
 3. Agent A 위임: frontend 구현 또는 수정을 수행한다.
 4. Agent B 위임: frontend 아키텍처 기준 준수 여부를 검토한다.
 5. 위반 수정: 같은 A 인스턴스에 수정 작업을 맡긴다.
-6. 반복 종료: 모든 필수 reviewer가 통과하면 완료하고, 반복 한계를 넘으면 escalation한다.
+6. 반복 종료: Agent B가 통과하면 완료하고, 반복 한계를 넘으면 escalation한다.
 
 ## 공통 운영 규칙
 
@@ -91,12 +91,11 @@ Main agent
 - 브라우저 검증이 필요한데 실행되지 않았으면 이유를 사용자에게 노출하고, B 검토 전에 허용 가능한지 판단한다.
 - 검증 실패는 A 재호출 또는 사용자 보고로 처리하고 B 검토로 넘기지 않는다.
 
-## Step 4. Agent B 및 Supplemental Reviewer 위임
+## Step 4. Agent B 위임
 
 목적:
 
 - A가 변경한 frontend 파일이 입력된 Source of Truth와 TDD 결정에 맞는지 검토한다.
-- 문서 구조 또는 보안 민감 변경은 supplemental reviewer로 보강한다.
 
 처리:
 
@@ -105,14 +104,8 @@ Main agent
 - 기준 문서와 TDD 결정은 B input artifact로 전달하며 agent TOML이 정적으로 소유하지 않는다.
 - `REVIEW_COMPLETED:`이면 B output을 검증하고 `status`와 `payload.violations`를 읽는다.
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 복구 절차로 새 B 인스턴스를 재호출한다.
-- 호출된 모든 reviewer의 `status: pass`가 확인되면 마일스톤을 완료한다.
+- B의 `status: pass`가 확인되면 마일스톤을 완료한다.
 - `status: violations`이면 위반 수정 단계로 진행한다.
-
-Supplemental reviewer 적용:
-
-- 변경 파일이 문서 또는 보안 민감 영역을 포함하면 [review routing](../../../../docs/review/README.md)에 따라 supplemental reviewer를 추가한다.
-- supplemental reviewer 결과도 Rule ID, severity, source_path를 포함해야 한다.
-- `blocker` 또는 `major` 위반은 B 위반과 동일하게 수정 루프로 보낸다.
 
 ## Step 5. 위반 수정
 
@@ -134,8 +127,8 @@ Supplemental reviewer 적용:
 
 ## Step 6. 반복 종료
 
-- 호출된 모든 reviewer가 `status: pass`를 반환하면 frontend 마일스톤을 완료한다.
-- B 또는 supplemental reviewer가 `status: violations`를 반환하면 위반 수정 단계로 돌아간다.
+- B가 `status: pass`를 반환하면 frontend 마일스톤을 완료한다.
+- B가 `status: violations`를 반환하면 위반 수정 단계로 돌아간다.
 - A-B 반복은 최대 5회까지만 자동 수행한다.
 - 5회를 넘으면 escalation 단계로 넘어간다.
 

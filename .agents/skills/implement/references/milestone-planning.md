@@ -15,8 +15,8 @@
 - backend: 서버 API, UseCase, domain, application, storage, external integration, DB/schema, backend policy, `docs/backend/**`
 - frontend: UI, route/page, component, client state, API client, query/cache, rendering performance, UI/UX, `docs/frontend/**`
 - fullstack: API 계약과 UI가 함께 바뀌거나 backend 결과를 frontend가 소비해야 하는 사용자 흐름
-- 문서 구조 변경은 구현 흐름에 섞지 않고 문서 검토 대상으로 분리한다.
-- 보안 민감 변경은 영역과 무관하게 supplemental reviewer 대상 후보로 표시한다.
+- 문서 구조 변경은 구현 흐름에 섞지 않고 별도 문서 작업으로 분리한다.
+- 보안 민감 변경은 backend 정책 영향 여부를 명시한다.
 
 ## 마일스톤 분할 기준
 

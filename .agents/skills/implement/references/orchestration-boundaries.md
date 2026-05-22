@@ -9,7 +9,6 @@
 | `implement` 라우터 | 요구사항 분류, fullstack 분해, run id 생성, 영역별 실행 순서 결정, 통합 보고 | 이 문서와 `SKILL.md` |
 | `implement-backend` | backend 마일스톤의 D/A/B 실행, backend input/output 검증, backend reviewer 반복 루프 | [implement-backend references](../../implement-backend/references) |
 | `implement-frontend` | frontend 마일스톤의 D/A/B 실행, frontend input/output 검증, frontend reviewer 반복 루프 | [implement-frontend references](../../implement-frontend/references) |
-| Supplemental reviewers | 문서, 보안 민감 변경 검토 | [review routing](../../../../docs/review/README.md) |
 
 ## 라우터 제약
 

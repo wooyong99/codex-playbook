@@ -39,7 +39,6 @@
 - backend 실행 결과에서 frontend가 소비해야 할 API 계약, 미해결 사항, 검증 결과를 읽는다.
 - frontend 실행 결과에서 backend 계약 누락, API 불확실성, UI 검증 결과를 읽는다.
 - 한 영역이 실패해도 다른 영역의 완료 상태를 덮어쓰지 않는다.
-- 문서 또는 보안 supplemental reviewer 결과는 해당 영역의 결과와 함께 보고한다.
 
 ## Step 5. 계약 불확실성 처리
 
