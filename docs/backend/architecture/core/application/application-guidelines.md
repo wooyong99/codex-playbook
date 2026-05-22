@@ -56,8 +56,11 @@
 
 - [Strategies](./strategies/README.md)
 
-## 완료 기준
+## 완료 체크리스트
 
-- application 진입점은 도메인 행위와 Port 계약을 조합하되 인프라 구현체를 직접 참조하지 않는다.
-- 트랜잭션 경계, 외부 I/O 경계, 데이터 일관성 단위가 문서 기준으로 설명된다.
-- UseCase, Facade, Coordinator, Service, Validator, Strategy, Port, Mapper 역할 중 필요한 것만 선택되어 책임이 중복되지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] application 진입점은 도메인 행위와 Port 계약을 조합하되 인프라 구현체를 직접 참조하지 않는다.
+- [ ] 트랜잭션 경계, 외부 I/O 경계, 데이터 일관성 단위가 설계 문서, 테스트, 또는 코드 구조에서 확인된다.
+- [ ] UseCase, Facade, Coordinator, Service, Validator, Strategy, Port, Mapper 역할 중 필요한 것만 선택되어 책임이 중복되지 않는다.

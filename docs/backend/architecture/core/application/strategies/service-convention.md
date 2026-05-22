@@ -86,9 +86,12 @@
 - Domain 불변식은 Service에 구현하지 않고 Domain 객체로 내린다.
 - command가 많아 `{Entity}CommandService`가 비대해지면 action 단위 Service 분리를 검토할 수 있다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 하나의 aggregate command가 하나의 원자적 Service 경계에서 처리된다.
-- Service는 Port, Validator, Strategy를 조합하되 도메인 판단을 직접 구현하지 않는다.
-- 외부 시스템 호출이 Service 트랜잭션 안에 포함되지 않는다.
-- Service 입출력에 컴포넌트 전용 DTO 체인이 없다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 하나의 aggregate command가 하나의 원자적 Service 경계에서 처리된다.
+- [ ] Service는 Port, Validator, Strategy를 조합하되 도메인 판단을 직접 구현하지 않는다.
+- [ ] 외부 시스템 호출이 Service 트랜잭션 안에 포함되지 않는다.
+- [ ] Service 입출력에 컴포넌트 전용 DTO 체인이 없다.

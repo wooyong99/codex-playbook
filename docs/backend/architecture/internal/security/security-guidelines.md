@@ -47,8 +47,11 @@
 
 - 전용 전략 문서 없음
 
-## 완료 기준
+## 완료 체크리스트
 
-- 구현 추가 시 인증 방식, 권한 모델, password/token 정책이 이 문서 또는 `strategies` 문서에 설명된다.
-- application과 domain은 provider SDK나 HTTP security 세부 구현에 의존하지 않는다.
-- 민감 정보 보호, token 만료, 검증 실패 처리 기준을 설명할 수 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 구현 추가 시 인증 방식, 권한 모델, password/token 정책이 이 문서 또는 `strategies` 문서에 명시되어 있다.
+- [ ] application과 domain은 provider SDK나 HTTP security 세부 구현에 의존하지 않는다.
+- [ ] 민감 정보 보호, token 만료, 검증 실패 처리 기준이 문서 또는 테스트에서 확인된다.

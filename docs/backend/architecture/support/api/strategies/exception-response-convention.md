@@ -94,8 +94,11 @@ Exception
 - 인증 framework가 challenge header를 요구하면 HTTP header 처리는 보안 설정과 함께 예외로 둘 수 있다.
 - 공개 API에서 field-level validation error를 제공해야 하면 response envelope 확장을 먼저 설계한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 모든 business API 예외 응답이 `GlobalExceptionHandler`를 통과한다.
-- `CoreErrorType`과 `HttpStatus` 매핑이 `support/api`에만 존재한다.
-- 오류 응답은 공통 envelope를 따르고 내부 구현 정보가 노출되지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 모든 business API 예외 응답이 `GlobalExceptionHandler`를 통과한다.
+- [ ] `CoreErrorType`과 `HttpStatus` 매핑이 `support/api`에만 존재한다.
+- [ ] 오류 응답은 공통 envelope를 따르고 내부 구현 정보가 노출되지 않는다.

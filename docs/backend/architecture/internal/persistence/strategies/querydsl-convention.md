@@ -91,9 +91,12 @@ select -> from -> join -> where -> groupBy -> having -> orderBy -> offset/limit
 - 페이지 크기가 매우 작아도 fetch join pagination은 기본 금지로 본다.
 - Projection DTO가 application 응답 계약이면 application DTO와 소유권을 먼저 검토한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 동적 조건이 `BooleanExpression?` 방식으로 작성되어 있다.
-- pagination 쿼리가 2-step 방식과 분리된 count 쿼리를 사용한다.
-- Projection은 타입 안정적인 constructor 기반으로 작성되어 있다.
-- QueryDsl 구현 세부사항이 persistence 경계 밖으로 새지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 동적 조건이 `BooleanExpression?` 방식으로 작성되어 있다.
+- [ ] pagination 쿼리가 2-step 방식과 분리된 count 쿼리를 사용한다.
+- [ ] Projection은 타입 안정적인 constructor 기반으로 작성되어 있다.
+- [ ] QueryDsl 구현 세부사항이 persistence 경계 밖으로 새지 않는다.

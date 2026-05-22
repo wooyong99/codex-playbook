@@ -99,9 +99,12 @@ Adapter
 - Provider가 공통 wrapper를 쓰지 않으면 endpoint별 Response DTO를 바로 반환할 수 있다.
 - HTTP client 종류는 프로젝트별 선택 사항이지만 Provider 전용 bean 주입 원칙은 유지한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 모든 public 외부 호출이 단일 예외 변환 흐름을 통과한다.
-- Adapter는 Provider 예외 계층만 알면 Result 변환을 수행할 수 있다.
-- token 인증 흐름이 TokenHolder와 executeWithToken으로 격리되어 있다.
-- 외부 호출 로그와 endpoint 상수가 누락되지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 모든 public 외부 호출이 단일 예외 변환 흐름을 통과한다.
+- [ ] Adapter는 Provider 예외 계층만 알면 Result 변환을 수행할 수 있다.
+- [ ] token 인증 흐름이 TokenHolder와 executeWithToken으로 격리되어 있다.
+- [ ] 각 public 외부 호출 method에 호출 로그와 endpoint 상수 참조가 포함되어 있다.

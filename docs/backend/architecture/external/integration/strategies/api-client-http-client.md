@@ -65,8 +65,11 @@ HTTP client bean 생성은 [config-convention](config-convention.md)이 소유�
 - 단일 Provider의 모든 API가 같은 baseUrl과 timeout을 쓰면 하나의 client bean을 공유한다.
 - HTTP client 종류가 `RestClient`, `RestTemplate`, `WebClient` 중 무엇이든 Provider 전용 bean 원칙을 유지한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- ApiClient가 Provider 전용 HTTP client bean을 qualifier로 주입받는다.
-- client 생성과 timeout 설정이 Config로 분리되어 있다.
-- 외부 호출 코드 안에 client 생성 코드가 반복되지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] ApiClient가 Provider 전용 HTTP client bean을 qualifier로 주입받는다.
+- [ ] client 생성과 timeout 설정이 Config로 분리되어 있다.
+- [ ] 외부 호출 코드 안에 client 생성 코드가 반복되지 않는다.

@@ -47,8 +47,11 @@
 
 - 전용 전략 문서 없음
 
-## 완료 기준
+## 완료 체크리스트
 
-- 구현 추가 시 retry, dead-letter, outbox, idempotency 기준이 이 문서 또는 `strategies` 문서에 설명된다.
-- application은 broker 구현이 아니라 Port, event, handler 계약에 의존한다.
-- 중복 수신과 일시 장애 시 처리 결과를 설명할 수 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 구현 추가 시 retry, dead-letter, outbox, idempotency 기준이 이 문서 또는 `strategies` 문서에 명시되어 있다.
+- [ ] application은 broker 구현이 아니라 Port, event, handler 계약에 의존한다.
+- [ ] 중복 수신과 일시 장애 시 처리 결과가 retry, dead-letter, outbox, idempotency 기준으로 문서화되어 있다.

@@ -125,9 +125,12 @@ open class CoreException(
 - 새 실패 케이스를 클라이언트가 구분해야 하면 기존 enum에 새 값을 append한다.
 - 동일한 의미와 동일한 `CoreErrorType`이면 기존 enum 값을 재사용할 수 있다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 도메인 실패가 `{Domain}ErrorCode`와 `CoreException`으로 표현된다.
-- domain이 HTTP나 Spring 타입에 의존하지 않는다.
-- `support/api`는 `CoreErrorType`만 보고 HTTP 상태로 매핑할 수 있다.
-- 범용 error code enum 없이 도메인별 실패 소유권이 드러난다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 도메인 실패가 `{Domain}ErrorCode`와 `CoreException`으로 표현된다.
+- [ ] domain이 HTTP나 Spring 타입에 의존하지 않는다.
+- [ ] `support/api`는 `CoreErrorType`만 보고 HTTP 상태로 매핑할 수 있다.
+- [ ] 범용 error code enum 없이 도메인별 `{Domain}ErrorCode`와 exception 파일로 실패 소유권이 분리되어 있다.

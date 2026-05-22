@@ -50,8 +50,11 @@
 - [exception-response-convention](./strategies/exception-response-convention.md) - 예외 응답과 HTTP status 매핑
 - [common-concern-convention](./strategies/common-concern-convention.md) - API 전역 관심사와 filter 배치
 
-## 완료 기준
+## 완료 체크리스트
 
-- 모든 API 애플리케이션이 같은 응답 envelope와 예외 응답 포맷을 사용한다.
-- endpoint별 계약과 업무 흐름은 `app/api`와 `core/application`에 남아 있다.
-- trace, tenant, rate limit, security header 같은 공통 관심사가 한 경계에서 설명된다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 모든 API 애플리케이션이 같은 응답 envelope와 예외 응답 포맷을 사용한다.
+- [ ] endpoint별 계약과 업무 흐름은 `app/api`와 `core/application`에 남아 있다.
+- [ ] trace, tenant, rate limit, security header 같은 공통 관심사의 구현 위치가 `support/api` 경계로 한정되어 있다.

@@ -68,8 +68,11 @@ UseCase implementation
 - 조건에 따라 다른 비즈니스 판단이 필요하면 호출 측에서 판단한 뒤 Mapper에 넘긴다.
 - 변환 중 데이터 조회가 필요하면 Mapper가 아니라 호출 측 또는 Service 책임으로 분리한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- application DTO와 Domain 사이의 변환이 Mapper에 모여 있다.
-- Mapper는 조회, 저장, 외부 호출, 상태 변경을 수행하지 않는다.
-- UseCase 구현체에 인라인 DTO 조립이 남아 있지 않다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] application DTO와 Domain 사이의 변환이 Mapper에 모여 있다.
+- [ ] Mapper는 조회, 저장, 외부 호출, 상태 변경을 수행하지 않는다.
+- [ ] UseCase 구현체에 인라인 DTO 조립이 남아 있지 않다.

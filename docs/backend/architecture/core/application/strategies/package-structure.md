@@ -103,10 +103,13 @@ Command/Result 같은 application 내부 DTO는 수가 빠르게 늘어나므로
 - 파일 수가 적은 초기 단계에서는 도메인 패키지 루트 flat 구조를 우선한다.
 - 특정 action이 별도 권한, 별도 actor, 독립적인 외부 계약을 가지면 action 단위 UseCase 또는 구현체 분리를 검토할 수 있다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 신규 application 파일 위치를 도메인과 역할 기준으로 설명할 수 있다.
-- 외부 호출 계약인 Command/Query UseCase는 도메인 패키지 루트에서, application DTO는 `dto/`에서 바로 찾을 수 있다.
-- 하위 컴포넌트 간 DTO는 기본 금지이며, 예외 DTO만 `dto/internal/`에 제한적으로 존재한다.
-- 역할 하위 패키지가 파일 수와 책임 분리를 기준으로 만들어져 있다.
-- `common/`에 있는 코드가 application 전역 관심사임을 설명할 수 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 신규 application 파일이 도메인과 역할 기준에 맞는 패키지에 배치되어 있다.
+- [ ] 외부 호출 계약인 Command/Query UseCase는 도메인 패키지 루트에 있고, application DTO는 `dto/` 아래에 있다.
+- [ ] 하위 컴포넌트 간 DTO는 기본 금지이며, 예외 DTO만 `dto/internal/`에 제한적으로 존재한다.
+- [ ] 역할 하위 패키지가 파일 수와 책임 분리를 기준으로 만들어져 있다.
+- [ ] `common/`에 있는 코드는 특정 도메인 업무 흐름이 아니라 application 전역 관심사만 포함한다.

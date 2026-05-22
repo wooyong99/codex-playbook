@@ -101,8 +101,11 @@ class OrderController(
 - Health check, actuator, static resource는 REST business API Controller 규칙과 별도로 둘 수 있다.
 - 인증 callback처럼 provider protocol을 구현하는 endpoint는 URI와 DTO 규칙의 예외를 둘 수 있지만 application 경계는 유지한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- Controller method를 읽으면 HTTP binding과 UseCase 호출 흐름만 보인다.
-- Request DTO와 application Command가 분리되어 있다.
-- 성공 응답과 오류 응답이 각각 response envelope, exception response 규칙을 따른다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Controller method를 읽으면 HTTP binding과 UseCase 호출 흐름만 보인다.
+- [ ] Request DTO와 application Command가 분리되어 있다.
+- [ ] 성공 응답과 오류 응답이 각각 response envelope, exception response 규칙을 따른다.

@@ -92,9 +92,12 @@ UseCase Command
 - 내부 DTO가 Domain 불변식이나 상태를 표현하기 시작하면 Domain value object로 옮기는 것을 우선 검토한다.
 - Query 결과 조립 DTO가 필요하면 Query Facade와 Mapper 책임을 먼저 검토한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- UseCase 외부 계약 DTO와 application 내부 전달 타입이 구분된다.
-- Service는 UseCase `Result`를 반환하지 않는다.
-- 하위 컴포넌트 간 DTO는 기본 금지이며, 예외가 업무 개념 이름과 위치로 설명된다.
-- DTO 변환은 Mapper에 모여 있고 컴포넌트별 복사 DTO 체인이 없다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] UseCase 외부 계약 DTO와 application 내부 전달 타입이 구분된다.
+- [ ] Service는 UseCase `Result`를 반환하지 않는다.
+- [ ] 하위 컴포넌트 간 DTO는 기본 금지이며, 예외 DTO는 업무 개념 이름과 `dto/internal/` 위치를 가진다.
+- [ ] DTO 변환은 Mapper에 모여 있고 컴포넌트별 복사 DTO 체인이 없다.

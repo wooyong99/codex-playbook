@@ -58,11 +58,11 @@ architecture 하위 문서는 문서 깊이에 따라 다음 섹션 순서를 �
 | 문서 유형 | 필수 섹션 | 예시 |
 |-----------|-----------|------|
 | 아키텍처 단위 README | 목적, 적용 범위, 모듈 맵, 의존 경계, 문서 운영 원칙 | `core/README.md`, `external/README.md` |
-| 모듈 Guidelines | 코드 위치, 책임, 의존 경계, 핵심 원칙, 관련 정책, 금지 규칙, 주요 컴포넌트, 전략 문서, 완료 기준 | `core/application/application-guidelines.md`, `external/integration/integration-guidelines.md` |
+| 모듈 Guidelines | 코드 위치, 책임, 의존 경계, 핵심 원칙, 관련 정책, 금지 규칙, 주요 컴포넌트, 전략 문서, 완료 체크리스트 | `core/application/application-guidelines.md`, `external/integration/integration-guidelines.md` |
 | Strategies README | 목적, 적용 범위, 전략 문서, 공통 의존 흐름 | `core/application/strategies/README.md`, `external/integration/strategies/README.md` |
-| 개별 Strategy 문서 | 목적, 적용 범위, 책임, 전체 흐름 또는 전체 구조, 세부 규칙, 금지 규칙, 예외와 경계, 완료 기준 | `*-convention.md` |
+| 개별 Strategy 문서 | 목적, 적용 범위, 책임, 전체 흐름 또는 전체 구조, 세부 규칙, 금지 규칙, 예외와 경계, 완료 체크리스트 | `*-convention.md` |
 
-코드가 아직 없는 후보 모듈도 같은 Guidelines 템플릿을 따르되, 전략 문서가 없으면 `전략 문서 없음`으로 명시하고 구현 추가 시 보강해야 할 기준은 `완료 기준`에 둔다.
+코드가 아직 없는 후보 모듈도 같은 Guidelines 템플릿을 따르되, 전략 문서가 없으면 `전략 문서 없음`으로 명시하고 구현 추가 시 보강해야 할 체크 항목은 `완료 체크리스트`에 둔다.
 
 ## 관련 정책
 

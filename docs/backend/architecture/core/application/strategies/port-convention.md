@@ -73,8 +73,11 @@ Port는 application 내부 어느 역할에서도 참조할 수 있다.
 - 같은 Port 호출이 여러 Service에서 반복되면 Port 계약을 더 작은 업무 기능 단위로 분리한다.
 - Port가 비대해지면 aggregate 또는 외부 기능 단위로 분리한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- application은 infrastructure 구현체가 아니라 Port 인터페이스에 의존한다.
-- Port 시그니처에 외부 DTO나 persistence Entity가 노출되지 않는다.
-- Port 참조는 가능하면 Service에 모여 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] application은 infrastructure 구현체가 아니라 Port 인터페이스에 의존한다.
+- [ ] Port 시그니처에 외부 DTO나 persistence Entity가 노출되지 않는다.
+- [ ] Port 참조는 가능하면 Service에 모여 있다.

@@ -29,5 +29,5 @@ support/api -> core/application -> core/domain
 ## 문서 운영 원칙
 
 - 하위 지원 모듈이 추가되면 이 README의 모듈 맵을 먼저 갱신한다.
-- 모듈별 책임과 완료 기준은 각 `{module}-guidelines.md`가 소유한다.
+- 모듈별 책임과 완료 체크리스트는 각 `{module}-guidelines.md`가 소유한다.
 - 반복 구현 방식과 공통 관심사 배치 기준은 가장 가까운 `strategies/README.md`가 소유한다.

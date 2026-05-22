@@ -52,8 +52,11 @@
 
 - [Strategies](./strategies/README.md)
 
-## 완료 기준
+## 완료 체크리스트
 
-- 도메인 모델이 framework-independent 타입만 사용한다.
-- 생성, 복원, 상태 변경 경로가 도메인 객체 내부 메서드로 드러난다.
-- 도메인별 error code와 exception 경계가 app 계층 응답 처리와 분리되어 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 도메인 모델이 framework-independent 타입만 사용한다.
+- [ ] 생성, 복원, 상태 변경 경로가 도메인 객체 내부 public 메서드로 제공되고 public setter로 우회되지 않는다.
+- [ ] 도메인별 error code와 exception 경계가 app 계층 응답 처리와 분리되어 있다.

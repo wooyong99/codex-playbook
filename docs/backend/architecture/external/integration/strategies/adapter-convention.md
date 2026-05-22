@@ -92,9 +92,12 @@ application Port
 - Mock이 필요 없는 Adapter는 profile 제약 없이 기본 bean으로 등록할 수 있다.
 - 외부 API code를 내부 Port ErrorCode로 변환해야 하면 Adapter 내부 private extension으로 둔다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- Adapter가 하나의 outbound Port 구현체로 동작한다.
-- 외부 예외가 Port Result로 변환되어 application에 노출된다.
-- 외부 DTO와 Provider 예외 타입이 Port 시그니처로 새지 않는다.
-- 민감 정보가 Adapter 로그에 원문으로 남지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Adapter 클래스가 정확히 하나의 outbound Port 인터페이스를 구현한다.
+- [ ] 외부 예외가 Port Result로 변환되어 application에 노출된다.
+- [ ] 외부 DTO와 Provider 예외 타입이 Port 시그니처로 새지 않는다.
+- [ ] 민감 정보가 Adapter 로그에 원문으로 남지 않는다.

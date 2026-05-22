@@ -75,8 +75,11 @@
 - Port가 별도 ErrorCode를 갖지 않는 단순 연동이면 status와 raw code만 반환할 수 있다.
 - 여러 API가 같은 code 의미를 공유하면 Provider 공통 enum을 재사용할 수 있다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 외부 error code가 Provider enum으로 표현된다.
-- Adapter가 `fromCode()`와 `toPortErrorCode()`를 거쳐 Port ErrorCode를 반환한다.
-- 신규 enum 추가 시 번역 누락을 코드 리뷰나 컴파일에서 발견할 수 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 외부 error code가 Provider enum으로 표현된다.
+- [ ] Adapter가 `fromCode()`와 `toPortErrorCode()`를 거쳐 Port ErrorCode를 반환한다.
+- [ ] 신규 enum 추가 시 Port ErrorCode 번역 누락이 테스트, 컴파일, 또는 명시적 리뷰 체크 항목에서 검출된다.

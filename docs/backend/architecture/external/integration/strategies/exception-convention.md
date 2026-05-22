@@ -88,9 +88,12 @@ HTTP client exception
 - Provider 특수 실패 분류가 필요해도 기본 5종을 제거하거나 이름을 바꾸지 않는다.
 - 외부 error code와 Port ErrorCode 번역은 [errorcode-convention](errorcode-convention.md)이 소유한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- Provider별 sealed exception 계층이 독립적으로 정의되어 있다.
-- ApiClient가 원시 HTTP/네트워크 예외를 Provider 예외로 변환한다.
-- Adapter가 Provider 예외만 catch해 Port Result로 바꿀 수 있다.
-- cause와 rawMessage가 보존되고 민감 정보는 노출되지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Provider별 sealed exception 계층이 독립적으로 정의되어 있다.
+- [ ] ApiClient가 원시 HTTP/네트워크 예외를 Provider 예외로 변환한다.
+- [ ] Adapter가 Provider 예외만 catch해 Port Result로 바꿀 수 있다.
+- [ ] cause와 rawMessage가 보존되고 민감 정보는 노출되지 않는다.

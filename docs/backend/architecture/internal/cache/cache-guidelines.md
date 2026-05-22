@@ -46,8 +46,11 @@
 
 - 전용 전략 문서 없음
 
-## 완료 기준
+## 완료 체크리스트
 
-- 구현 추가 시 TTL, key naming, invalidation 기준이 이 문서 또는 `strategies` 문서에 설명된다.
-- application은 cache provider가 아니라 Port 또는 service 계약에 의존한다.
-- cache 장애 시 원천 데이터 조회나 재생성 경로를 설명할 수 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 구현 추가 시 TTL, key naming, invalidation 기준이 이 문서 또는 `strategies` 문서에 명시되어 있다.
+- [ ] application은 cache provider가 아니라 Port 또는 service 계약에 의존한다.
+- [ ] cache 장애 시 원천 데이터 조회나 재생성 경로가 문서 또는 코드 흐름에서 확인된다.

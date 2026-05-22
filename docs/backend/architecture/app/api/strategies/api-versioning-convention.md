@@ -94,8 +94,11 @@ API 변경 요청
 - 보안 취약점 대응처럼 즉시 변경이 필요한 경우 migration 기간 없이 breaking fix를 적용할 수 있지만 변경 기록을 남긴다.
 - provider callback API는 provider version 정책을 우선할 수 있다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 변경이 additive인지 breaking인지 설명할 수 있다.
-- breaking change는 새 version path 또는 명시된 예외 기록을 가진다.
-- version별 Controller와 DTO 차이가 app 계층 안에 격리되어 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 변경이 additive인지 breaking인지 PR, 설계 문서, 또는 변경 문서에 명시되어 있다.
+- [ ] breaking change는 새 version path 또는 명시된 예외 기록을 가진다.
+- [ ] version별 Controller와 DTO 차이가 app 계층 안에 격리되어 있다.

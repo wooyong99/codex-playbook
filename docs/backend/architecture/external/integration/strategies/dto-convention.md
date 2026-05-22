@@ -85,8 +85,11 @@ external JSON
 - nullable 여부가 문서와 실제 응답에서 다르면 실제 관찰과 parsing failure 정책을 문서화한다.
 - 내부 Port 타입과 이름이 비슷해도 external DTO와 application DTO는 분리한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- Provider DTO가 외부 JSON 구조를 그대로 표현한다.
-- JSON property와 unknown field 허용 정책이 모든 DTO에 일관 적용되어 있다.
-- 도메인 타입 변환이 DTO가 아니라 Adapter에서 수행된다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Provider DTO가 외부 JSON 구조를 그대로 표현한다.
+- [ ] JSON property와 unknown field 허용 정책이 모든 DTO에 일관 적용되어 있다.
+- [ ] 도메인 타입 변환이 DTO가 아니라 Adapter에서 수행된다.

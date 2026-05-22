@@ -83,8 +83,11 @@ Controller endpoint
 - provider callback은 provider 문서가 원천 계약일 수 있지만 내부 운영 문서에는 최소한의 endpoint 설명을 남긴다.
 - OpenAPI annotation이 과도해지면 common OpenAPI component나 custom annotation으로 중복을 줄인다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 신규 endpoint는 URI, method, request, response, error, security, version 정보를 OpenAPI에서 확인할 수 있다.
-- DTO schema의 required와 nullable 정보가 실제 serialization 계약과 일치한다.
-- 공통 error response와 response envelope가 OpenAPI component로 재사용된다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 신규 endpoint는 URI, method, request, response, error, security, version 정보를 OpenAPI에서 확인할 수 있다.
+- [ ] DTO schema의 required와 nullable 정보가 실제 serialization 계약과 일치한다.
+- [ ] 공통 error response와 response envelope가 OpenAPI component로 재사용된다.

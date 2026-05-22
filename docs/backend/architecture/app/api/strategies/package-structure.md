@@ -101,8 +101,11 @@ app/
 - GraphQL, batch callback, webhook처럼 REST resource 구조와 다른 protocol은 별도 package를 둘 수 있다.
 - 프로젝트의 기존 전역 관심사 패키지명이 `global`, `shared`, `support`라면 역할 기준만 동일하게 적용한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 신규 Controller와 DTO 위치를 resource 도메인과 version 기준으로 설명할 수 있다.
-- DTO 파일이 도메인 `dto/` 아래에 모여 있다.
-- common 패키지가 표현 계층 전역 관심사만 담고 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 신규 Controller와 DTO 위치가 resource 도메인과 version 기준에 맞게 배치되어 있다.
+- [ ] DTO 파일이 도메인 `dto/` 아래에 모여 있다.
+- [ ] common 패키지가 표현 계층 전역 관심사만 담고 있다.

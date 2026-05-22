@@ -79,8 +79,11 @@ common/
 - 공통 validator가 도메인 정책을 포함하기 시작하면 application Validator 또는 domain value object로 옮긴다.
 - common response와 exception의 세부 규칙은 각각 [response-envelope-convention](response-envelope-convention.md), [exception-response-convention](exception-response-convention.md)을 따른다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- common 패키지의 각 클래스가 표현 계층 전역 관심사임을 설명할 수 있다.
-- common 패키지가 도메인별 API 계약을 소유하지 않는다.
-- 전역 관심사와 도메인별 API 코드가 package 구조에서 분리되어 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] common 패키지의 각 클래스가 표현 계층 전역 관심사임이 이름, 패키지, 참조 관계에서 확인된다.
+- [ ] common 패키지가 도메인별 API 계약을 소유하지 않는다.
+- [ ] 전역 관심사와 도메인별 API 코드가 package 구조에서 분리되어 있다.

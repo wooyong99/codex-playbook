@@ -89,8 +89,11 @@ non-local profile
 - 통합 테스트 전용 Fake가 필요하면 `src/test`에 별도 Fake를 두고 main Mock Adapter와 분리한다.
 - Mock scenario token은 테스트 편의를 위한 계약이므로 사용자 API 계약으로 노출하지 않는다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- local profile에서 실 외부 호출 없이 동일 Port 흐름이 동작한다.
-- 성공, 실패, 불확정 시나리오를 입력 token으로 재현할 수 있다.
-- Mock이 외부 시스템과 persistence에 의존하지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] local profile에서 동일 Port에 Mock Adapter가 주입되고 실 외부 호출 bean은 선택되지 않는다.
+- [ ] 성공, 실패, 불확정 시나리오가 입력 token만으로 재현된다.
+- [ ] Mock이 외부 시스템과 persistence에 의존하지 않는다.

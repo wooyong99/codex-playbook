@@ -74,8 +74,11 @@ Service / Facade / Coordinator
 - Validator가 Port를 필요로 한다면 조회 책임을 호출 측으로 올린다.
 - UseCase 전용 Validator처럼 여러 검증을 순서대로 호출만 하는 묶음은 만들지 않는다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- Validator는 Port와 infrastructure 구현체에 의존하지 않는다.
-- 검증에 필요한 데이터 조회가 호출 흐름에 드러난다.
-- Validator는 상태 변경 없이 규칙 판단만 수행한다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Validator는 Port와 infrastructure 구현체에 의존하지 않는다.
+- [ ] 검증에 필요한 데이터 조회 위치가 Service 또는 Coordinator 호출 흐름에서 확인된다.
+- [ ] Validator는 상태 변경 없이 규칙 판단만 수행한다.

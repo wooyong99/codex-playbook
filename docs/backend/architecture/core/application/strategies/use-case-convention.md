@@ -108,8 +108,11 @@ UseCase 구현체는 책임으로 결정하되, 이름은 구현하는 Command/Q
 - 외부 진입점이 둘 이상이거나 구현체 교체 가능성이 있으면 UseCase 인터페이스를 먼저 둔다.
 - 특정 action이 별도 권한, 별도 actor, 별도 배포 경계, 독립적인 외부 계약을 가지면 action 단위 UseCase 분리를 검토할 수 있다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 외부 진입점이 구현체가 아니라 UseCase 인터페이스를 참조한다.
-- Command와 Result가 application 내부 계약으로 정의되어 있다.
-- UseCase 계약이 Command/Query 단위로 나뉘고, 구현체 책임이 Facade, Coordinator, Service 중 하나로 설명된다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 외부 진입점이 구현체가 아니라 UseCase 인터페이스를 참조한다.
+- [ ] Command와 Result가 application 내부 계약으로 정의되어 있다.
+- [ ] UseCase 계약이 Command/Query 단위로 나뉘고, 구현체 클래스명 또는 패키지가 Facade, Coordinator, Service 중 하나로 분류된다.

@@ -129,8 +129,11 @@ Failure
 - 외부 provider callback response는 provider protocol을 우선할 수 있다.
 - public API 호환성 때문에 기존 envelope를 유지해야 하면 versioning 문서에 예외를 기록한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 모든 business API 성공 응답과 오류 응답의 최상위 구조가 통일되어 있다.
-- pagination response가 cursor 또는 offset 중 하나의 표준 envelope를 따른다.
-- Controller와 exception handler가 같은 공통 응답 DTO를 사용한다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 모든 business API 성공 응답과 오류 응답의 최상위 구조가 통일되어 있다.
+- [ ] pagination response가 cursor 또는 offset 중 하나의 표준 envelope를 따른다.
+- [ ] Controller와 exception handler가 같은 공통 응답 DTO를 사용한다.

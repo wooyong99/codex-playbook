@@ -88,8 +88,11 @@ application.yml
 - local mock만 사용하는 Provider는 실 HTTP client bean이 불필요할 수 있다.
 - 프로젝트가 별도 secret manager를 사용하면 Properties에는 secret key 참조만 둔다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- Provider 설정이 `@ConfigurationProperties`로 바인딩된다.
-- ApiClient가 Provider 전용 HTTP client bean을 qualifier로 주입받는다.
-- timeout과 민감 정보 기본값 정책이 명확하다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Provider 설정이 `@ConfigurationProperties`로 바인딩된다.
+- [ ] ApiClient가 Provider 전용 HTTP client bean을 qualifier로 주입받는다.
+- [ ] timeout과 민감 정보 기본값 정책이 properties 문서, config 기본값, 또는 테스트에 명시되어 있다.

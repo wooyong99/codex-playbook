@@ -47,8 +47,11 @@
 
 - 전용 전략 문서 없음
 
-## 완료 기준
+## 완료 체크리스트
 
-- 구현 추가 시 metric naming, trace propagation, alert 연동 기준이 이 문서 또는 `strategies` 문서에 설명된다.
-- 업무 모듈은 provider SDK가 아니라 공통 관측 계약이나 framework extension에 의존한다.
-- 운영자가 주요 실패 흐름을 trace id와 metric으로 추적할 수 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 구현 추가 시 metric naming, trace propagation, alert 연동 기준이 이 문서 또는 `strategies` 문서에 명시되어 있다.
+- [ ] 업무 모듈은 provider SDK가 아니라 공통 관측 계약이나 framework extension에 의존한다.
+- [ ] 주요 실패 흐름이 trace id와 metric으로 연결되어 운영 로그에서 추적된다.

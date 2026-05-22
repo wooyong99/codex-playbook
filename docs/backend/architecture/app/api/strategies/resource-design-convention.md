@@ -119,9 +119,12 @@ GET /api/v1/orders?ids=1,2,3
 - Webhook, OAuth callback, 파일 download처럼 외부 protocol이 path를 요구하면 protocol path를 우선할 수 있다.
 - 검색 자체가 독립 resource로 관리되면 `/search-results` 같은 resource를 둘 수 있다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- URL만 보고 resource와 상위 관계를 이해할 수 있다.
-- path와 query의 역할이 구분되어 있다.
-- 상태 전이 operation이 동사 URL이 아니라 resource로 표현되어 있다.
-- version prefix가 [api-versioning-convention](api-versioning-convention.md)을 따른다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] URL path만으로 resource와 상위 관계가 식별된다.
+- [ ] path와 query의 역할이 구분되어 있다.
+- [ ] 상태 전이 operation이 동사 URL이 아니라 resource로 표현되어 있다.
+- [ ] version prefix가 [api-versioning-convention](api-versioning-convention.md)을 따른다.

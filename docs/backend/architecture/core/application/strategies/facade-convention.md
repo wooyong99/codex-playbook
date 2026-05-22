@@ -76,9 +76,12 @@
 - 조회 결과 조립만 복잡한 경우에는 Facade 내부 조합과 Mapper 분리만으로 충분하다.
 - Facade가 비즈니스 규칙을 직접 구현하기 시작하면 Service, Validator, Strategy로 책임을 분리한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- 외부 진입점은 Facade 구현체가 아니라 UseCase 인터페이스에 의존한다.
-- 여러 도메인 조합 방식이 Facade 뒤에 숨겨져 있다.
-- 변환 로직은 Mapper, 원자적 command 처리는 Service로 분리되어 있다.
-- Facade 이름이 구현하는 Command/Query UseCase 계약과 맞춰져 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 외부 진입점은 Facade 구현체가 아니라 UseCase 인터페이스에 의존한다.
+- [ ] 여러 도메인 조합 방식이 Facade 뒤에 숨겨져 있다.
+- [ ] 변환 로직은 Mapper, 원자적 command 처리는 Service로 분리되어 있다.
+- [ ] Facade 이름이 구현하는 Command/Query UseCase 계약과 맞춰져 있다.

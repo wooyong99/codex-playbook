@@ -39,5 +39,5 @@ app/api/* -> core/application -> core/domain
 ## 문서 운영 원칙
 
 - API 애플리케이션이 추가되면 이 README의 모듈 맵을 먼저 갱신한다.
-- API 공통 책임과 완료 기준은 `api-guidelines.md`가 소유한다.
+- API 공통 책임과 완료 체크리스트는 `api-guidelines.md`가 소유한다.
 - Controller, DTO, resource, 문서화, versioning 반복 구현 방식은 `strategies/README.md`가 소유한다.

@@ -116,8 +116,11 @@ field value   -> 값 변경
 - 파일 업로드나 multipart request는 DTO 대신 parameter binding을 사용할 수 있지만 Command 변환 경계는 유지한다.
 - response가 application Result와 완전히 같아도 OpenAPI schema 이름을 분리해야 하면 Response DTO를 만들 수 있다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- Request DTO, application Command, Response DTO의 책임이 분리되어 있다.
-- nullable과 optional field의 의미를 API 계약으로 설명할 수 있다.
-- DTO 변환이 DTO 내부가 아니라 app Extension에 모여 있다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Request DTO, application Command, Response DTO의 책임이 분리되어 있다.
+- [ ] nullable과 optional field의 의미가 API 계약, DTO schema, 또는 OpenAPI 문서에 명시되어 있다.
+- [ ] DTO 변환이 DTO 내부가 아니라 app Extension에 모여 있다.

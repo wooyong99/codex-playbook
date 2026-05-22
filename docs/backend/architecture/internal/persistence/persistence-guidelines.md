@@ -53,8 +53,11 @@
 
 - [Strategies](./strategies/README.md)
 
-## 완료 기준
+## 완료 체크리스트
 
-- application은 저장 기술이 아니라 Port 인터페이스에 의존한다.
-- persistence 반환 타입에 JPA Entity나 QueryDsl 타입이 노출되지 않는다.
-- Entity 변경과 DDL 변경이 같은 변경 단위로 설명된다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] application은 저장 기술이 아니라 Port 인터페이스에 의존한다.
+- [ ] persistence 반환 타입에 JPA Entity나 QueryDsl 타입이 노출되지 않는다.
+- [ ] Entity 변경과 DDL 변경이 같은 PR, 커밋, 또는 설계 문서에 함께 포함되어 있다.

@@ -94,9 +94,12 @@ Client
 - [support/api exception response](../../support/api/strategies/exception-response-convention.md) - 예외 응답과 HTTP status 매핑
 - [support/api common concern](../../support/api/strategies/common-concern-convention.md) - 표현 계층 전역 관심사
 
-## 완료 기준
+## 완료 체크리스트
 
-- 신규 API의 URI, DTO, 응답 envelope, 예외 응답, OpenAPI, version 정책을 문서 기준으로 설명할 수 있다.
-- Controller가 `core/application` 계약만 호출한다.
-- HTTP 표현 계층 관심사가 `core`, `internal`, `external`로 새어 나가지 않는다.
-- `app/api` 하위 문서 맵이 실제 전략 문서와 일치한다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] 신규 API의 URI, DTO, 응답 envelope, 예외 응답, OpenAPI, version 정책이 각 소유 문서 기준과 대조되어 있다.
+- [ ] Controller가 `core/application` 계약만 호출한다.
+- [ ] HTTP 표현 계층 관심사가 `core`, `internal`, `external`로 새어 나가지 않는다.
+- [ ] `app/api` 하위 문서 맵이 실제 전략 문서와 일치한다.

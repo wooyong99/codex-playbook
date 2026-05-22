@@ -101,8 +101,11 @@ cancelOrder
 - OAuth, SSO, URL, ID처럼 널리 쓰이는 약어는 대문자 표기를 유지할 수 있다.
 - 기존 public API 이름을 바꾸면 breaking change가 될 수 있으므로 versioning 정책을 먼저 확인한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- URI, Controller, DTO, operationId가 같은 resource 용어를 사용한다.
-- 파일명만 보고 Request, Response, 변환 Extension의 위치와 역할을 알 수 있다.
-- OpenAPI operationId가 중복되지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] URI, Controller, DTO, operationId가 같은 resource 용어를 사용한다.
+- [ ] 파일명과 패키지만으로 Request, Response, 변환 Extension의 위치와 역할이 구분된다.
+- [ ] OpenAPI operationId가 중복되지 않는다.

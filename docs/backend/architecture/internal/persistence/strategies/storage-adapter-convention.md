@@ -93,9 +93,12 @@ application Port
 - Entity와 Domain 구조가 거의 같아도 변환 책임은 분리한다.
 - 저장소 구현 기술이 JPA가 아니면 실제 기술명에 맞추되 Port 외부 노출 금지 원칙은 유지한다.
 
-## 완료 기준
+## 완료 체크리스트
 
-- Adapter가 application Port를 구현하고 저장 기술 세부사항을 숨긴다.
-- JpaRepository와 QueryDslRepository의 책임이 분리되어 있다.
-- Entity와 Domain 변환이 `{Entity}Extension.kt`에 모여 있다.
-- storage 밖으로 JPA Entity가 노출되지 않는다.
+아래 항목을 모두 충족해야 완료로 판정한다.
+
+- [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Adapter가 application Port를 구현하고 저장 기술 세부사항을 숨긴다.
+- [ ] JpaRepository와 QueryDslRepository의 책임이 분리되어 있다.
+- [ ] Entity와 Domain 변환이 `{Entity}Extension.kt`에 모여 있다.
+- [ ] storage 밖으로 JPA Entity가 노출되지 않는다.
