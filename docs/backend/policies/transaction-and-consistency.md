@@ -39,6 +39,6 @@
 
 ## 관련 아키텍처 문서
 
-- [architecture/application](../architecture/application/application-guidelines.md) - UseCase, Flow, EventHandler 경계
-- [architecture/storage](../architecture/storage/storage-guidelines.md) - 저장소 경계
-- [architecture/external](../architecture/external/external-guidelines.md) - 외부 I/O 경계
+- [architecture/core/application](../architecture/core/application/application-guidelines.md) - UseCase, Flow, EventHandler 경계
+- [architecture/internal/persistence](../architecture/internal/persistence/persistence-guidelines.md) - 저장소 경계
+- [architecture/external/integration](../architecture/external/integration/integration-guidelines.md) - 외부 I/O 경계

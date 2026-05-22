@@ -39,6 +39,6 @@
 
 ## 관련 아키텍처 문서
 
-- [architecture/application](../architecture/application/application-guidelines.md) - 동시성 제어 선택 지점
-- [architecture/storage](../architecture/storage/storage-guidelines.md) - 조회 성능과 캐시 경계
+- [architecture/core/application](../architecture/core/application/application-guidelines.md) - 동시성 제어 선택 지점
+- [architecture/internal/persistence](../architecture/internal/persistence/persistence-guidelines.md) - 조회 성능과 캐시 경계
 - [design](../design/README.md) - 설계 문서의 확장 가능성 기록

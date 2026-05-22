@@ -32,6 +32,6 @@
 
 ## 관련 아키텍처 문서
 
-- [architecture/app](../architecture/app/app-guidelines.md) - 인증 필터와 HTTP 경계
-- [architecture/domain](../architecture/domain/domain-guidelines.md) - 도메인으로 들어오는 민감 정보 경계
-- [architecture/external](../architecture/external/external-guidelines.md) - 외부 인증 토큰과 credentials 경계
+- [architecture/app/api](../architecture/app/api/api-guidelines.md) - 인증 필터와 HTTP 경계
+- [architecture/core/domain](../architecture/core/domain/domain-guidelines.md) - 도메인으로 들어오는 민감 정보 경계
+- [architecture/external/integration](../architecture/external/integration/integration-guidelines.md) - 외부 인증 토큰과 credentials 경계

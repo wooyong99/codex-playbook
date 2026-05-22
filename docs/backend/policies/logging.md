@@ -39,6 +39,6 @@
 
 ## 관련 아키텍처 문서
 
-- [architecture/app](../architecture/app/app-guidelines.md) - 요청 추적과 전역 예외 처리
-- [architecture/application](../architecture/application/application-guidelines.md) - 상태 변경 흐름의 로그 위치
-- [architecture/external](../architecture/external/external-guidelines.md) - 외부 API 호출 로그
+- [architecture/support/api](../architecture/support/api/api-guidelines.md) - 요청 추적과 전역 예외 처리
+- [architecture/core/application](../architecture/core/application/application-guidelines.md) - 상태 변경 흐름의 로그 위치
+- [architecture/external/integration](../architecture/external/integration/integration-guidelines.md) - 외부 API 호출 로그

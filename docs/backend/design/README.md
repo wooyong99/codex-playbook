@@ -4,11 +4,11 @@
 
 ## 문서 목록
 
-- 현재 active 설계 문서는 없다.
+- [Storefront Domain Access Backend TDD](tdd-storefront-domain-access.md): `domainVariable` 기반 쇼핑몰 방문자 접속과 SSR HTML payload 조회 계약 설계.
 
 ## 운영 원칙
 
 - TDD 파일 추가·삭제·이름 변경 시 이 README의 문서 목록을 함께 갱신한다.
 - 상위 문서(예: `docs/backend/README.md`)는 개별 설계 파일이 아닌 이 README를 참조한다.
 - 이 디렉토리는 실제 설계 문서만 소유한다. 작성 가이드 파일을 별도로 만들지 않는다.
-- TDD 작성 템플릿과 작성 규칙은 `.agents/skills/write-backend-tech-design-doc/references`가 소유한다.
+- TDD 작성 방식과 템플릿은 `backend-technical-design-writing-rules` skill의 references를 따른다.
