@@ -1,8 +1,12 @@
 # Support API Strategies
 
+이 문서는 `backend/support/api` 모듈의 역할형 전략 문서 맵을 소유한다.
+
 ## 목적
 
-`backend/support/api` 모듈이 소유하는 API 공통 응답, 예외 응답, 전역 관심사 전략을 정리한다.
+- support/api 내부 공통 응답, 예외 응답, 전역 관심사 책임을 전략별로 분리한다.
+- response envelope, exception response, common concern의 선택 기준을 한곳에서 찾게 한다.
+- endpoint별 API 계약과 공통 HTTP 지원 경계가 서로의 책임을 침범하지 않게 한다.
 
 ## 적용 범위
 
@@ -18,6 +22,17 @@
 | Exception Response | [exception-response-convention](exception-response-convention.md) | 예외를 HTTP status와 오류 응답으로 변환하는 규칙 |
 | Common Concern | [common-concern-convention](common-concern-convention.md) | API 공통 filter, handler, configuration 배치 기준 |
 
-## 경계
+## 공통 의존 흐름
+
+```text
+app/api Controller
+  -> support/api response envelope
+  -> support/api exception response
+  -> support/api common concern
+
+support/api
+  -> core/application
+  -> core/domain
+```
 
 Endpoint별 Controller, URI, DTO, OpenAPI 문서화는 [app/api strategies](../../../app/api/strategies/README.md)가 소유한다.

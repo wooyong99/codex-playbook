@@ -55,3 +55,9 @@
 ## 전략 문서
 
 - [Strategies](./strategies/README.md)
+
+## 완료 기준
+
+- application 진입점은 도메인 행위와 Port 계약을 조합하되 인프라 구현체를 직접 참조하지 않는다.
+- 트랜잭션 경계, 외부 I/O 경계, 데이터 일관성 단위가 문서 기준으로 설명된다.
+- UseCase, Facade, Coordinator, Service, Validator, Strategy, Port, Mapper 역할 중 필요한 것만 선택되어 책임이 중복되지 않는다.

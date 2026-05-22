@@ -17,19 +17,19 @@
 
 공통 응답, 예외 응답, tenant, trace, rate limit 같은 전역 API 관심사는 [support/api strategies](../../../support/api/strategies/README.md)가 소유한다.
 
-## 문서 책임
+## 전략 문서
 
-| 문서 | 소유하는 책임 |
-|------|---------------|
-| [controller-convention](controller-convention.md) | Controller의 HTTP adapter 책임과 UseCase 호출 흐름 |
-| [resource-design-convention](resource-design-convention.md) | REST URI naming, resource 단위 설계, method, path/query 기준 |
-| [dto-convention](dto-convention.md) | Request/Response DTO, nullable, optional, mapping 기준 |
-| [api-documentation-convention](api-documentation-convention.md) | OpenAPI tag, operation, schema, response 문서화 규칙 |
-| [api-versioning-convention](api-versioning-convention.md) | `/api/v{N}` version path와 breaking change 관리 |
-| [package-structure](package-structure.md) | app 패키지와 파일 배치 기준 |
-| [naming-convention](naming-convention.md) | URI segment, class, DTO, method, operationId 네이밍 |
+| 전략 | 문서 | 책임 |
+|------|------|------|
+| Controller | [controller-convention](controller-convention.md) | Controller의 HTTP adapter 책임과 UseCase 호출 흐름 |
+| Resource Design | [resource-design-convention](resource-design-convention.md) | REST URI naming, resource 단위 설계, method, path/query 기준 |
+| DTO | [dto-convention](dto-convention.md) | Request/Response DTO, nullable, optional, mapping 기준 |
+| API Documentation | [api-documentation-convention](api-documentation-convention.md) | OpenAPI tag, operation, schema, response 문서화 규칙 |
+| API Versioning | [api-versioning-convention](api-versioning-convention.md) | `/api/v{N}` version path와 breaking change 관리 |
+| Package Structure | [package-structure](package-structure.md) | app 패키지와 파일 배치 기준 |
+| Naming | [naming-convention](naming-convention.md) | URI segment, class, DTO, method, operationId 네이밍 |
 
-## 전체 흐름
+## 공통 의존 흐름
 
 ```text
 Resource design

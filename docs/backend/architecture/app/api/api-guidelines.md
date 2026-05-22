@@ -2,6 +2,12 @@
 
 이 문서는 `backend/app/api` 단위의 HTTP API 애플리케이션 책임, 의존 경계, 전략 문서 체계를 정리한다.
 
+## 코드 위치
+
+- `backend/app/api/admin` - 관리자 API HTTP endpoint를 담당한다.
+- `backend/app/api/operator` - 운영자 API HTTP endpoint를 담당한다.
+- `backend/app/api/user` - 플랫폼 사용자 API HTTP endpoint를 담당한다.
+
 ## 목적
 
 - HTTP API 계약을 `core/application` 서비스 계약으로 변환하는 경계를 고정한다.
@@ -65,6 +71,15 @@ Client
 - OpenAPI 문서 없이 신규 public endpoint를 추가하지 않는다.
 - `nullable` 필드를 단순 편의로 열어두지 않는다. null의 계약 의미를 문서화한다.
 - `common`, `shared`, `util` 패키지에 도메인별 Controller, DTO, 변환 로직을 넣지 않는다.
+
+## 주요 컴포넌트
+
+- Controller: `{Domain}Controller`
+- Request DTO: `{Action}{Resource}Request`
+- Response DTO: `{Resource}Response`
+- DTO Extension: `{Resource}DtoExtension`
+- API documentation: OpenAPI operation and schema
+- API version path: `/api/v{major}`
 
 ## 전략 문서
 
