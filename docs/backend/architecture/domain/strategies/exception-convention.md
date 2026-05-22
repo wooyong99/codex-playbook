@@ -16,7 +16,7 @@
 - `CoreException`
 - 도메인 전용 exception 클래스가 필요한 경우의 기준
 
-app 계층의 HTTP 응답 변환은 [app exception handling convention](../../app/strategies/exception-handling-convention.md)이 소유한다.
+app 계층의 HTTP 응답 변환은 [app exception response convention](../../app/strategies/exception-response-convention.md)이 소유한다.
 
 ## 책임
 
