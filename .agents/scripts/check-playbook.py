@@ -12,7 +12,7 @@ import sys
 import urllib.parse
 
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[2]
 
 CRITICAL_PLACEHOLDERS = {
     ROOT / "AGENTS.md": [
@@ -152,7 +152,7 @@ def check_rule_metadata(errors):
 
 
 def check_checkpoint_contract(errors):
-    script = ROOT / ".agents/skills/implement/scripts/validate-context-checkpoints.py"
+    script = ROOT / ".agents/scripts/validate-context-checkpoints.py"
     if not script.exists():
         errors.append(f"{script.relative_to(ROOT)}: missing")
         return

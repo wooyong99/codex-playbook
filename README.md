@@ -1,5 +1,7 @@
 # codex-playbook
 
+## 목적
+
 Codex와 사람이 함께 사용할 수 있도록 정리한 프로젝트 플레이북 템플릿.
 
 이 저장소는 새 프로젝트를 시작할 때 다음을 한 번에 가져가도록 설계되어 있다.
@@ -25,7 +27,7 @@ Codex와 사람이 함께 사용할 수 있도록 정리한 프로젝트 플레�
 5. 아래 명령으로 플레이북 자체 검증을 실행한다.
 
 ```bash
-python3 .agents/skills/implement/scripts/check-playbook.py
+python3 .agents/scripts/check-playbook.py
 ```
 
 ## 먼저 읽으면 좋은 문서
@@ -38,7 +40,6 @@ python3 .agents/skills/implement/scripts/check-playbook.py
   프로젝트명, 목표, 문서, 스킬, 서브에이전트 점검 목록
 - [Rule ID and metadata](docs/rules/README.md)
 - [Review routing](docs/review/README.md)
-- [Examples](docs/examples/README.md)
 - [Agent evaluation suite](docs/evals/README.md)
 - [Backend 문서 홈](docs/backend/README.md)
 - [Frontend 문서 홈](docs/frontend/README.md)

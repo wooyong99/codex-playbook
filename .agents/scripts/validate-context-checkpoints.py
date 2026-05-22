@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate implement skill context-checkpoint contracts.
+"""Validate backend/frontend context-checkpoint contracts.
 
 This script intentionally uses only Python 3.9 standard-library features.
 """
@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[2]
 
 AGENTS = {
     "backend-technical-design-writer": {
@@ -169,13 +169,8 @@ def require_between(errors, path, text, start, needle, end, reason):
 def main():
     errors = []
 
-    implement_path = ROOT / ".agents/skills/implement/SKILL.md"
     backend_skill_path = ROOT / ".agents/skills/implement-backend/SKILL.md"
     frontend_skill_path = ROOT / ".agents/skills/implement-frontend/SKILL.md"
-    boundaries_path = ROOT / ".agents/skills/implement/references/orchestration-boundaries.md"
-    planning_path = ROOT / ".agents/skills/implement/references/milestone-planning.md"
-    protocol_path = ROOT / ".agents/skills/implement/references/input-output-checkpoint-protocol.md"
-    workflow_path = ROOT / ".agents/skills/implement/references/milestone-execution-workflow.md"
     backend_boundaries_path = ROOT / ".agents/skills/implement-backend/references/orchestration-boundaries.md"
     backend_planning_path = ROOT / ".agents/skills/implement-backend/references/milestone-planning.md"
     backend_protocol_path = ROOT / ".agents/skills/implement-backend/references/input-output-checkpoint-protocol.md"
@@ -184,22 +179,6 @@ def main():
     frontend_planning_path = ROOT / ".agents/skills/implement-frontend/references/milestone-planning.md"
     frontend_protocol_path = ROOT / ".agents/skills/implement-frontend/references/input-output-checkpoint-protocol.md"
     frontend_workflow_path = ROOT / ".agents/skills/implement-frontend/references/milestone-execution-workflow.md"
-
-    implement = read(implement_path)
-    for needle, reason in [
-        ("## 역할", "top-level role section"),
-        ("## 기본 범위", "top-level scope section"),
-        ("## 참조 문서", "top-level reference section"),
-        ("## 라우팅 기준", "router classification section"),
-        ("## 프로세스", "top-level process section"),
-        ("implement-backend", "backend execution skill reference"),
-        ("implement-frontend", "frontend execution skill reference"),
-        ("references/orchestration-boundaries.md", "orchestration boundary reference"),
-        ("references/milestone-planning.md", "milestone planning reference"),
-        ("references/input-output-checkpoint-protocol.md", "input output checkpoint protocol reference"),
-        ("references/milestone-execution-workflow.md", "milestone execution workflow reference"),
-    ]:
-        require(errors, implement_path, implement, needle, reason)
 
     backend_skill = read(backend_skill_path)
     for needle, reason in [
@@ -234,50 +213,6 @@ def main():
         require(errors, frontend_skill_path, frontend_skill, needle, reason)
 
     for path, expected in [
-        (
-            planning_path,
-            [
-                ("# Router Milestone Planning", "router planning title"),
-                ("## 라우팅 기준", "router classification criteria"),
-                ("## 마일스톤 분할 기준", "router milestone split criteria"),
-                ("영역 내부의 예상 변경 파일 수", "router does not own area file-count rules"),
-                ("명시적 제외사항", "router explicit exclusions planning"),
-            ],
-        ),
-        (
-            protocol_path,
-            [
-                ("# Router Input Output And Checkpoint Protocol", "router protocol title"),
-                ("## Router Output 처리", "router output handling"),
-                ("## Router Checkpoint 처리", "router checkpoint handling"),
-                ("├── inputs/", "router input directory"),
-                ("├── outputs/", "router output directory"),
-                ("영역 내부 파일명을 재정의하지 않는다", "router does not own area filenames"),
-                ("존재하고 비어 있지 않은지 확인한다", "checkpoint existence validation"),
-                ("python3 .agents/skills/implement/scripts/validate-context-checkpoints.py", "validation command"),
-            ],
-        ),
-        (
-            boundaries_path,
-            [
-                ("# Router Orchestration Boundaries", "router boundary title"),
-                ("D/A/B 서브에이전트를 직접 운영하지 않고", "router delegates DAB ownership"),
-                ("backend 세부 기준 문서 선택은 `implement-backend`", "backend source ownership"),
-                ("frontend 세부 기준 문서 선택은 `implement-frontend`", "frontend source ownership"),
-            ],
-        ),
-        (
-            workflow_path,
-            [
-                ("# Router Milestone Execution Workflow", "router workflow title"),
-                ("## Step 1. 요청 분류", "router classification step"),
-                ("## Step 2. Fullstack 분해", "fullstack split step"),
-                ("## Step 3. 영역별 실행 스킬 호출", "area skill execution step"),
-                ("영역 내부 D/A/B 실행 루프", "area workflow ownership"),
-                ("## Step 4. 결과 통합", "integration result step"),
-                ("## Escalation", "escalation workflow"),
-            ],
-        ),
         (
             backend_planning_path,
             [
@@ -406,13 +341,8 @@ def main():
     ]
 
     all_paths = [
-        implement_path,
         backend_skill_path,
         frontend_skill_path,
-        boundaries_path,
-        planning_path,
-        protocol_path,
-        workflow_path,
         backend_boundaries_path,
         backend_planning_path,
         backend_protocol_path,
@@ -659,7 +589,6 @@ def main():
     ]:
         require(errors, backend_review_spec["contract"], backend_review_contract, needle, reason)
     implement_coupling_banned = [
-        ".agents/skills/implement/references",
         "backend-architecture-reviewer-contract.md",
         "frontend-architecture-reviewer-contract.md",
         "implementation-engineer-contract.md",

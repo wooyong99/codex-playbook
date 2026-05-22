@@ -93,5 +93,5 @@ D/A/B는 `[출력 파일]`에 YAML payload를 저장하고, 같은 호출의 `[�
 frontend 실행 규약, 계약 문서, 서브에이전트 정의를 수정한 뒤에는 아래 명령으로 필수 항목을 검증한다.
 
 ```bash
-python3 .agents/skills/implement/scripts/validate-context-checkpoints.py
+python3 .agents/scripts/validate-context-checkpoints.py
 ```
