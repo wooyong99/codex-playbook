@@ -1,21 +1,35 @@
 # Domain Strategies
 
-이 프로젝트에서 `domain` 단위에 실제로 사용 중인 구현 전략 요약.
+이 문서는 `domain` 단위의 역할형 전략 문서 맵을 소유한다.
 
-## 핵심 전략
+## 목적
 
-- 도메인 모델은 정적 팩토리로 생성 경로를 구분하고 행위 메서드로 상태 전이를 캡슐화한다.
-- Entity는 식별자 기반 동등성, Value Object는 값 기반 동등성을 사용한다.
-- 비즈니스 규칙 위반은 도메인별 ErrorCode와 `CoreException`으로 표현한다.
-- HTTP 의미는 `CoreErrorType` 같은 프레임워크 미의존 분류까지만 둔다.
+- domain 내부 모델과 예외의 책임을 전략별로 분리한다.
+- `Domain Model`, `Domain Exception`의 선택 기준을 한곳에서 찾게 한다.
+- 레거시 템플릿 대신 현재 전략 문서의 용어를 기준으로 domain 구조를 설명한다.
 
-## 근거가 된 코드 패턴
+## 적용 범위
 
-- `companion object.create`, `reconstitute` - 신규 생성과 DB 복원 경로 분리
-- `{Domain}ErrorCode`, `ErrorCode`, `CoreException` - 도메인 예외 계층
-- 도메인 행위 메서드 - Tell, Don't Ask 방식의 상태 변경 캡슐화
+- Entity, Value Object, 상태 enum, 도메인 행위 메서드
+- 정적 팩토리, 복원 경로, 불변식 보호
+- 도메인 ErrorCode, CoreException, framework-independent error type
 
-## 세부 문서
+## 전략 문서
 
-- [domain-model-convention](domain-model-convention.md) - Entity, Value Object, 팩토리, 행위 메서드를 작성할 때
-- [exception-convention](exception-convention.md) - 도메인 ErrorCode와 CoreException을 작성할 때
+| 전략 | 문서 | 책임 |
+|------|------|------|
+| Domain Model | [domain-model-convention](domain-model-convention.md) | Entity, Value Object, 팩토리, 상태 전이, Tell Don't Ask 규칙 |
+| Domain Exception | [exception-convention](exception-convention.md) | 도메인 ErrorCode, CoreException, 예외 선택 기준 |
+
+## 공통 의존 흐름
+
+```text
+application
+  -> Domain Model
+    -> Domain behavior
+    -> Domain exception
+
+app
+  -> GlobalExceptionHandler
+    -> CoreErrorType mapping
+```

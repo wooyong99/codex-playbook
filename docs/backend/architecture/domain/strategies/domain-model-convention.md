@@ -1,360 +1,159 @@
 # Domain Model 컨벤션
 
----
+이 문서는 `domain` 단위에서 Entity, Value Object, 상태 enum, 도메인 행위 메서드를 작성하는 전략을 정리한다.
 
-## 언제 사용하는가
+## 목적
 
-- `domain` 단위에서 Domain Model 컨벤션 전략을 적용하거나 검토할 때 사용한다.
+- 도메인 모델을 외부 프레임워크와 저장소 구조에서 분리한다.
+- 생성, 복원, 상태 변경 경로를 도메인 객체 내부에 명시한다.
+- 외부 계층이 도메인 상태를 꺼내 판단하지 않게 한다.
 
-## 코드 위치
+## 적용 범위
 
-- `domain` 단위의 실제 프로젝트 적용 위치를 기준으로 작성한다.
+- Entity와 Value Object 정의
+- 정적 팩토리 메서드와 복원 경로
+- 도메인 상태 전이와 비즈니스 판단 메서드
+- 도메인 모델의 불변성, 동등성, 외부 의존 제한
 
-## 구조
+도메인 예외 계층과 ErrorCode 설계는 [exception-convention](exception-convention.md)이 소유한다.
 
-- 이 문서의 본문 섹션이 해당 전략의 구조와 세부 규칙을 설명한다.
+## 책임
 
-## 핵심 원칙
+- 도메인 언어로 비즈니스 개념과 상태를 표현한다.
+- 생성 시점과 복원 시점의 검증 범위를 분리한다.
+- 상태 변경을 행위 메서드로 캡슐화한다.
+- Entity와 Value Object의 동등성 기준을 명확히 한다.
 
-**도메인 모델은 순수 Kotlin/Java로만 작성하고, `private constructor` + `companion object` 팩토리 메서드로 생성한다. 상태 변경은 행위 메서드로만 허용한다.**
+## 전체 흐름
 
-외부 프레임워크(Spring / JPA / Jackson) 변경이 도메인 계층으로 전파되지 않도록 격리하고, `init`·`var` 노출 같은 우회 생성/변경을 차단한다. 외부에서 enum/상태를 꺼내 판단하지 않고 도메인 객체에게 질문한다 (Tell, Don't Ask).
+```text
+application
+  -> Domain factory
+    -> create | reconstitute | of | from
+  -> Domain behavior
+    -> validate state
+    -> change state
+    -> expose business query method
+```
 
----
+## 세부 규칙
 
-## 코드에서 관찰된 규칙
+### 외부 의존
 
-1. 실제 프로젝트 적용 시 본문 규칙이 코드에서 반복되는지 확인한다.
-
-## 네이밍 규칙
-
-### 팩토리 메서드
-
-| 메서드명 | 용도 |
-|---------|------|
-| `create(...)` | 신규 도메인 객체 생성 (불변식 전체 적용) |
-| `reconstitute(...)` | 저장된 데이터에서 복원 (생성 시점 규칙 생략 가능) |
-| `of(...)` | Value Object 생성 (간결한 표현이 어울릴 때) |
-| `from(...)` | 다른 표현에서 변환 (예: `Money.from(rawAmount)`) |
-
-### 도메인 행위 메서드 (Tell, Don't Ask)
-
-| 패턴 | 용도 | 예시 |
-|------|------|------|
-| `is{State}()` | 현재 상태 확인 | `isActive()`, `isAdmin()` |
-| `can{Action}()` | 행위 가능 여부 | `canCancel()`, `canApprove()` |
-| `requires{Noun}()` | 정책상 필요 여부 | `requiresAnnualLeave()`, `requiresApproval()` |
-| `has{Noun}()` | 보유 여부 | `hasProfileImage()`, `hasPermission()` |
-
----
-
-## 외부 의존 금지
-
-**규칙: 도메인 계층은 순수 Kotlin 코드만 허용한다. Spring, JPA, Jackson 등 프레임워크에 의존하지 않는다.**
-
-프레임워크에 의존하면 DB 스키마 변경, JSON 포맷 변경 같은 인프라 변화가 도메인 계층 수정을 강제한다. 도메인 모델과 JPA 엔티티를 분리하면 이런 변경이 인프라 계층 내부로 격리된다.
+- 도메인 모델은 순수 Kotlin / Java 표준 라이브러리만 사용한다.
+- Spring, JPA, Jackson, HTTP 타입을 import하지 않는다.
+- 도메인 모델과 JPA Entity 변환은 storage adapter가 소유한다.
 
 ```kotlin
-// ❌ 금지
+// 금지
 import org.springframework.stereotype.Component
 import jakarta.persistence.Entity
-import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.annotation.JsonProperty
 
-// ✅ 허용
+// 허용
 import java.time.LocalDateTime
 import java.util.UUID
 ```
 
-| 의존 대상 | 허용 시 문제 |
-|-----------|------------|
-| Spring (`@Component`) | 도메인이 Spring 컨테이너 없이 테스트 불가 |
-| JPA (`@Entity`) | DB 스키마 변경이 도메인 모델에 전파됨 |
-| Jackson (`@JsonProperty`) | JSON 직렬화 방식이 도메인 개념을 오염 |
-| HttpStatus | HTTP 프로토콜 개념이 비즈니스 개념과 혼합 |
+### 모델 종류
 
-도메인 모델 ↔ JPA 엔티티 변환은 인프라 계층의 Extension 함수(`toDomain()`, `toEntity()`)가 담당한다.
-
----
-
-## 도메인 모델 종류
-
-**규칙: Entity는 식별자 기준 동등성을 갖는 `class`로, Value Object는 값 기준 동등성을 갖는 `data class`로 정의한다.**
-
-### Entity
+- Entity는 식별자 기준 동등성을 갖는 `class`로 정의한다.
+- Value Object는 값 기준 동등성을 갖는 `data class`로 정의한다.
+- 상태 enum은 도메인 행위 메서드 내부에서 해석한다.
 
 ```kotlin
 class Order private constructor(
     val id: Long,
     val customerId: Long,
     private var _status: OrderStatus,
-    val totalAmount: Long,
 ) {
     val status: OrderStatus get() = _status
 
     companion object {
-        fun create(customerId: Long, totalAmount: Long): Order {
-            require(totalAmount > 0) { "주문 금액은 0보다 커야 합니다." }
-            return Order(0L, customerId, OrderStatus.PENDING, totalAmount)
+        fun create(customerId: Long): Order {
+            require(customerId > 0) { "customerId must be positive." }
+            return Order(0L, customerId, OrderStatus.PENDING)
         }
 
-        fun reconstitute(id: Long, customerId: Long, status: OrderStatus, totalAmount: Long): Order =
-            Order(id, customerId, status, totalAmount)
+        fun reconstitute(id: Long, customerId: Long, status: OrderStatus): Order =
+            Order(id, customerId, status)
     }
 
     fun confirm() {
-        check(_status == OrderStatus.PENDING) { "대기 상태의 주문만 확정할 수 있습니다." }
+        check(_status == OrderStatus.PENDING) { "Only pending orders can be confirmed." }
         _status = OrderStatus.CONFIRMED
     }
 
-    fun cancel() {
-        check(_status != OrderStatus.SHIPPED) { "배송 중인 주문은 취소할 수 없습니다." }
-        _status = OrderStatus.CANCELLED
-    }
+    fun canCancel(): Boolean = _status != OrderStatus.SHIPPED
 
     override fun equals(other: Any?) = other is Order && id == other.id
     override fun hashCode() = id.hashCode()
 }
 ```
 
-- 내부 `var`는 허용하되, 반드시 행위 메서드를 통해서만 변경한다.
-- 외부에는 `val` getter로만 노출한다 (`private var _status` + `val status get()`).
-- `equals` / `hashCode`는 식별자 기준으로 재정의한다.
+### 팩토리 메서드
 
-### Value Object
+| 메서드명 | 용도 |
+|---------|------|
+| `create(...)` | 신규 도메인 객체 생성, 불변식 전체 적용 |
+| `reconstitute(...)` | 저장된 데이터에서 복원, 생성 시점 규칙 생략 가능 |
+| `of(...)` | Value Object 생성 |
+| `from(...)` | 다른 표현에서 도메인 타입으로 변환 |
+
+- `private constructor`와 `companion object` 팩토리 메서드를 기본으로 한다.
+- 신규 생성은 `create`, 저장소 복원은 `reconstitute`로 분리한다.
+- `init` 블록으로 모든 생성 경로에 같은 검증을 강제하지 않는다.
+
+### 불변성과 상태 변경
+
+- 필드는 `val`을 기본으로 한다.
+- 상태 전이가 필요한 Entity만 내부 `private var`를 사용할 수 있다.
+- 외부에는 `val` getter로만 노출하고 변경은 행위 메서드로 수행한다.
+- `copy()`로 불변식을 우회할 수 있는 Value Object는 private constructor와 factory를 함께 사용한다.
+
+### Tell Don't Ask
+
+- 외부 계층이 enum이나 내부 상태를 직접 비교해 비즈니스 판단을 내리지 않는다.
+- 상태 판단은 `is{State}()`, `can{Action}()`, `requires{Noun}()`, `has{Noun}()` 같은 도메인 메서드로 표현한다.
 
 ```kotlin
-data class Money private constructor(val amount: Long, val currency: String) {
-    companion object {
-        fun of(amount: Long, currency: String): Money {
-            require(amount >= 0) { "금액은 0 이상이어야 합니다." }
-            require(currency.isNotBlank()) { "통화 코드는 비어있을 수 없습니다." }
-            return Money(amount, currency)
-        }
-    }
+// 금지
+if (order.status == OrderStatus.PENDING) {
+    order.cancel()
+}
 
-    operator fun plus(other: Money): Money {
-        require(currency == other.currency) { "통화 단위가 다릅니다." }
-        return copy(amount = amount + other.amount)
-    }
+// 권장
+if (order.canCancel()) {
+    order.cancel()
 }
 ```
 
----
+### 도메인 예외
 
-## 정적 팩토리 메서드
-
-**규칙: `private constructor` + `companion object` 팩토리 메서드로만 생성한다. `init` 블록을 사용하지 않는다.**
-
-```kotlin
-class FsNode private constructor(
-    val id: Long,
-    val tenantId: String,
-    val name: String,
-    val path: String,
-    val type: FsNodeType,
-    val parentId: Long?,
-    val size: Long,
-    val uploadedAt: LocalDateTime,
-) {
-    companion object {
-        fun create(
-            tenantId: String,
-            name: String,
-            path: String,
-            type: FsNodeType,
-            parentId: Long?,
-            size: Long,
-        ): FsNode {
-            require(tenantId.isNotBlank()) { "테넌트 ID는 비어있을 수 없습니다." }
-            require(name.isNotBlank()) { "파일명은 비어있을 수 없습니다." }
-            require(size >= 0) { "파일 크기는 0 이상이어야 합니다." }
-            return FsNode(0L, tenantId, name, path, type, parentId, size, LocalDateTime.now())
-        }
-
-        fun reconstitute(
-            id: Long, tenantId: String, name: String, path: String,
-            type: FsNodeType, parentId: Long?, size: Long, uploadedAt: LocalDateTime,
-        ): FsNode = FsNode(id, tenantId, name, path, type, parentId, size, uploadedAt)
-    }
-}
-```
-
-### 왜 팩토리 메서드인가
-
-1. **의도를 이름으로 표현**: `FsNode.create(...)` vs `FsNode.reconstitute(...)` — 호출부만 읽어도 생성 맥락이 파악된다.
-2. **생성 컨텍스트 분리**: `create`는 불변식을 전체 적용하고, `reconstitute`는 DB 복원 시 생성 시점 규칙을 생략할 수 있다.
-3. **생성자 직접 노출 차단**: `private constructor`로 검증을 우회하는 생성을 막는다.
-
-### 왜 init을 사용하지 않는가
-
-| 상황 | init의 문제 |
-|------|------------|
-| `data class`의 `.copy()` | `init`이 재실행 — 의도치 않은 검증 실패 가능 |
-| DB 복원 (`reconstitute`) | 과거 데이터가 현재 정책을 만족하지 않을 수 있으나 `init`은 항상 실행 |
-| 생성자가 `public` | 팩토리를 거치지 않고 객체 생성 가능 — 검증 우회 |
-
----
-
-## 불변성 원칙
-
-**규칙: 도메인 객체는 `val`을 기본으로 한다. 상태 변경은 행위 메서드를 통해서만 수행한다.**
-
-`product.price = -1` 같은 직접 변경은 도메인 규칙을 우회한다. 행위 메서드로 감싸면 비즈니스 의도가 드러나고, 검증이 보장된다.
-
-```kotlin
-// ❌ 외부에서 직접 변경 가능
-class Product(val id: Long, var name: String, var price: Long)
-
-// ✅ 행위 메서드로 상태 변경 표현
-class Product private constructor(val id: Long, val name: String, val price: Long) {
-    companion object {
-        fun create(name: String, price: Long): Product { ... }
-        fun reconstitute(id: Long, name: String, price: Long): Product { ... }
-    }
-
-    fun rename(newName: String): Product {
-        require(newName.isNotBlank()) { "상품명은 비어있을 수 없습니다." }
-        return Product(id, newName, price)
-    }
-
-    fun adjustPrice(newPrice: Long): Product {
-        require(newPrice > 0) { "가격은 0보다 커야 합니다." }
-        return Product(id, name, newPrice)
-    }
-}
-```
-
-Entity의 내부 var: 상태 전이가 잦은 Entity는 내부 `var` + 외부 `val` getter 패턴을 사용한다 ("도메인 모델 종류" 섹션의 `Order` 예시 참고).
-
----
-
-## 도메인 행위 캡슐화 (Tell, Don't Ask)
-
-**규칙: 도메인 객체의 내부 상태를 꺼내서 외부에서 판단하지 않는다. 비즈니스 판단은 도메인 객체에게 질문(메서드 호출)한다.**
-
-외부에서 enum/상태를 직접 비교하면 비즈니스 규칙이 호출부에 분산되고, 정책 변경 시 모든 호출부를 수정해야 하며, 도메인 모델이 데이터 구조체로 전락한다.
-
-### 상태 기반 판단 — 도메인에 캡슐화
-
-```kotlin
-// ❌ 외부에서 상태를 꺼내 판단 (Ask)
-if (user.userType != UserType.ADMIN) {
-    initAnnualLeaveFlow.execute(user.id)
-}
-
-// ✅ 도메인 객체에게 질문 (Tell)
-if (user.requiresAnnualLeave()) {
-    initAnnualLeaveFlow.execute(user.id)
-}
-```
-
-```kotlin
-// User.kt — 비즈니스 규칙을 도메인에 캡슐화
-fun requiresAnnualLeave(): Boolean = userType != UserType.ADMIN
-```
-
-### enum 직접 비교 vs 도메인 메서드
-
-```kotlin
-// ❌ 호출부마다 enum 비교가 산재
-if (order.status == OrderStatus.PENDING) { ... }
-if (order.status == OrderStatus.PENDING || order.status == OrderStatus.CONFIRMED) { ... }
-
-// ✅ 도메인이 비즈니스 의미를 표현
-if (order.canCancel()) { ... }
-if (order.isModifiable()) { ... }
-```
-
-```kotlin
-// Order.kt
-fun canCancel(): Boolean = status != OrderStatus.SHIPPED
-fun isModifiable(): Boolean = status in setOf(OrderStatus.PENDING, OrderStatus.CONFIRMED)
-```
-
-### 판단 기준
-
-| 상황 | 방식 |
-|------|------|
-| 비즈니스 정책에 따른 분기 (`ADMIN이면 연차 미부여`) | 도메인 메서드 (`requiresAnnualLeave()`) |
-| 상태 전이 가능 여부 (`취소 가능한가?`) | 도메인 메서드 (`canCancel()`) |
-| 복합 상태 판단 (`수정 가능한 상태인가?`) | 도메인 메서드 (`isModifiable()`) |
-| 단순 동등성 비교 (인프라/매핑 계층에서 사용) | 직접 비교 허용 |
-
----
-
-## 도메인 예외
-
-**규칙: 입력값 전제조건은 `require`, 객체 상태 전제조건은 `check`, 비즈니스 규칙 위반은 `CoreException(errorCode)`를 사용한다.**
-
-```kotlin
-// 팩토리 메서드 내 — 입력값 검증
-require(name.isNotBlank()) { "상품명은 비어있을 수 없습니다." }
-
-// 행위 메서드 내 — 상태 전제조건
-check(status == OrderStatus.PENDING) { "대기 상태의 주문만 확정할 수 있습니다." }
-
-// 비즈니스 규칙 위반 — 핸들링 가능한 도메인 예외
-throw CoreException(TenantErrorCode.TENANT_NOT_FOUND)
-```
-
-> 예외 계층 구조, ErrorCode enum 설계, 새 예외 추가 방법은 [exception-convention.md](exception-convention.md) 참고
-
----
-
-## 의존 및 책임 경계
-
-- 허용되는 의존: `domain` 단위의 상위 guideline이 허용한 의존 방향을 따른다.
-- 주의할 의존 또는 경계 조건: 세부 경계는 본문 규칙과 상위 guideline을 함께 따른다.
-
-## 관련 정책 / 상위 규칙
-
-- [domain guidelines](../domain-guidelines.md) - 이 전략이 따르는 상위 아키텍처 단위 규칙
-- 관련 전역 정책: 필요 시 [policies](../../../policies/README.md) 문서를 링크한다
+- 입력값 전제조건은 `require`를 사용한다.
+- 객체 상태 전제조건은 `check`를 사용한다.
+- 클라이언트에 구조화된 실패로 전달해야 하는 비즈니스 규칙 위반은 `CoreException(errorCode)`를 사용한다.
 
 ## 금지 규칙
 
-- Spring, JPA, Jackson 등 외부 프레임워크 import를 사용하지 않는다.
-- `init` 블록에서 비즈니스 검증을 수행하지 않는다 — `companion object` 팩토리에서 명시적으로 수행한다.
-- `var` 필드를 외부에 직접 노출하지 않는다 — 상태 변경은 행위 메서드로만.
-- 생성자를 `public`으로 노출하지 않는다 — `private constructor` + 팩토리 메서드 사용.
-- 도메인 모델이 다른 도메인 모델을 직접 포함하지 않는다 — ID 참조로 경계를 유지한다.
-- 외부에서 enum/상태를 직접 비교하여 비즈니스 판단을 내리지 않는다 — 도메인 메서드로 캡슐화 (Tell, Don't Ask).
+- Spring, JPA, Jackson, HTTP 타입을 도메인 모델에 import하지 않는다.
+- 생성자를 public으로 노출하지 않는다.
+- 비즈니스 검증을 `init` 블록에 몰아넣지 않는다.
+- 외부에서 변경 가능한 public setter 또는 public `var`를 열지 않는다.
+- 도메인 모델이 다른 도메인 모델을 직접 포함하지 않는다.
+- 외부 계층에서 enum 또는 상태 값을 직접 비교해 비즈니스 판단을 내리지 않는다.
+- Entity 동등성을 모든 필드 값 기준으로 정의하지 않는다.
+- Value Object에 식별자 기반 동등성을 섞지 않는다.
 
----
+## 예외와 경계
 
-## 안티패턴
+- 단순 매핑 또는 로깅을 위한 상태 값 노출은 가능하지만, 비즈니스 판단은 도메인 메서드로 옮긴다.
+- 저장소 복원 시 과거 데이터가 현재 생성 규칙을 만족하지 않을 수 있으면 `reconstitute`에서 생성 시점 검증을 생략할 수 있다.
+- 여러 aggregate를 조합해야 하는 규칙은 Domain이 아니라 application Service 또는 Coordinator에서 조합한다.
 
-- 없음
+## 완료 기준
 
-## 체크 리스트
-
-### 모델 구조
-- [ ] `private constructor`를 사용하는가?
-- [ ] `companion object`에 `create` / `reconstitute` 팩토리 메서드가 있는가?
-- [ ] `init` 블록을 사용하지 않는가?
-- [ ] Entity라면 `equals` / `hashCode`를 식별자 기준으로 재정의했는가?
-- [ ] Value Object라면 `data class`로 정의했는가?
-
-### 불변성
-- [ ] 필드가 `val`로 선언되어 있는가?
-- [ ] 상태 변경이 행위 메서드를 통해서만 이루어지는가?
-- [ ] 내부 `var`가 필요한 경우 외부에 `val` getter로만 노출하는가?
-
-### 검증
-- [ ] 생성 시 입력값 검증을 팩토리 메서드 내에서 `require`로 수행하는가?
-- [ ] 상태 전이 전제조건을 행위 메서드 내에서 `check`로 수행하는가?
-- [ ] 비즈니스 규칙 위반 시 `CoreException`을 사용하는가?
-
-### 캡슐화 (Tell, Don't Ask)
-- [ ] 외부에서 enum/상태 값을 직접 비교하지 않고 도메인 메서드를 호출하는가?
-- [ ] 비즈니스 정책 분기(`ADMIN이면 ~`, `PENDING이면 ~`)가 도메인 메서드에 캡슐화되어 있는가?
-- [ ] 도메인 메서드명이 비즈니스 의미를 드러내는가? (`isActive`, `canCancel`, `requiresAnnualLeave`)
-
-### 순수성
-- [ ] Spring, JPA, Jackson 등 외부 프레임워크 import가 없는가?
-- [ ] 순수 Kotlin / Java 표준 라이브러리만 사용하는가?
-- [ ] 다른 도메인 모델을 직접 포함하지 않고 ID로 참조하는가?
-
-## 예시 코드
-
-- 본문의 예시 코드와 프로젝트 적용 시 실제 저장소 상대 경로를 함께 확인한다.
+- 도메인 모델이 외부 framework 타입 없이 작성되어 있다.
+- 생성과 복원 경로가 factory method 이름으로 구분된다.
+- 상태 변경이 도메인 행위 메서드로만 가능하다.
+- 비즈니스 상태 판단이 Tell Don't Ask 방식으로 캡슐화되어 있다.
