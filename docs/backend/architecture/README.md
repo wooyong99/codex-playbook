@@ -51,6 +51,48 @@ external/* -> core/application -> core/domain
 - [internal](./internal/README.md) - 내부 인프라 모듈
 - [external](./external/README.md) - 외부 연동 모듈
 
+## Source Of Truth 선택
+
+backend 변경을 설계, 구현, 리뷰할 때는 변경 유형별로 가장 가까운 guideline, strategy, policy 문서를 Source of Truth로 삼는다.
+상위 README는 문서 위치와 라우팅을 확인하는 진입점이며, 세부 규칙 위반의 단독 근거로 사용하지 않는다.
+
+### 문서 선택 절차
+
+1. 변경 파일의 코드 위치를 기준으로 가장 가까운 module guideline을 고른다.
+2. 변경한 컴포넌트 역할에 맞는 strategy 문서를 추가한다.
+3. 보안, 로깅, 트랜잭션, 동시성, 성능처럼 여러 계층에 걸치는 관심사가 있으면 policy 문서를 추가한다.
+4. 특정 기능의 선행 설계가 있으면 `docs/backend/design`의 해당 TDD를 추가한다.
+5. README는 문서 맵과 라우팅 확인에만 사용하고, 강제 규칙은 guideline, strategy, policy 문서에서 찾는다.
+
+### 변경 유형별 필수 문서
+
+| 변경 유형 | 반드시 확인할 문서 | 추가 판단 기준 |
+|-----------|-------------------|----------------|
+| HTTP endpoint, Controller, app DTO | `architecture/app/api/api-guidelines.md`, 관련 `app/api/strategies/*` | 공통 응답과 예외 응답이 있으면 `support/api/strategies/*`를 함께 본다. |
+| UseCase, Service, Facade, Coordinator | `architecture/core/application/application-guidelines.md`, 관련 `core/application/strategies/*` | 트랜잭션 또는 외부 호출 조합이 있으면 `policies/transaction-and-consistency.md`를 함께 본다. |
+| Port 인터페이스 | `core/application/strategies/port-convention.md`, `core/application/strategies/package-structure.md` | 저장소 Port면 `internal/persistence/strategies/storage-adapter-convention.md`도 함께 본다. |
+| Domain model, value object, 상태 전이 | `architecture/core/domain/domain-guidelines.md`, `core/domain/strategies/domain-model-convention.md` | 실패 표현이 있으면 `core/domain/strategies/exception-convention.md`도 함께 본다. |
+| ErrorCode, CoreException, HTTP 오류 응답 | `core/domain/strategies/exception-convention.md`, `support/api/strategies/exception-response-convention.md` | 외부 provider 오류 번역이면 `external/integration/strategies/errorcode-convention.md`를 함께 본다. |
+| JPA Entity, Repository, QueryDsl, DDL | `architecture/internal/persistence/persistence-guidelines.md`, 관련 `internal/persistence/strategies/*` | application Port 계약 변경이 있으면 `core/application/strategies/port-convention.md`를 함께 본다. |
+| in-memory runtime 저장소 | `internal/persistence/persistence-guidelines.md`, `internal/persistence/strategies/storage-adapter-convention.md` | 테스트 fake가 아니라 runtime bean이면 persistence adapter로 판정한다. |
+| 외부 API 연동 | `architecture/external/integration/integration-guidelines.md`, 관련 `external/integration/strategies/*` | 민감 정보, token, 원문 payload가 있으면 `policies/security.md`, `policies/logging.md`를 함께 본다. |
+| API 공통 응답, 예외, filter, tenant, trace, rate limit | `architecture/support/api/api-guidelines.md`, 관련 `support/api/strategies/*` | 인증/인가 또는 민감 header가 있으면 `policies/security.md`를 함께 본다. |
+| 인증/인가, 비밀번호, 세션, token | `policies/security.md`, 변경 위치의 module guideline | 저장 또는 조회가 있으면 persistence/application Port 문서를 함께 본다. |
+| 로깅, 모니터링, trace | `policies/logging.md`, `support/api` 또는 `external/integration` 관련 전략 | 민감 정보가 로그에 들어갈 수 있으면 `policies/security.md`를 함께 본다. |
+| 동시성, idempotency, rate limit, 성능 병목 | `policies/concurrency-and-performance.md` | 정합성 경계가 있으면 `policies/transaction-and-consistency.md`를 함께 본다. |
+
+### 섹션별 사용 방식
+
+| 섹션 | 사용 방식 |
+|------|-----------|
+| `목적` | 문서가 어떤 결정을 소유하는지 확인한다. |
+| `적용 범위` | 변경이 해당 문서 대상인지 확인한다. 범위 밖 문서를 세부 규칙 근거로 사용하지 않는다. |
+| `책임`, `의존 경계`, `핵심 원칙` | 구현 방향과 계층 경계를 판단한다. |
+| `세부 규칙` | 이름, 위치, 흐름, 변환 방식 등 구체 구현 기준으로 사용한다. |
+| `금지 규칙` | 반드시 피해야 하는 코드, 문서, 설정 변경을 확인한다. |
+| `예외와 경계` | 허용 가능한 예외와 조건을 확인한다. |
+| `완료 체크리스트` | 변경이 문서 기준을 충족했는지 확인한다. |
+
 ## 공통 문서 템플릿
 
 architecture 하위 문서는 문서 깊이에 따라 다음 섹션 순서를 기본으로 한다.

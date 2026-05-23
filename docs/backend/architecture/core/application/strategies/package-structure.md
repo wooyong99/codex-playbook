@@ -73,6 +73,7 @@ Command/Result 같은 application 내부 DTO는 수가 빠르게 늘어나므로
 
 - `validator/`, `strategy/`, `port/`, `mapper/`는 해당 역할 파일이 늘어날 때만 만든다.
 - UseCase 인터페이스는 외부 호출 계약이므로 `{Entity}CommandUseCase`, `{Entity}QueryUseCase`로 도메인 패키지 루트에 둔다.
+- `port/`에는 application outbound Port 인터페이스만 두며, production 인터페이스 이름은 반드시 `*Port`로 끝낸다.
 - Facade와 Coordinator는 구현하는 UseCase의 Command/Query 축을 이름에 맞춘다.
 - Service는 Command의 원자적 처리 단위이므로 기본적으로 `{Entity}CommandService`로 둔다.
 - 구현체가 많아지면 역할별 하위 패키지를 검토한다.
@@ -92,6 +93,8 @@ Command/Result 같은 application 내부 DTO는 수가 빠르게 늘어나므로
 - `ServiceCommand`, `ValidatorDto`, `StrategyDto` 같은 컴포넌트 전용 DTO 파일을 만들지 않는다.
 - action마다 `{Action}{Entity}UseCase`, `{Action}{Entity}Facade`, `{Action}{Entity}Coordinator` 파일을 기본값으로 만들지 않는다.
 - application `dto/`에 HTTP Request/Response DTO나 외부 API DTO를 섞지 않는다.
+- application `port/`에 `*Port` suffix가 없는 production 인터페이스를 추가하지 않는다.
+- application `port/`에 Port 구현체, test fake, in-memory runtime adapter를 함께 두지 않는다.
 - 예외 승인 없는 내부 DTO를 `dto/internal/`, `common`, `shared`, `util`에 두지 않는다.
 - 다른 도메인의 내부 구현체를 직접 참조하기 위해 패키지 경계를 우회하지 않는다.
 - `app/api`, `internal/persistence`, `external/integration` 구현체나 DTO를 application 패키지 안으로 끌어오지 않는다.
@@ -110,6 +113,7 @@ Command/Result 같은 application 내부 DTO는 수가 빠르게 늘어나므로
 - [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
 - [ ] 신규 application 파일이 도메인과 역할 기준에 맞는 패키지에 배치되어 있다.
 - [ ] 외부 호출 계약인 Command/Query UseCase는 도메인 패키지 루트에 있고, application DTO는 `dto/` 아래에 있다.
+- [ ] `port/` 아래 production 인터페이스는 모두 `*Port`로 끝나며 구현체가 섞여 있지 않다.
 - [ ] 하위 컴포넌트 간 DTO는 기본 금지이며, 예외 DTO만 `dto/internal/`에 제한적으로 존재한다.
 - [ ] 역할 하위 패키지가 파일 수와 책임 분리를 기준으로 만들어져 있다.
 - [ ] `common/`에 있는 코드는 특정 도메인 업무 흐름이 아니라 application 전역 관심사만 포함한다.

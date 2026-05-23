@@ -23,6 +23,7 @@
 
 - 비즈니스 규칙은 Domain에 위임하고 application은 조합과 경계 설정에 집중한다.
 - 인프라 구현체가 아니라 application이 정의한 추상화 인터페이스를 통해 외부 자원에 접근한다.
+- Port 인터페이스는 application에 둘 수 있지만 Port 구현체는 application 밖의 adapter 모듈에 둔다.
 - 입력 형식 검증, 데이터 조회, 비즈니스 규칙 검증, 도메인 행위 실행, 저장 및 결과 반환의 책임 단계를 섞지 않는다.
 
 ## 관련 정책
@@ -35,6 +36,8 @@
 
 - Application 계층에 도메인 불변식이나 상태 판단을 직접 구현하지 않는다.
 - 추상화 인터페이스 없이 DB, 외부 API, 메시징 구현체를 직접 참조하지 않는다.
+- Application 계층 production source에 Port 구현체, 저장소 adapter, 외부 시스템 adapter, in-memory runtime adapter를 두지 않는다.
+- Map, lock, connection, client, repository implementation, id generator처럼 저장 또는 외부 연동 기술의 생명주기를 application 계층이 소유하지 않는다.
 - 트랜잭션 안에서 외부 API 호출, 파일 I/O, 장기 계산을 수행하지 않는다.
 - Validator가 데이터를 직접 조회하거나 형식 검증과 존재 여부 검증을 섞지 않는다.
 - UseCase가 다른 UseCase를 직접 호출해 진입점끼리 결합하지 않는다.
@@ -62,5 +65,7 @@
 
 - [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
 - [ ] application 진입점은 도메인 행위와 Port 계약을 조합하되 인프라 구현체를 직접 참조하지 않는다.
+- [ ] application production source에는 Port 인터페이스만 있고, 해당 Port의 runtime 구현체는 `internal/*` 또는 `external/*` adapter 모듈에 있다.
+- [ ] in-memory 구현이 runtime bean으로 사용된다면 테스트 대역이 아니라 infrastructure adapter로 분류되어 application 밖에 배치되어 있다.
 - [ ] 트랜잭션 경계, 외부 I/O 경계, 데이터 일관성 단위가 설계 문서, 테스트, 또는 코드 구조에서 확인된다.
 - [ ] UseCase, Facade, Coordinator, Service, Validator, Strategy, Port, Mapper 역할 중 필요한 것만 선택되어 책임이 중복되지 않는다.

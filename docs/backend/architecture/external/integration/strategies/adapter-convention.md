@@ -44,10 +44,12 @@ application Port
 |------|------|
 | 실 Adapter | `{Provider}{Function}Adapter` |
 | Mock Adapter | `Mock{Function}Adapter` |
-| 구현 대상 Port | `{Provider}{Function}Port` 또는 기능 중심 Port |
+| 구현 대상 Port | `{Provider}{Function}Port` 또는 `{Capability}Port` |
 
 - 한 외부 서비스에서 여러 기능을 사용하면 기능별 Adapter로 분리한다.
 - Adapter 하나는 하나의 Port 구현을 기본으로 한다.
+- application outbound Port 인터페이스는 반드시 `*Port`로 끝낸다.
+- Port 이름을 `Client`, `Provider`, `Gateway`만으로 끝내지 않는다. 이 이름들은 외부 구현체나 provider 세부사항으로 오해될 수 있다.
 
 ### 의존성
 
@@ -82,6 +84,7 @@ application Port
 - 외부 예외를 Adapter 밖으로 그대로 전파하지 않는다.
 - Spring HTTP 예외를 Adapter에서 직접 catch하지 않는다. ApiClient가 Provider 예외로 감싸야 한다.
 - Result 타입을 우회해 Port 시그니처 밖으로 예외를 던지지 않는다.
+- 외부 연동 Port 인터페이스를 `*Port` suffix 없이 정의하지 않는다.
 - Port 타입에 외부 DTO를 직접 노출하지 않는다.
 - 로그에 민감 정보를 원문으로 출력하지 않는다.
 - 하나의 Adapter에 여러 Port 구현을 기본값으로 합치지 않는다.
@@ -97,6 +100,7 @@ application Port
 아래 항목을 모두 충족해야 완료로 판정한다.
 
 - [ ] `금지 규칙` 섹션의 각 항목을 위반하는 코드, 문서, 설정 변경이 없다.
+- [ ] Adapter가 구현하는 application outbound 인터페이스 이름이 `*Port`로 끝난다.
 - [ ] Adapter 클래스가 정확히 하나의 outbound Port 인터페이스를 구현한다.
 - [ ] 외부 예외가 Port Result로 변환되어 application에 노출된다.
 - [ ] 외부 DTO와 Provider 예외 타입이 Port 시그니처로 새지 않는다.
