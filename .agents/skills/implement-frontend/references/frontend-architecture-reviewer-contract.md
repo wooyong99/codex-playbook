@@ -69,8 +69,10 @@ checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/architecture-review-r{it
 
 - `[입력 파일]`의 `검토 대상` 섹션에 있는 변경 파일만 검토 대상으로 삼는다.
 - implementation output의 변경 요약, design output, TDD 경로는 입력된 경우에만 보조 컨텍스트로 사용한다.
+- `[검토 지시]`에는 확정 요구사항 컨텍스트 경로를 포함할 수 있다.
+- 확정 요구사항 컨텍스트가 있으면 `요구사항 결정`, `사용자 확인 필요 없음`, `금지된 추론`, `backend 계약/미확정 사항`, `검증 기준`, `남은 미결정 사항`을 검토 경계로 사용한다.
 - 검토 기준은 `[입력 파일]`의 `Source of Truth` 섹션으로 한정한다.
-- 입력되지 않은 문서 경로, 숨은 팀 관행, 개인적 선호, 설계 대안은 violation 근거로 삼지 않는다.
+- 입력되지 않은 문서 경로, 숨은 팀 관행, 개인적 선호, 설계 대안, 미확정 제품 UX/API/cache/navigation 정책은 violation 근거로 삼지 않는다.
 - `[출력 파일]`은 `[입력 파일]`의 `Metadata.output_file` 값을 그대로 사용한다.
 - `[체크포인트 파일]`은 `[입력 파일]`의 `Metadata.checkpoint_file` 값을 그대로 사용한다.
 - 체크포인트 여부는 `[입력 파일]`의 `체크포인트 규격` 섹션을 기준으로 판단한다.

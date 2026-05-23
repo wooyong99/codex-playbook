@@ -2,7 +2,7 @@
 
 이 문서는 `implement-frontend` 스킬의 frontend 마일스톤 실행 흐름을 정의한다.
 
-책임 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)가 소유하고, 역할별 input/output schema는 각 frontend 계약 문서가 소유한다. 파일 검증과 체크포인트 복구 절차는 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.
+핵심 책임 경계는 [../SKILL.md](../SKILL.md)가 소유하고, 상세 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)가 소유한다. 역할별 input/output schema는 각 frontend 계약 문서가 소유한다. 파일 검증과 체크포인트 복구 절차는 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.
 
 ## 실행 모델
 
@@ -10,6 +10,9 @@
 
 ```text
 Main agent
+  -> Requirement clarification gate
+  -> Clarified frontend requirement context
+  -> Milestone planning
   -> Frontend Design Writer input
   -> design output
   -> Frontend Implementation Engineer input
@@ -19,11 +22,12 @@ Main agent
   -> pass or implementation fix input
 ```
 
-메인 에이전트는 각 단계 사이에서 이전 output을 검증하고 다음 input을 만든다. 이 변환은 단순 포맷 변환이 아니라 현재 마일스톤 상태, Source of Truth, 제외사항, 검증 결과, reviewer 위반, backend API 계약 불확실성을 반영하는 오케스트레이션 책임이다.
+메인 에이전트는 각 단계 사이에서 이전 output을 검증하고 다음 input을 만든다. 이 변환은 단순 포맷 변환이 아니라 현재 마일스톤 상태, Source of Truth, 제외사항, 확정 요구사항 컨텍스트, 검증 결과, reviewer 위반, backend API 계약 불확실성을 반영하는 오케스트레이션 책임이다.
 
 ## 단계 개요
 
-1. 마일스톤 시작: 범위, 제외사항, 검증 기준, run artifact 경로를 확정한다.
+0. 요구사항 명확화 게이트: 구현 방식에 영향을 주는 frontend 정책을 확정하거나 사용자에게 질문한다.
+1. 마일스톤 시작: 범위, 제외사항, 검증 기준, 확정 요구사항 컨텍스트, run artifact 경로를 확정한다.
 2. Frontend Design Writer 위임: frontend TDD를 작성하거나 스킵 근거를 받는다.
 3. Frontend Implementation Engineer 위임: frontend 구현 또는 수정을 수행한다.
 4. Frontend Architecture Reviewer 위임: frontend 아키텍처 기준 준수 여부를 검토한다.
@@ -38,14 +42,31 @@ Main agent
 - 각 역할 호출마다 해당 계약 문서의 Case에 있는 `체크포인트 규격`을 입력 파일에 포함한다.
 - 각 역할 호출 전에 `[입력 파일]`, `[출력 파일]`, `[체크포인트 파일]` 경로를 모두 할당한다.
 - Source of Truth 후보 중 이번 변경과 직접 관련된 문서만 input artifact에 넣는다.
+- 확정 요구사항 컨텍스트가 있으면 design/implementation/review input artifact에 경로로 연결한다.
 - 정상 산출물과 체크포인트 파일은 모두 검증한 뒤 다음 단계로 진행한다.
+
+## Step 0. 요구사항 명확화 게이트
+
+목적:
+
+- 추상적인 frontend 요청을 구현 가능한 요구사항으로 좁힌다.
+- UX, API, 상태, cache, rendering, 검증 정책을 AI가 임의로 추론하지 못하게 한다.
+- Frontend Design Writer가 미확정 UX/API/cache/navigation 정책을 설계 결정으로 확정하지 않도록 입력 경계를 만든다.
+
+처리:
+
+- [requirement-clarification-gate.md](requirement-clarification-gate.md)에 따라 사용자 흐름, 진입 경로/라우팅, 화면 상태, interaction lifecycle, API 계약, state ownership, cache/invalidation, form/submit 정책, UX 실패 처리, responsive/a11y, design source, 렌더링 성능, 브라우저 검증 기준을 확인한다.
+- 구현 방식에 영향을 주는 정보가 누락되면 design/implementation/review artifact를 만들기 전에 중단하고 사용자에게 질문한다.
+- 질문은 사용자 흐름과 대상 화면, API 계약과 backend dependency, 상태 소유권과 interaction state, cache/invalidation 순서로 우선한다.
+- 단순 UI copy 수정 또는 국소 component 스타일 조정처럼 결정 영향도가 낮으면 확정된 기본값과 코드베이스 관례 기반 가정을 기록하고 진행할 수 있다.
+- 게이트를 통과하면 `요구사항 결정`, `사용자 확인 필요 없음`, `금지된 추론`, `backend 계약/미확정 사항`, `검증 기준`, `남은 미결정 사항`을 확정 요구사항 컨텍스트로 남긴다.
 
 ## Step 1. 마일스톤 시작
 
 고수준 확인:
 
 - 현재 frontend 마일스톤을 진행 중으로 표시한다.
-- 목표, 범위, 명시적 제외사항, build/test 또는 브라우저 검증 기준을 다시 확인한다.
+- 목표, 범위, 명시적 제외사항, 확정 요구사항 컨텍스트, build/test 또는 브라우저 검증 기준을 다시 확인한다.
 - 이번 마일스톤의 input, output, checkpoint 경로를 할당한다.
 - frontend Source of Truth 후보에서 이번 변경과 직접 관련된 문서만 선별한다.
 - backend API 계약이 불확실하면 Frontend Implementation Engineer 구현 전에 계약 불확실성으로 보고하거나 backend 마일스톤 선행을 요청한다.
@@ -62,9 +83,11 @@ Main agent
 처리:
 
 - 호출 전 [frontend-technical-design-writer-contract.md](frontend-technical-design-writer-contract.md)의 Case 1 형식으로 design input artifact를 저장한다.
+- design input artifact에는 확정 요구사항 컨텍스트 경로를 포함한다.
 - 호출 프롬프트에는 `[입력 파일]` 경로와 계약 파일 경로만 전달한다.
 - `TDD_CREATED:`이면 design output을 검증하고 TDD 경로와 design output 경로를 보관한다.
 - `TDD_SKIPPED:`이면 design output을 검증하고 스킵 근거와 design output 경로를 보관한다.
+- `TDD_BLOCKED:`이면 design output을 검증하고 `설계 불가 사유`를 읽은 뒤 구현으로 진행하지 않고 Step 0으로 돌아가 사용자 질문을 만든다.
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 복구 절차로 재호출한다.
 
 `TDD_SKIPPED` 재확인 조건:
@@ -85,6 +108,7 @@ Main agent
 
 - 호출 전 [frontend-implementation-engineer-contract.md](frontend-implementation-engineer-contract.md)의 Case 1 형식으로 implementation input artifact를 저장한다.
 - implementation input artifact에는 design output 경로를 기록하고, 설계 요약 원문은 복사하지 않는다.
+- implementation input artifact에는 확정 요구사항 컨텍스트 경로를 포함한다.
 - `IMPLEMENTATION_COMPLETED:`이면 implementation output을 검증한다.
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 복구 절차로 같은 Frontend Implementation Engineer 인스턴스를 재호출한다.
 - `검증 결과` 섹션의 build/compile 또는 tests 결과가 누락됐거나 실패면 마일스톤을 성공으로 간주하지 않는다.
@@ -101,6 +125,7 @@ Main agent
 
 - frontend 변경 파일이 있으면 [frontend-architecture-reviewer-contract.md](frontend-architecture-reviewer-contract.md)의 Case 1 형식으로 architecture review input artifact를 저장한다.
 - architecture review input artifact에는 implementation output 경로, design output 경로, 이번 검토의 Source of Truth, output/checkpoint 경로, 체크포인트 규격을 기록한다.
+- architecture review input artifact에는 확정 요구사항 컨텍스트 경로를 포함한다.
 - 기준 문서와 TDD 결정은 architecture review input artifact로 전달하며 agent TOML이 정적으로 소유하지 않는다.
 - `REVIEW_COMPLETED:`이면 architecture review output을 검증하고 판정과 위반 목록을 읽는다.
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 복구 절차로 새 Frontend Architecture Reviewer 인스턴스를 재호출한다.

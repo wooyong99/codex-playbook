@@ -69,6 +69,9 @@ checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/implementation-r00-v001.
 
 - `[명시적 제외사항]`은 구현 범위에서 제외한다.
 - 신규 구현은 `[입력 파일]`의 `선행 산출물`과 `Source of Truth` 섹션을 기준으로 수행한다.
+- `[구현 지시]`에는 확정 요구사항 컨텍스트 경로를 포함할 수 있다.
+- 확정 요구사항 컨텍스트가 있으면 `요구사항 결정`, `사용자 확인 필요 없음`, `금지된 추론`, `backend 계약/미확정 사항`, `검증 기준`, `남은 미결정 사항`을 구현 경계로 사용한다.
+- Implementation Engineer는 확정 요구사항 컨텍스트에 없는 제품 UX, navigation flow, API shape, cache freshness, invalidation, optimistic update, destructive action, form validation 정책을 임의로 구현하지 않는다.
 - `[출력 파일]`은 `[입력 파일]`의 `Metadata.output_file` 값을 그대로 사용한다.
 - `[체크포인트 파일]`은 `[입력 파일]`의 `Metadata.checkpoint_file` 값을 그대로 사용한다.
 - 체크포인트 여부는 `[입력 파일]`의 `체크포인트 규격` 섹션을 기준으로 판단한다.
@@ -187,6 +190,8 @@ checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/implementation-r{iter}-v
 - 위반 수정은 `[입력 파일]`의 `수정 대상 위반`과 `선행 산출물`이 가리키는 review output만 기준으로 수행한다.
 - `수정 대상 위반`에는 reviewer output 파일 경로와 수정 대상 violation 식별자만 둔다.
 - 위반 본문 원문을 복사하지 않고 reviewer output 파일 경로를 참조한다.
+- `[수정 지시]`에는 확정 요구사항 컨텍스트 경로를 포함할 수 있다.
+- 확정 요구사항 컨텍스트에 없는 UX/API/cache/navigation 정책을 위반 수정 과정에서 새로 만들지 않는다.
 - `[출력 파일]`은 `[입력 파일]`의 `Metadata.output_file` 값을 그대로 사용한다.
 - `[체크포인트 파일]`은 `[입력 파일]`의 `Metadata.checkpoint_file` 값을 그대로 사용한다.
 - 체크포인트 여부는 `[입력 파일]`의 `체크포인트 규격` 섹션을 기준으로 판단한다.
