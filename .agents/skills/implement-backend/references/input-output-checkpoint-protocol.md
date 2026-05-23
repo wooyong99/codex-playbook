@@ -6,7 +6,7 @@
 
 이 문서는 저수준 실행 규격이다.
 
-- 전체 책임 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)를 따른다.
+- 핵심 책임 경계는 [../SKILL.md](../SKILL.md)를 따르고, 상세 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)를 따른다.
 - design/implementation/review 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)를 따른다.
 - 역할별 Case, Markdown input/output 섹션, 체크포인트 판단 기준은 각 `*-contract.md`를 따른다.
 - 이 문서는 `.agents/runs/{run_id}` 하위 파일 구조, 결과 신호 검증, 체크포인트 복구 절차를 정의한다.
@@ -54,7 +54,7 @@ backend 입력, 출력, 체크포인트는 run과 backend 마일스톤 단위로
 처리 절차:
 
 1. 서브에이전트 호출 전에 `[입력 파일]`, `[출력 파일]`, `[체크포인트 파일]` 절대 경로를 할당한다.
-2. `[입력 파일]`에는 요구사항, 명시적 제외사항, 선행 output artifact 경로, 선별된 Source of Truth, 출력 파일 경로, 체크포인트 파일 경로, 출력 규격, 체크포인트 규격을 저장한다.
+2. `[입력 파일]`에는 요구사항, 명시적 제외사항, 확정 요구사항 컨텍스트 경로, 선행 output artifact 경로, 선별된 Source of Truth, 출력 파일 경로, 체크포인트 파일 경로, 출력 규격, 체크포인트 규격을 저장한다.
 3. 메인 에이전트는 계약 문서의 해당 Case에서 출력 규격과 체크포인트 규격을 가져와 입력 파일에 포함한다.
 4. 서브에이전트에는 `[입력 파일]`을 읽고 입력 파일의 출력 규격에 따라 작업하라는 짧은 프롬프트만 전달한다.
 5. 체크포인트 재호출도 같은 `[입력 파일]`을 기준으로 하되, 기존 `[체크포인트 파일]`을 먼저 읽고 이어서 수행하게 한다.
@@ -71,7 +71,14 @@ backend 입력, 출력, 체크포인트는 run과 backend 마일스톤 단위로
 4. backend 구현 결과는 `변경 파일`, `검증 결과` 섹션을 확인한다.
 5. backend 검토 결과는 `판정`, `위반 사항` 섹션을 확인하고, `blocker` 또는 `major` 위반이 있으면 수정 루프로 보낸다.
 6. 정상 완료 경로에서도 이번 호출의 `[체크포인트 파일]`이 존재하고 비어 있지 않으며, 계약 문서의 체크포인트 파일 스키마에 있는 제목과 핵심 섹션이 포함됐는지 검증한다.
-7. 다음 backend 에이전트의 input artifact에는 필요한 output 원문을 복사하지 않고 선행 output artifact 경로만 기록한다.
+7. 다음 backend 에이전트의 input artifact에는 필요한 output 원문을 복사하지 않고 선행 output artifact 경로와 확정 요구사항 컨텍스트 경로만 기록한다.
+
+확정 요구사항 컨텍스트는 아래 내용을 담는다.
+
+- `요구사항 결정`: 사용자 또는 Source of Truth로 확정된 정책
+- `사용자 확인 필요 없음`: 코드베이스 관례로 처리해도 되는 구현 선택
+- `금지된 추론`: 아직 확정되지 않아 구현에 반영하면 안 되는 정책
+- `남은 미결정 사항`: 이번 마일스톤에서 제외하거나 사용자 확인이 필요한 항목
 
 ## 체크포인트 처리
 
