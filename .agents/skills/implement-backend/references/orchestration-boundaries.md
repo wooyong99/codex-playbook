@@ -2,7 +2,7 @@
 
 이 문서는 `implement-backend`의 [SKILL.md](../SKILL.md)에 있는 역할 요약을 보조하여, 메인 에이전트와 backend 역할 서브에이전트의 세부 경계와 예외를 정의한다.
 
-실행 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 규격은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)와 역할별 계약 문서가 소유한다.
+실행 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 저장·검증 규격은 [run-artifact-protocol.md](run-artifact-protocol.md)가 소유한다. 역할별 input/output/checkpoint 템플릿은 각 역할 계약 문서가 소유한다.
 
 ## 핵심 경계
 
@@ -27,7 +27,7 @@
 
 - 구현 전에 [requirement-clarification-gate.md](requirement-clarification-gate.md)에 따라 요구사항 명확화 게이트를 수행한다.
 - 구현 방식에 영향을 주는 유저 플로우, 정합성, 실패 처리, 운영 정책이 누락되면 사용자에게 질문한다.
-- 확정 요구사항, 사용자 확인이 필요 없는 코드베이스 관례, 금지된 추론, 남은 미결정 사항을 분리한다.
+- 업무 목표, 범위, 업무 규칙, 정책, 상태 변화, 운영 요구사항, 사용자 확인이 필요 없는 코드베이스 관례, 금지된 추론, 남은 미결정 사항을 분리한다.
 - 실패 추적, 재처리, 감사 로그, 이벤트 유실 허용 여부, 중복 실행 방지 같은 운영 가능성을 architecture 요구사항으로 다룬다.
 - backend 범위와 명시적 제외사항을 고정한다.
 - 마일스톤별 Source of Truth 후보를 실제 요구사항에 맞게 선별한다.
@@ -62,5 +62,5 @@
 
 - 마일스톤 분할 수치와 계획 기준: [milestone-planning.md](milestone-planning.md)
 - backend 역할 호출 순서와 반복 종료 기준: [milestone-execution-workflow.md](milestone-execution-workflow.md)
-- `.agents/runs/{run_id}` 파일 구조와 검증 절차: [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)
+- `.agents/runs/{run_id}` 파일 구조와 검증 절차: [run-artifact-protocol.md](run-artifact-protocol.md)
 - 역할별 Markdown artifact 섹션, 결과 신호, 체크포인트 판단 기준: 각 `*-contract.md`

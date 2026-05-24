@@ -2,7 +2,7 @@
 
 이 문서는 `implement-backend` 스킬의 backend 마일스톤 실행 흐름을 정의한다.
 
-핵심 책임 경계는 [../SKILL.md](../SKILL.md)가 소유하고, 상세 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)가 소유한다. 역할별 input/output schema는 각 backend 계약 문서가 소유한다. 파일 검증과 체크포인트 복구 절차는 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.
+핵심 책임 경계는 [../SKILL.md](../SKILL.md)가 소유하고, 상세 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)가 소유한다. 역할별 input/output/checkpoint 템플릿은 각 backend 계약 문서가 소유한다. 파일 검증과 체크포인트 복구 절차는 [run-artifact-protocol.md](run-artifact-protocol.md)를 따른다.
 
 ## 실행 모델
 
@@ -59,7 +59,7 @@ Main agent
 - 구현 방식에 영향을 주는 정보가 누락되면 design/implementation/review artifact를 만들기 전에 중단하고 사용자에게 질문한다.
 - 질문은 유저 플로우, 정합성 요구사항, 실패 처리 정책, 운영 정책 순서로 우선한다.
 - 단순 CRUD 또는 국소 리팩토링처럼 결정 영향도가 낮으면 확정된 기본값과 코드베이스 관례 기반 가정을 기록하고 진행할 수 있다.
-- 게이트를 통과하면 `요구사항 결정`, `사용자 확인 필요 없음`, `금지된 추론`, `남은 미결정 사항`을 확정 요구사항 컨텍스트로 남긴다.
+- 게이트를 통과하면 업무 목표, 범위, 업무 규칙, 정책, 상태 변화, 정합성, 운영 요구사항, 금지된 추론, 남은 미결정 사항을 확정 요구사항 컨텍스트로 남긴다.
 
 ## Step 1. 마일스톤 시작
 
@@ -70,7 +70,7 @@ Main agent
 - 이번 마일스톤의 input, output, checkpoint 경로를 할당한다.
 - backend Source of Truth 후보에서 이번 변경과 직접 관련된 문서만 선별한다.
 
-세부 파일 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.
+세부 파일 규칙은 [run-artifact-protocol.md](run-artifact-protocol.md)를 따른다.
 
 ## Step 2. Backend Design Writer 위임
 

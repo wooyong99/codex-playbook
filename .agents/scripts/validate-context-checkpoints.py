@@ -167,7 +167,8 @@ def main():
     frontend_skill_path = ROOT / ".agents/skills/implement-frontend/SKILL.md"
     backend_boundaries_path = ROOT / ".agents/skills/implement-backend/references/orchestration-boundaries.md"
     backend_planning_path = ROOT / ".agents/skills/implement-backend/references/milestone-planning.md"
-    backend_protocol_path = ROOT / ".agents/skills/implement-backend/references/input-output-checkpoint-protocol.md"
+    backend_protocol_path = ROOT / ".agents/skills/implement-backend/references/run-artifact-protocol.md"
+    backend_requirement_context_path = ROOT / ".agents/skills/implement-backend/references/requirement-context-template.md"
     backend_workflow_path = ROOT / ".agents/skills/implement-backend/references/milestone-execution-workflow.md"
     frontend_boundaries_path = ROOT / ".agents/skills/implement-frontend/references/orchestration-boundaries.md"
     frontend_planning_path = ROOT / ".agents/skills/implement-frontend/references/milestone-planning.md"
@@ -182,7 +183,8 @@ def main():
         ("backend-architecture-reviewer", "backend review agent"),
         ("references/orchestration-boundaries.md", "backend boundary reference"),
         ("references/milestone-planning.md", "backend planning reference"),
-        ("references/input-output-checkpoint-protocol.md", "backend input output reference"),
+        ("references/run-artifact-protocol.md", "backend run artifact reference"),
+        ("references/requirement-context-template.md", "backend requirement context template reference"),
         ("references/milestone-execution-workflow.md", "backend workflow reference"),
         ("references/backend-technical-design-writer-contract.md", "backend design contract"),
         ("references/backend-implementation-engineer-contract.md", "backend implementation contract"),
@@ -220,16 +222,37 @@ def main():
         (
             backend_protocol_path,
             [
-                ("# Backend Input Output And Checkpoint Protocol", "backend protocol title"),
-                ("## Backend Input Artifact 처리", "backend input handling"),
-                ("## Backend Output Artifact 처리", "backend output handling"),
+                ("# Backend Run Artifact Protocol", "backend protocol title"),
+                ("## Input Artifact 처리", "backend input handling"),
+                ("## Output Artifact 처리", "backend output handling"),
                 ("## 체크포인트 처리", "backend checkpoint handling"),
-                ("Markdown input artifact", "backend markdown input artifact"),
-                ("Markdown output artifact", "backend markdown output artifact"),
+                ("role별 input 템플릿", "backend role-owned input template"),
+                ("role별 output 템플릿", "backend role-owned output template"),
+                ("role별 checkpoint 템플릿", "backend role-owned checkpoint template"),
                 ("├── inputs/", "backend input directory"),
                 ("├── outputs/", "backend output directory"),
                 ("역할별 체크포인트 판단 기준은 backend 계약 문서가 단일 출처", "backend contract-owned checkpoint criteria"),
                 ("체크포인트 규격", "backend protocol passes checkpoint criteria input"),
+            ],
+        ),
+        (
+            backend_requirement_context_path,
+            [
+                ("# Backend Requirement Context Template", "backend requirement context title"),
+                ("schema_version: implement-backend-requirement-context/v1", "backend requirement context schema"),
+                ("## 업무 목표", "backend business goal section"),
+                ("## 범위와 제외사항", "backend scope section"),
+                ("## 액터와 유저 플로우", "backend actor flow section"),
+                ("## 업무 규칙", "backend business rules section"),
+                ("## 정책 결정", "backend policy section"),
+                ("## 상태 변화", "backend state transition section"),
+                ("## 정합성 요구사항", "backend consistency section"),
+                ("## 운영 요구사항", "backend operational section"),
+                ("## 외부 계약", "backend external contract section"),
+                ("## 검증 기준", "backend verification section"),
+                ("## 사용자 확인 필요 없음", "backend no-user-confirmation section"),
+                ("## 금지된 추론", "backend forbidden inference section"),
+                ("## 남은 미결정 사항", "backend remaining unknowns section"),
             ],
         ),
         (
@@ -344,6 +367,7 @@ def main():
         backend_boundaries_path,
         backend_planning_path,
         backend_protocol_path,
+        backend_requirement_context_path,
         backend_workflow_path,
         frontend_boundaries_path,
         frontend_planning_path,

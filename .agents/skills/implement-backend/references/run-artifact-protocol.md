@@ -1,6 +1,8 @@
-# Backend Input Output And Checkpoint Protocol
+# Backend Run Artifact Protocol
 
-이 문서는 `implement-backend` 스킬의 backend Markdown input artifact, output artifact, 체크포인트 파일, 결과 신호, 검증 절차를 소유한다. 세부 Case와 역할별 Markdown 섹션은 backend 계약 문서가 단일 출처다.
+이 문서는 `implement-backend` 스킬의 `.agents/runs/{run_id}` 하위 저장 구조, 파일명, 공통 metadata, 결과 신호 검증, 체크포인트 복구 절차를 소유한다.
+
+역할별 input/output/checkpoint Markdown 템플릿은 각 backend 계약 문서가 단일 출처다.
 
 ## 문서 역할
 
@@ -8,16 +10,27 @@
 
 - 핵심 책임 경계는 [../SKILL.md](../SKILL.md)를 따르고, 상세 경계는 [orchestration-boundaries.md](orchestration-boundaries.md)를 따른다.
 - design/implementation/review 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)를 따른다.
-- 역할별 Case, Markdown input/output 섹션, 체크포인트 판단 기준은 각 `*-contract.md`를 따른다.
-- 이 문서는 `.agents/runs/{run_id}` 하위 파일 구조, 결과 신호 검증, 체크포인트 복구 절차를 정의한다.
+- 확정 요구사항 컨텍스트 형식은 [requirement-context-template.md](requirement-context-template.md)를 따른다.
+- 역할별 Case, Markdown input/output/checkpoint 템플릿, 필수 섹션, 체크포인트 판단 기준은 각 `*-contract.md`를 따른다.
+- 이 문서는 파일 저장과 검증 흐름만 정의한다.
+
+이 문서가 소유하지 않는 항목:
+
+- role별 input 템플릿
+- role별 output 템플릿
+- role별 checkpoint 템플릿
+- role별 결과 신호 이름
+- role별 필수 섹션
+- role별 Case 분기
 
 ## 저장 위치
 
-backend 입력, 출력, 체크포인트는 run과 backend 마일스톤 단위로 저장한다.
+backend 입력, 출력, 체크포인트는 run과 backend 마일스톤 단위로 저장한다. 확정 요구사항 컨텍스트는 run 전체에 공통이면 `inputs/` 바로 아래에 두고, 마일스톤별 경계가 다르면 `inputs/M{n}/` 아래에 둔다.
 
 ```text
 .agents/runs/{run_id}/
 ├── inputs/
+│   ├── requirement-context.v1.md
 │   └── M{n}/
 │       ├── 001-design-r00-input.v1.md
 │       ├── 002-implementation-r00-input.v1.md
@@ -47,19 +60,43 @@ backend 입력, 출력, 체크포인트는 run과 backend 마일스톤 단위로
 - `v1`: input/output artifact 파일명 스키마 버전. 파일 내용의 `Metadata` 섹션에 있는 `schema_version`은 각 backend 계약 문서가 정한다.
 - 정상 결과를 다시 받아야 하면 새 `{seq}`를 할당한다. 같은 파일 경로 재사용은 동일 호출의 저장 실패 복구에만 허용한다.
 
-## Backend Input Artifact 처리
+## 공통 Metadata 필드
+
+role별 artifact의 `## Metadata` 섹션은 각 계약 문서가 정의한다. 다만 아래 필드는 모든 role input artifact에서 공통으로 사용한다.
+
+```yaml
+schema_version: <role별 계약 문서가 정한 schema version>
+run_id: <run_id>
+milestone: M<n>
+sequence: <오케스트레이터가 파일명에 부여한 순번>
+role: <서브에이전트 이름>
+kind: <role별 input kind>
+iteration: <role별 반복 번호>
+created_at: <ISO-8601 timestamp>
+output_file: .agents/runs/{run_id}/outputs/M{n}/{seq}-{role_slug}-r{iter}-result.v1.md
+checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/{role_slug}-r{iter}-v001.md
+```
+
+공통 규칙:
+
+- `output_file`은 이번 호출에서 정상 완료 시 저장해야 하는 `[출력 파일]` 경로다.
+- `checkpoint_file`은 이번 호출에서 중간 체크포인트와 정상 완료 snapshot을 저장해야 하는 `[체크포인트 파일]` 경로다.
+- role별 계약 문서는 위 공통 필드에 role별 `schema_version`, `role`, `kind`, `iteration`, 경로 패턴을 구체화한다.
+
+## Input Artifact 처리
 
 `implement-backend`는 서브에이전트 호출 전에 `[입력 파일]` Markdown을 저장하고, 호출 프롬프트에는 `[입력 파일]` 절대 경로와 계약 파일 경로만 전달한다. 긴 입력 본문을 프롬프트에 직접 복사하지 않는다.
 
 처리 절차:
 
 1. 서브에이전트 호출 전에 `[입력 파일]`, `[출력 파일]`, `[체크포인트 파일]` 절대 경로를 할당한다.
-2. `[입력 파일]`에는 요구사항, 명시적 제외사항, 확정 요구사항 컨텍스트 경로, 선행 output artifact 경로, 선별된 Source of Truth, 출력 파일 경로, 체크포인트 파일 경로, 출력 규격, 체크포인트 규격을 저장한다.
-3. 메인 에이전트는 계약 문서의 해당 Case에서 출력 규격과 체크포인트 규격을 가져와 입력 파일에 포함한다.
-4. 서브에이전트에는 `[입력 파일]`을 읽고 입력 파일의 출력 규격에 따라 작업하라는 짧은 프롬프트만 전달한다.
-5. 체크포인트 재호출도 같은 `[입력 파일]`을 기준으로 하되, 기존 `[체크포인트 파일]`을 먼저 읽고 이어서 수행하게 한다.
+2. 확정 요구사항 컨텍스트가 있으면 [requirement-context-template.md](requirement-context-template.md)에 맞는 파일을 저장하고 role input artifact에는 그 경로를 기록한다.
+3. `[입력 파일]`에는 role별 계약 문서의 해당 Case template에 맞춰 요구사항, 명시적 제외사항, 확정 요구사항 컨텍스트 경로, 선행 output artifact 경로, 선별된 Source of Truth, 출력 파일 경로, 체크포인트 파일 경로, 출력 규격, 체크포인트 규격을 저장한다.
+4. 메인 에이전트는 계약 문서의 해당 Case에서 출력 규격과 체크포인트 규격을 가져와 입력 파일에 포함한다.
+5. 서브에이전트에는 `[입력 파일]`을 읽고 입력 파일의 출력 규격에 따라 작업하라는 짧은 프롬프트만 전달한다.
+6. 체크포인트 재호출도 같은 `[입력 파일]`을 기준으로 하되, 기존 `[체크포인트 파일]`을 먼저 읽고 이어서 수행하게 한다.
 
-## Backend Output Artifact 처리
+## Output Artifact 처리
 
 서브에이전트는 `[출력 파일]`에 Markdown output artifact를 저장하고, 같은 호출의 `[체크포인트 파일]`에도 완료 snapshot을 저장한 뒤 첫 줄에 결과 신호와 파일 경로만 반환한다.
 
@@ -72,13 +109,6 @@ backend 입력, 출력, 체크포인트는 run과 backend 마일스톤 단위로
 5. backend 검토 결과는 `판정`, `위반 사항` 섹션을 확인하고, `blocker` 또는 `major` 위반이 있으면 수정 루프로 보낸다.
 6. 정상 완료 경로에서도 이번 호출의 `[체크포인트 파일]`이 존재하고 비어 있지 않으며, 계약 문서의 체크포인트 파일 스키마에 있는 제목과 핵심 섹션이 포함됐는지 검증한다.
 7. 다음 backend 에이전트의 input artifact에는 필요한 output 원문을 복사하지 않고 선행 output artifact 경로와 확정 요구사항 컨텍스트 경로만 기록한다.
-
-확정 요구사항 컨텍스트는 아래 내용을 담는다.
-
-- `요구사항 결정`: 사용자 또는 Source of Truth로 확정된 정책
-- `사용자 확인 필요 없음`: 코드베이스 관례로 처리해도 되는 구현 선택
-- `금지된 추론`: 아직 확정되지 않아 구현에 반영하면 안 되는 정책
-- `남은 미결정 사항`: 이번 마일스톤에서 제외하거나 사용자 확인이 필요한 항목
 
 ## 체크포인트 처리
 

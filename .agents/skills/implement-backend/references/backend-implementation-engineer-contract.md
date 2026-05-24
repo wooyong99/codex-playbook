@@ -1,7 +1,7 @@
 # Backend Implementation Engineer — Case Contract
 
 `implement-backend` 스킬이 `backend-implementation-engineer` 서브에이전트와 주고받는 Case 기반 인터페이스 규격.
-에이전트 정의 파일(`.codex/agents/backend-implementation-engineer.toml`)이 아닌 이 문서가 backend 구현·수정 입력 Markdown 섹션, 출력 Markdown 섹션, 결과 신호, 체크포인트 판단 기준, 체크포인트 파일 템플릿의 단일 출처다.
+에이전트 정의 파일(`.codex/agents/backend-implementation-engineer.toml`)이 아닌 이 문서가 backend 구현·수정 input/output/checkpoint 템플릿, 결과 신호, 체크포인트 판단 기준의 단일 출처다.
 
 ## 문서 역할
 
@@ -9,7 +9,7 @@
 
 - Backend Implementation Engineer의 역할 철학은 `.codex/agents/backend-implementation-engineer.toml`이 제공한다.
 - Implementation Engineer 호출과 재호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 결정한다.
-- 이 문서는 신규 구현 Case, 위반 수정 Case, Markdown input/output 섹션, 결과 신호, 체크포인트 기준만 소유한다.
+- 이 문서는 신규 구현 Case, 위반 수정 Case, Markdown input/output/checkpoint 템플릿, 결과 신호, 체크포인트 기준만 소유한다.
 - 메인 에이전트는 design/review output을 읽고 implementation input으로 재구성한다.
 
 ## 공통 원칙
@@ -34,9 +34,9 @@ Design Writer의 결과와 Source of Truth를 기준으로 backend 코드를 구
 [지시]: 입력 파일을 읽고 입력 파일의 출력 규격에 따라 출력 파일과 체크포인트 파일을 저장하세요.
 ```
 
-### 입력 파일 섹션
+### Input Template
 
-`[입력 파일]`은 Markdown으로 작성하며 아래 섹션을 포함한다.
+`[입력 파일]`은 Markdown으로 작성하며 아래 섹션을 포함한다. 이 input template은 이 계약 문서가 소유한다.
 
 ```text
 # Backend Implementation Input
@@ -70,7 +70,7 @@ checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/implementation-r00-v001.
 - `[명시적 제외사항]`은 구현 범위에서 제외한다.
 - 신규 구현은 `[입력 파일]`의 `선행 산출물`과 `Source of Truth` 섹션을 기준으로 수행한다.
 - `[구현 지시]`에는 확정 요구사항 컨텍스트 경로를 포함할 수 있다.
-- 확정 요구사항 컨텍스트가 있으면 `요구사항 결정`, `사용자 확인 필요 없음`, `금지된 추론`, `남은 미결정 사항`을 구현 경계로 사용한다.
+- 확정 요구사항 컨텍스트가 있으면 업무 목표, 범위, 업무 규칙, 정책, 상태 변화, 정합성, 운영 요구사항, 금지된 추론, 남은 미결정 사항을 구현 경계로 사용한다.
 - Implementation Engineer는 확정 요구사항 컨텍스트에 없는 비즈니스, 운영, 실패 처리, 정합성, 재처리, 동시성 정책을 임의로 구현하지 않는다.
 - `[출력 파일]`은 `[입력 파일]`의 `Metadata.output_file` 값을 그대로 사용한다.
 - `[체크포인트 파일]`은 `[입력 파일]`의 `Metadata.checkpoint_file` 값을 그대로 사용한다.
@@ -90,9 +90,9 @@ Source of Truth 후보:
 완료된 작업은 건너뛰고 남은 작업부터 이어서 수행.
 ```
 
-### 출력 규격
+### Output Template / 출력 규격
 
-Implementation Engineer는 작업 완료 후 `[출력 파일]`에 아래 Markdown 섹션을 저장한다.
+Implementation Engineer는 작업 완료 후 `[출력 파일]`에 아래 Markdown 섹션을 저장한다. 이 output template은 이 계약 문서가 소유한다.
 
 ```text
 # Backend Implementation Result
@@ -150,9 +150,9 @@ Architecture Reviewer가 확정한 위반만 수정하고, 위반과 무관한 �
 [지시]: 입력 파일을 읽고 입력 파일의 출력 규격에 따라 출력 파일과 체크포인트 파일을 저장하세요.
 ```
 
-### 입력 파일 섹션
+### Input Template
 
-`[입력 파일]`은 Markdown으로 작성하며 아래 섹션을 포함한다.
+`[입력 파일]`은 Markdown으로 작성하며 아래 섹션을 포함한다. 이 input template은 이 계약 문서가 소유한다.
 
 ```text
 # Backend Fix Input
@@ -191,9 +191,9 @@ checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/implementation-r{iter}-v
 - `[체크포인트 파일]`은 `[입력 파일]`의 `Metadata.checkpoint_file` 값을 그대로 사용한다.
 - 체크포인트 여부는 `[입력 파일]`의 `체크포인트 규격` 섹션을 기준으로 판단한다.
 
-### 출력 규격
+### Output Template / 출력 규격
 
-Implementation Engineer는 수정 완료 후 `[출력 파일]`에 아래 Markdown 섹션을 저장한다.
+Implementation Engineer는 수정 완료 후 `[출력 파일]`에 아래 Markdown 섹션을 저장한다. 이 output template은 이 계약 문서가 소유한다.
 
 ```text
 # Backend Fix Result
@@ -239,7 +239,7 @@ FIX_APPLIED: {[출력 파일] 절대 경로}
 
 정상 완료 checkpoint의 `체크포인트 사유`는 `normal_completion`으로 기록하고, 완료 snapshot에는 재호출해도 같은 변경·검증 결론으로 수렴할 수 있는 최소 근거를 남긴다.
 
-## 공통 체크포인트 규격
+## Common Checkpoint Template / 공통 체크포인트 규격
 
 체크포인트 판단은 상대 기준을 먼저 적용하고, 절대 수치는 안전장치로만 사용한다. 남은 작업이 없고 곧 `IMPLEMENTATION_COMPLETED:` 또는 `FIX_APPLIED:`를 반환할 수 있으면 `CONTEXT_CHECKPOINT:` 신호를 반환하지 말고 정상 완료한다.
 
@@ -259,7 +259,7 @@ CONTEXT_CHECKPOINT: {[체크포인트 파일] 경로}
 
 이후에는 정상 완료 포맷(`IMPLEMENTATION_COMPLETED`, `FIX_APPLIED`)을 섞지 말고 최소 진행 상태만 작성한다. 체크포인트는 이 계약에서 유일하게 보장되는 복구 메커니즘이다. 정상 완료 경로에서는 위 신호를 반환하지 않지만, 같은 템플릿의 완료 snapshot을 `[체크포인트 파일]`에 반드시 저장한다.
 
-체크포인트 파일은 아래 섹션을 포함한다.
+체크포인트 파일은 아래 섹션을 포함한다. 이 checkpoint template은 이 계약 문서가 소유한다.
 
 - `# Backend Implementation Engineer Checkpoint`
 - `## 체크포인트 사유`: `{normal_completion | changed_file_batch | implementation_batch_done | violation_batch_done | verification_failure | read_batch_done | requirement_boundary | 기타}`
