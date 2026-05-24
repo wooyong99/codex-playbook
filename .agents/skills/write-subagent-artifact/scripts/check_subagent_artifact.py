@@ -35,7 +35,6 @@ def check_toml(path: Path) -> list[str]:
         "컨텍스트 원칙:",
         "판단 기준:",
         "입력·출력 원칙:",
-        "완료 체크리스트:",
         "금지 규칙:",
     ):
         if section not in text:

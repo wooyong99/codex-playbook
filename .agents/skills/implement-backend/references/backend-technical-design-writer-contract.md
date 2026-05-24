@@ -72,6 +72,7 @@ checkpoint_file: .agents/runs/{run_id}/checkpoints/M{n}/design-r00-v001.md
 - 확정 요구사항 컨텍스트가 있으면 업무 목표, 범위, 업무 규칙, 정책, 상태 변화, 정합성, 운영 요구사항, 금지된 추론, 남은 미결정 사항을 설계 경계로 사용한다.
 - Design Writer는 확정 요구사항 컨텍스트에 없는 비즈니스, 운영, 실패 처리, 정합성, 재처리, 동시성 정책을 임의로 확정하지 않는다.
 - 설계 판단 기준은 `[입력 파일]`의 `Source of Truth` 섹션으로 한정한다.
+- `docs/backend` Source of Truth가 비어 있거나 generic 문서이거나 실제 코드와 불일치하면 설계를 임의로 보강하지 않고 `TDD_BLOCKED`로 차단 사유를 남긴다.
 - `[출력 파일]`은 `[입력 파일]`의 `Metadata.output_file` 값을 그대로 사용한다.
 - `[체크포인트 파일]`은 `[입력 파일]`의 `Metadata.checkpoint_file` 값을 그대로 사용한다.
 - 체크포인트 여부는 `[입력 파일]`의 `체크포인트 규격` 섹션을 기준으로 판단한다.
@@ -95,16 +96,173 @@ Source of Truth 후보:
 
 ### Output Template / 출력 규격
 
-Design Writer는 작업 완료 후 `[출력 파일]`에 아래 Markdown 섹션을 저장한다. 이 output template은 이 계약 문서가 소유한다.
+`TDD_CREATED` 상태의 `[출력 파일]`은 [../../write-backend-tech-design-doc/references/backend-tdd-template.md](../../write-backend-tech-design-doc/references/backend-tdd-template.md)의 전체 구조와 동일한 Backend TDD 문서로 저장한다.
+
+````markdown
+# {기능명} Backend TDD
+
+## Metadata
+
+```yaml
+schema_version: implement-backend-design/v1
+run_id: <run_id>
+milestone: M<n>
+sequence: <오케스트레이터가 파일명에 부여한 순번>
+role: backend-technical-design-writer
+kind: design_result
+iteration: 0
+created_at: <ISO-8601 timestamp>
+```
+
+> 작성일: YYYY-MM-DD
+> 상태: Draft | Reviewing | Approved | Superseded
+> 대상 모듈: {대상 backend 모듈}
+
+## 1. 설계 배경 및 목적
+
+### 1.1 배경
+{기능이 필요한 이유, 해결하려는 비즈니스 문제, 현재 시스템 제약}
+
+### 1.2 설계 목표
+1. **{목표}**: {달성 기준과 이유}
+
+### 1.3 설계 비목표
+- {이번 설계에서 제외하는 항목과 이유}
+
+### 1.4 기술적 제약사항
+- **아키텍처 제약**: {확인된 backend architecture 제약}
+- **인프라 제약**: {확인된 infra 제약}
+- **비기능 요구사항**: {성능, 가용성, 정합성 요구 수준}
+
+## 2. 현행 시스템 분석
+
+### 2.1 관련 도메인 구조
+```text
+{EntityA} (1) -> (N) {EntityB}  [{entityAId}로 참조]
+```
+
+### 2.2 현재 처리 흐름
+```text
+Controller -> UseCase -> Domain Service -> Port -> Adapter
+```
+
+### 2.3 현행 스키마 분석
+| 테이블 | 주요 필드 | 현재 역할 | 변경 필요성 |
+|--------|-----------|-----------|-------------|
+| `{table}` | `{columns}` | {role} | {reason} |
+
+## 3. 아키텍처 설계
+
+### 3.1 계층별 책임 분배
+| 계층 | 구성 요소 | 책임 | 설계 근거 |
+|------|-----------|------|-----------|
+| App | `{Component}` | {responsibility} | {reason} |
+| Application | `{Component}` | {responsibility} | {reason} |
+| Domain | `{Component}` | {responsibility} | {reason} |
+| Storage/External | `{Component}` | {responsibility} | {reason} |
+
+### 3.2 처리 흐름
+{요청에서 응답까지의 command/query 흐름}
+
+### 3.3 설계 대안 분석
+| 대안 | 장점 | 단점 | 채택 여부 | 사유 |
+|------|------|------|-----------|------|
+| {alternative} | {pros} | {cons} | 채택/기각 | {reason} |
+
+## 4. 도메인 모델 설계
+
+### 4.1 애그리거트 경계
+{aggregate 단위와 경계 결정 이유}
+
+### 4.2 도메인 모델 상세
+#### `{DomainClass}`
+- 역할: {business responsibility}
+- 불변식: {invariants}
+- 주요 행위: {methods and meaning}
+- 상태 전이: {state transition}
+
+### 4.3 데이터 스키마 설계
+```sql
+-- 필요한 경우 실제 프로젝트 DDL 관리 방식에 맞춰 작성
+```
+
+### 4.4 데이터 변환 흐름
+{Domain <-> Entity <-> DTO 변환 경로와 책임}
+
+## 5. 트랜잭션 설계
+
+### 5.1 트랜잭션 경계
+| 연산 | 시작점 | 범위 | 격리 수준 | 사유 |
+|------|--------|------|-----------|------|
+| {operation} | {boundary} | {scope} | {isolation} | {reason} |
+
+### 5.2 정합성 보장 전략
+{강한 일관성 또는 최종 일관성 선택 이유}
+
+### 5.3 이벤트 처리
+| 이벤트 | 발행 시점 | 구독자 | 처리 방식 | 실패 대응 |
+|--------|-----------|--------|-----------|-----------|
+| {event} | {timing} | {handler} | {sync/async} | {recovery} |
+
+## 6. 예외 및 실패 처리
+
+### 6.1 예외 분류
+| 예외 유형 | ErrorCode | 발생 조건 | Error Type | 사용자 메시지 |
+|-----------|-----------|-----------|------------|---------------|
+| {type} | `{ErrorCode}` | {condition} | {error type} | {message} |
+
+### 6.2 실패 시나리오 및 복구 전략
+| 시나리오 | 발생 가능성 | 영향 범위 | 복구 전략 |
+|----------|-------------|-----------|-----------|
+| {scenario} | 높음/중간/낮음 | {impact} | {recovery} |
+
+### 6.3 멱등성 보장
+{중복 요청과 재처리 부작용을 막는 방법}
+
+## 7. 동시성 및 성능
+
+### 7.1 동시성 제어
+| 경합 지점 | 제어 방식 | 구현 방법 | 사유 |
+|-----------|-----------|-----------|------|
+| {resource} | {strategy} | {implementation} | {reason} |
+
+### 7.2 성능 고려사항
+| 항목 | 우려 사항 | 대응 전략 | 측정 기준 |
+|------|-----------|-----------|-----------|
+| {item} | {risk} | {strategy} | {metric} |
+
+### 7.3 확장 가능성
+{열어둔 확장 포인트와 의도적으로 제한한 지점}
+
+## 8. 변경 파일 목록
+| 파일 | 모듈 | 변경 유형 | 설명 |
+|------|------|-----------|------|
+| `{path}` | {module} | 생성/수정/삭제 | {description} |
+
+## 9. 검증 계획
+| 시나리오 | 유형 | 검증 내용 | 예상 결과 |
+|----------|------|-----------|-----------|
+| {scenario} | unit/integration/e2e/manual | {verification} | {expected} |
+
+## 10. 리스크와 미결정 사항
+- {risk or open question}
+
+## 11. 완료 체크리스트
+- [ ] 설계 배경과 목표가 현재 backend 구조와 요구사항에 연결된다.
+- [ ] 계층별 책임, 도메인 모델, 트랜잭션 경계, 실패 처리 판단에 근거가 있다.
+- [ ] 동시성, 성능, 확장 가능성의 의도적 제약과 열어둔 지점이 구분된다.
+- [ ] 검증 계획이 변경 파일과 주요 시나리오를 빠짐없이 다룬다.
+- [ ] 새 TDD 추가·삭제·이름 변경이 `docs/backend/design/README.md`에 반영되었다.
+````
+
+TDD가 불필요하거나 설계가 차단된 경우에는 `[출력 파일]`에 아래 fallback 결과를 저장한다.
 
 ```text
 # Backend Design Result
 ## Metadata
 ## 상태
-## TDD
-## 설계 요약
 ## 설계 불가 사유
-## 구현 제약
+## 스킵 근거
 ## 참조 근거
 ```
 
@@ -121,16 +279,16 @@ iteration: 0
 created_at: <ISO-8601 timestamp>
 ```
 
-필드 규칙:
+fallback 필드 규칙:
 
 - `schema_version`: 항상 `implement-backend-design/v1`
 - `role`: 항상 `backend-technical-design-writer`
 - `kind`: 항상 `design_result`
 - `iteration`: 항상 `0`
-- `## 상태`: `tdd_created`, `tdd_skipped`, `design_blocked`
-- `## TDD`: TDD를 작성한 경우 절대 경로, 스킵한 경우 `없음`
-- `## 설계 요약`: architecture decision, domain model, transaction/consistency, implementation note를 포함한다.
-- `## 설계 불가 사유`: `design_blocked`일 때 구현 전에 사용자 확인이 필요한 누락 정책을 포함한다. 설계 가능하거나 스킵 가능한 경우 `없음`으로 쓴다.
+- `## 상태`: `tdd_skipped` 또는 `design_blocked`
+- `## 설계 불가 사유`: `design_blocked`일 때 구현 전에 사용자 확인이 필요한 누락 정책을 포함한다. 스킵 가능한 경우 `없음`으로 쓴다.
+- `## 스킵 근거`: `tdd_skipped`일 때 TDD 없이 구현 가능한 이유를 쓴다. 차단된 경우 `없음`으로 쓴다.
+- `## 참조 근거`: 사용한 Source of Truth 문서 경로와 핵심 근거를 적는다.
 
 ### 정상 완료 포맷
 

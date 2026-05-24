@@ -189,8 +189,12 @@ def main():
         ("references/backend-technical-design-writer-contract.md", "backend design contract"),
         ("references/backend-implementation-engineer-contract.md", "backend implementation contract"),
         ("references/backend-architecture-reviewer-contract.md", "backend reviewer contract"),
+        ("reverse-engineer-backend-docs", "backend source-of-truth preparation skill"),
     ]:
         require(errors, backend_skill_path, backend_skill, needle, reason)
+    for needle in ["write-backend-tech-design-doc", "write-frontend-tech-design-doc"]:
+        if backend_skill is not None and needle in backend_skill:
+            errors.append(f"{backend_skill_path}: implement-backend must not directly depend on TDD writing skill: {needle}")
 
     frontend_skill = read(frontend_skill_path)
     for needle, reason in [
@@ -522,8 +526,18 @@ def main():
                 ("docs/backend/policies/**", "backend D policy source candidates"),
                 ("docs/backend/design/**", "backend D design source candidates"),
                 ("implement-backend-design-input/v1", "backend D input schema version"),
-                ("implement-backend-design/v1", "backend D schema version"),
+                ("implement-backend-design/v1", "backend D output schema version"),
                 ("특정 unit 이름은 이 계약에서 고정하지 않는다", "backend D architecture unit neutrality"),
+                ("write-backend-tech-design-doc/references/backend-tdd-template.md", "backend D output TDD template source"),
+                ("# {기능명} Backend TDD", "backend D output TDD title"),
+                ("## Metadata", "backend D output metadata section"),
+                ("role: backend-technical-design-writer", "backend D output metadata role"),
+                ("kind: design_result", "backend D output metadata kind"),
+                ("## 1. 설계 배경 및 목적", "backend D output TDD background section"),
+                ("## 5. 트랜잭션 설계", "backend D output TDD transaction section"),
+                ("## 9. 검증 계획", "backend D output TDD verification section"),
+                ("## 11. 완료 체크리스트", "backend D output TDD checklist section"),
+                ("generic 문서이거나 실제 코드와 불일치", "backend D blocks missing or stale docs"),
             ],
         ),
         (
@@ -641,6 +655,7 @@ def main():
         "정상 완료 시",
         "Source of Truth:",
         "application/use case",
+        "reverse-engineer-backend-docs",
         "write-backend-tech-design-doc",
         "write-frontend-tech-design-doc",
         "docs/backend/",

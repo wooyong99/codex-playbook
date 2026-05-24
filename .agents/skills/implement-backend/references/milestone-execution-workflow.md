@@ -69,6 +69,7 @@ Main agent
 - 목표, 범위, 명시적 제외사항, 확정 요구사항 컨텍스트, compile/test 검증 기준을 다시 확인한다.
 - 이번 마일스톤의 input, output, checkpoint 경로를 할당한다.
 - backend Source of Truth 후보에서 이번 변경과 직접 관련된 문서만 선별한다.
+- `docs/backend`가 비어 있거나 generic 문서이거나 실제 코드와 불일치하면 Backend Design Writer를 호출하지 않는다. 먼저 `reverse-engineer-backend-docs`로 backend 문서 시스템을 inspect/generate/merge/migrate 중 적절한 모드로 준비한다.
 
 세부 파일 규칙은 [run-artifact-protocol.md](run-artifact-protocol.md)를 따른다.
 
@@ -106,7 +107,7 @@ Main agent
 처리:
 
 - 호출 전 [backend-implementation-engineer-contract.md](backend-implementation-engineer-contract.md)의 Case 1 형식으로 implementation input artifact를 저장한다.
-- implementation input artifact에는 design output 경로를 기록하고, 설계 요약 원문은 복사하지 않는다.
+- implementation input artifact에는 design output 경로를 기록하고, TDD 본문 원문은 복사하지 않는다.
 - implementation input artifact에는 확정 요구사항 컨텍스트 경로를 포함한다.
 - `IMPLEMENTATION_COMPLETED:`이면 implementation output을 검증한다.
 - `CONTEXT_CHECKPOINT:`이면 체크포인트 복구 절차로 같은 Backend Implementation Engineer 인스턴스를 재호출한다.

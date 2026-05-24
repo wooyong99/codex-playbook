@@ -52,10 +52,6 @@ description: Use when 백엔드 기능 구현, 리팩토링, UseCase 추가, 도
 - Backend Implementation Engineer 계약: [references/backend-implementation-engineer-contract.md](references/backend-implementation-engineer-contract.md)
 - Backend Architecture Reviewer 계약: [references/backend-architecture-reviewer-contract.md](references/backend-architecture-reviewer-contract.md)
 
-관련 스킬:
-
-- backend TDD 작성: [../write-backend-tech-design-doc/SKILL.md](../write-backend-tech-design-doc/SKILL.md)
-
 ## 역할
 
 | 주체 | 핵심 책임 | 책임이 아닌 것 |
@@ -95,6 +91,7 @@ description: Use when 백엔드 기능 구현, 리팩토링, UseCase 추가, 도
    - 하나의 검증 가능한 backend 동작 단위로 나눈다.
    - 분할 기준은 [milestone-planning.md](references/milestone-planning.md)를 따른다.
 4. run artifact 경로를 준비한다.
+   - `docs/backend`가 비어 있거나 generic 문서이거나 실제 코드와 불일치하면 design 위임 전에 `reverse-engineer-backend-docs`로 backend Source of Truth를 준비한다.
    - 각 role 호출 전에 `[입력 파일]`, `[출력 파일]`, `[체크포인트 파일]` 경로를 할당한다.
    - 저장·검증·복구 규약은 [run-artifact-protocol.md](references/run-artifact-protocol.md)를 따른다.
 5. 각 마일스톤을 design → implementation → architecture review 순서로 실행한다.
