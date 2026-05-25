@@ -172,7 +172,8 @@ def main():
     backend_workflow_path = ROOT / ".agents/skills/implement-backend/references/milestone-execution-workflow.md"
     frontend_boundaries_path = ROOT / ".agents/skills/implement-frontend/references/orchestration-boundaries.md"
     frontend_planning_path = ROOT / ".agents/skills/implement-frontend/references/milestone-planning.md"
-    frontend_protocol_path = ROOT / ".agents/skills/implement-frontend/references/input-output-checkpoint-protocol.md"
+    frontend_protocol_path = ROOT / ".agents/skills/implement-frontend/references/run-artifact-protocol.md"
+    frontend_requirement_context_path = ROOT / ".agents/skills/implement-frontend/references/requirement-context-template.md"
     frontend_workflow_path = ROOT / ".agents/skills/implement-frontend/references/milestone-execution-workflow.md"
 
     backend_skill = read(backend_skill_path)
@@ -204,13 +205,18 @@ def main():
         ("frontend-architecture-reviewer", "frontend review agent"),
         ("references/orchestration-boundaries.md", "frontend boundary reference"),
         ("references/milestone-planning.md", "frontend planning reference"),
-        ("references/input-output-checkpoint-protocol.md", "frontend input output reference"),
+        ("references/run-artifact-protocol.md", "frontend run artifact reference"),
+        ("references/requirement-context-template.md", "frontend requirement context template reference"),
         ("references/milestone-execution-workflow.md", "frontend workflow reference"),
         ("references/frontend-technical-design-writer-contract.md", "frontend design contract"),
         ("references/frontend-implementation-engineer-contract.md", "frontend implementation contract"),
         ("references/frontend-architecture-reviewer-contract.md", "frontend reviewer contract"),
+        ("frontend Source of Truth 갭", "frontend source-of-truth gap handling"),
     ]:
         require(errors, frontend_skill_path, frontend_skill, needle, reason)
+    for needle in ["write-backend-tech-design-doc", "write-frontend-tech-design-doc"]:
+        if frontend_skill is not None and needle in frontend_skill:
+            errors.append(f"{frontend_skill_path}: implement-frontend must not directly depend on TDD writing skill: {needle}")
 
     for path, expected in [
         (
@@ -295,16 +301,37 @@ def main():
         (
             frontend_protocol_path,
             [
-                ("# Frontend Input Output And Checkpoint Protocol", "frontend protocol title"),
-                ("## Frontend Input Artifact 처리", "frontend input handling"),
-                ("## Frontend Output Artifact 처리", "frontend output handling"),
+                ("# Frontend Run Artifact Protocol", "frontend protocol title"),
+                ("## Input Artifact 처리", "frontend input handling"),
+                ("## Output Artifact 처리", "frontend output handling"),
                 ("## 체크포인트 처리", "frontend checkpoint handling"),
-                ("Markdown input artifact", "frontend markdown input artifact"),
-                ("Markdown output artifact", "frontend markdown output artifact"),
+                ("role별 input 템플릿", "frontend role-owned input template"),
+                ("role별 output 템플릿", "frontend role-owned output template"),
+                ("role별 checkpoint 템플릿", "frontend role-owned checkpoint template"),
                 ("├── inputs/", "frontend input directory"),
                 ("├── outputs/", "frontend output directory"),
                 ("역할별 체크포인트 판단 기준은 frontend 계약 문서가 단일 출처", "frontend contract-owned checkpoint criteria"),
                 ("체크포인트 규격", "frontend protocol passes checkpoint criteria input"),
+            ],
+        ),
+        (
+            frontend_requirement_context_path,
+            [
+                ("# Frontend Requirement Context Template", "frontend requirement context title"),
+                ("schema_version: implement-frontend-requirement-context/v1", "frontend requirement context schema"),
+                ("## 사용자 목표", "frontend user goal section"),
+                ("## 범위와 제외사항", "frontend scope section"),
+                ("## 사용자 흐름", "frontend user flow section"),
+                ("## 라우팅과 진입 경로", "frontend routing section"),
+                ("## 화면 상태와 Interaction 정책", "frontend interaction state section"),
+                ("## API 계약과 Backend Dependency", "frontend API dependency section"),
+                ("## 상태 소유권", "frontend state ownership section"),
+                ("## Cache와 동기화 정책", "frontend cache section"),
+                ("## Error/Loading/Empty/Success UX", "frontend UX state section"),
+                ("## 검증 기준", "frontend verification section"),
+                ("## 사용자 확인 필요 없음", "frontend no-user-confirmation section"),
+                ("## 금지된 추론", "frontend forbidden inference section"),
+                ("## 남은 미결정 사항", "frontend remaining unknowns section"),
             ],
         ),
         (
@@ -376,6 +403,7 @@ def main():
         frontend_boundaries_path,
         frontend_planning_path,
         frontend_protocol_path,
+        frontend_requirement_context_path,
         frontend_workflow_path,
     ]
     all_paths.extend(spec["agent"] for spec in AGENTS.values())
@@ -552,7 +580,17 @@ def main():
                 ("docs/frontend/ui-ux/**", "frontend D UI/UX source candidates"),
                 ("docs/frontend/design/**", "frontend D design source candidates"),
                 ("implement-frontend-design-input/v1", "frontend D input schema version"),
-                ("implement-frontend-design/v1", "frontend D schema version"),
+                ("implement-frontend-design/v1", "frontend D output schema version"),
+                ("write-frontend-tech-design-doc/references/frontend-tdd-template.md", "frontend D output TDD template source"),
+                ("# {기능명} Frontend TDD", "frontend D output TDD title"),
+                ("## Metadata", "frontend D output metadata section"),
+                ("role: frontend-technical-design-writer", "frontend D output metadata role"),
+                ("kind: design_result", "frontend D output metadata kind"),
+                ("## 1. 설계 배경 및 목표", "frontend D output TDD background section"),
+                ("## 6. API 연동 방식", "frontend D output TDD API section"),
+                ("## 10. 검증 계획", "frontend D output TDD verification section"),
+                ("## 12. 완료 체크리스트", "frontend D output TDD checklist section"),
+                ("generic 문서이거나 실제 코드와 불일치", "frontend D blocks missing or stale docs"),
             ],
         ),
         (

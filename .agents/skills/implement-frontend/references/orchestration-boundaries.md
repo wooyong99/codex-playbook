@@ -2,7 +2,7 @@
 
 이 문서는 `implement-frontend`에서 메인 에이전트와 frontend 역할 서브에이전트가 무엇을 책임지고 무엇을 책임지지 않는지 정의한다.
 
-핵심 책임 경계는 [../SKILL.md](../SKILL.md)가 소유하고, 이 문서는 상세 경계와 예외를 보완한다. 실행 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 규격은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)와 역할별 계약 문서가 소유한다.
+핵심 책임 경계는 [../SKILL.md](../SKILL.md)가 소유하고, 이 문서는 상세 경계와 예외를 보완한다. 실행 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 규격은 [run-artifact-protocol.md](run-artifact-protocol.md)와 역할별 계약 문서가 소유한다.
 
 ## 핵심 모델
 
@@ -67,5 +67,5 @@
 - 구현 전 요구사항 명확화 기준: [requirement-clarification-gate.md](requirement-clarification-gate.md)
 - 마일스톤 분할 수치와 계획 기준: [milestone-planning.md](milestone-planning.md)
 - frontend 역할 호출 순서와 반복 종료 기준: [milestone-execution-workflow.md](milestone-execution-workflow.md)
-- `.agents/runs/{run_id}` 파일 구조와 검증 절차: [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)
+- `.agents/runs/{run_id}` 파일 구조와 검증 절차: [run-artifact-protocol.md](run-artifact-protocol.md)
 - 역할별 Markdown artifact 섹션, 결과 신호, 체크포인트 판단 기준: 각 `*-contract.md`

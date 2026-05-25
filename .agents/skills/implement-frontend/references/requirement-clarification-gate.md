@@ -134,16 +134,7 @@ UI 개선:
 
 게이트를 통과하면 메인 에이전트는 이후 role input artifact에서 참조할 수 있도록 확정 frontend 요구사항 컨텍스트를 남긴다.
 
-컨텍스트는 아래 내용을 포함한다.
-
-- 요구사항 결정: 사용자 또는 Source of Truth로 확정된 UX/API/state/cache/rendering 정책
-- 사용자 확인 필요 없음: 코드베이스 관례로 처리해도 되는 구현 선택
-- 금지된 추론: 아직 확정되지 않아 구현에 반영하면 안 되는 UX/API/cache/navigation 정책
-- backend 계약/미확정 사항: 확정된 API 계약, backend 선행 작업, 또는 이번 frontend 마일스톤에서 제외할 불확실성
-- 검증 기준: build/test/browser/visual/a11y 검증 시나리오
-- 남은 미결정 사항: 이번 마일스톤에서 제외하거나 사용자 확인이 필요한 항목
-
-이 컨텍스트는 독립 파일로 저장하거나 role input artifact의 `설계 입력`, `구현 지시`, `검토 지시` 섹션에 경로로 기록할 수 있다.
+컨텍스트 템플릿과 저장 규칙은 [requirement-context-template.md](requirement-context-template.md)가 소유한다. role input artifact에는 이 컨텍스트의 본문을 복사하지 않고 경로만 기록한다.
 
 ## 중단 기준
 

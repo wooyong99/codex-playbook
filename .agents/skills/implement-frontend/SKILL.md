@@ -9,7 +9,7 @@ description: Use when 프론트엔드 기능 구현, 리팩토링, route/page/co
 
 `implement-frontend`는 frontend 변경을 하나 이상의 마일스톤으로 나누고, 각 마일스톤을 Frontend Design Writer → Frontend Implementation Engineer → Frontend Architecture Reviewer → 수정 루프로 실행하는 frontend 전용 오케스트레이션 스킬이다.
 
-이 문서는 스킬의 진입점이다. 핵심 구조, 문서 맵, 역할 책임 경계, 작업 흐름은 이 문서가 소유하고, 세부 파일 규칙·Markdown artifact 섹션·체크포인트 템플릿은 references 문서가 소유한다.
+이 문서는 스킬의 진입점이다. 핵심 구조, 문서 맵, 역할 책임 경계, 필수 작업 절차는 이 문서가 소유하고, 마일스톤 분할 기준·마일스톤 실행 세부 절차·파일 저장 규칙·Markdown artifact 섹션·체크포인트 템플릿은 references 문서가 소유한다.
 
 ## 적용 대상
 
@@ -41,38 +41,17 @@ description: Use when 프론트엔드 기능 구현, 리팩토링, route/page/co
 핵심 개념 문서:
 
 - 요구사항 명확화 게이트: [references/requirement-clarification-gate.md](references/requirement-clarification-gate.md)
+- 확정 요구사항 컨텍스트 템플릿: [references/requirement-context-template.md](references/requirement-context-template.md)
 - 상세 책임 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
 - 마일스톤 계획: [references/milestone-planning.md](references/milestone-planning.md)
 - 실행 흐름: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
 
 세부 규격 문서:
 
-- input/output/checkpoint 규약: [references/input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)
+- run artifact 저장·검증·복구 규약: [references/run-artifact-protocol.md](references/run-artifact-protocol.md)
 - Frontend Design Writer 계약: [references/frontend-technical-design-writer-contract.md](references/frontend-technical-design-writer-contract.md)
 - Frontend Implementation Engineer 계약: [references/frontend-implementation-engineer-contract.md](references/frontend-implementation-engineer-contract.md)
 - Frontend Architecture Reviewer 계약: [references/frontend-architecture-reviewer-contract.md](references/frontend-architecture-reviewer-contract.md)
-
-관련 스킬:
-
-- frontend TDD 작성: [../write-frontend-tech-design-doc/SKILL.md](../write-frontend-tech-design-doc/SKILL.md)
-
-## 운영 모델
-
-`implement-frontend`의 중심 책임은 메인 에이전트의 오케스트레이션이다. 메인 에이전트가 요구사항을 명확히 한 뒤 파일 기반 input/output/checkpoint artifact로 frontend 역할 서브에이전트를 연결한다.
-
-```text
-프론트엔드 요청
-  -> 메인 에이전트가 요구사항 명확화 게이트 수행
-  -> 구현 결정에 필요한 정보가 없으면 사용자에게 질문
-  -> 확정 요구사항 컨텍스트 기록
-  -> frontend 마일스톤 계획
-  -> Frontend Design Writer 입력 -> 설계 출력
-  -> 메인 에이전트가 설계 출력을 구현 입력으로 변환
-  -> Frontend Implementation Engineer 구현 출력
-  -> 메인 에이전트가 구현 출력을 아키텍처 검토 입력으로 변환
-  -> Frontend Architecture Reviewer 검토 출력
-  -> 통과 또는 구현 수정 루프
-```
 
 ## 역할
 
@@ -87,12 +66,42 @@ description: Use when 프론트엔드 기능 구현, 리팩토링, route/page/co
 
 ## 작업 흐름
 
-1. [requirement-clarification-gate.md](references/requirement-clarification-gate.md)에 따라 구현 전 요구사항 명확화 게이트를 수행한다.
-2. frontend 범위, 제외사항, 성공 기준, 확정 요구사항 컨텍스트를 고정한다.
-3. [milestone-planning.md](references/milestone-planning.md)에 따라 마일스톤을 나눈다.
-4. [input-output-checkpoint-protocol.md](references/input-output-checkpoint-protocol.md)에 따라 run 경로를 준비한다.
-5. [milestone-execution-workflow.md](references/milestone-execution-workflow.md)에 따라 design/implementation/review 루프를 실행한다.
-6. `frontend-architecture-reviewer`가 통과하면 frontend 마일스톤을 완료한다.
+`implement-frontend`가 호출되면 메인 에이전트는 아래 순서를 반드시 따른다. 세부 판단 기준은 각 reference 문서가 소유한다.
+
+```text
+프론트엔드 요청
+  -> 요구사항 명확화 게이트
+  -> 확정 요구사항 컨텍스트 기록
+  -> frontend 마일스톤 계획
+  -> run artifact 경로 준비
+  -> Frontend Design Writer
+  -> Frontend Implementation Engineer
+  -> Frontend Architecture Reviewer
+  -> 통과 또는 위반 수정 루프
+  -> 완료 보고
+```
+
+1. 요구사항 명확화 게이트를 수행한다.
+   - 구현 결정에 필요한 정책이 누락되면 구현, TDD, role input artifact 생성을 시작하지 않는다.
+   - 세부 기준은 [requirement-clarification-gate.md](references/requirement-clarification-gate.md)를 따른다.
+2. 확정 요구사항 컨텍스트를 기록한다.
+   - 사용자 흐름, UX 정책, API 계약, 상태 소유권, cache/invalidation, 검증 기준을 설계·구현 판단 기준으로 고정한다.
+   - 코드베이스 관례로 처리할 항목, 금지된 추론, 남은 미결정 사항을 분리한다.
+   - 템플릿은 [requirement-context-template.md](references/requirement-context-template.md)를 따른다.
+3. frontend 마일스톤을 계획한다.
+   - 하나의 검증 가능한 frontend 동작 단위로 나눈다.
+   - 분할 기준은 [milestone-planning.md](references/milestone-planning.md)를 따른다.
+4. run artifact 경로를 준비한다.
+   - `docs/frontend`가 비어 있거나 generic 문서이거나 실제 코드와 불일치하면 design 위임 전에 frontend Source of Truth 갭으로 보고한다.
+   - 각 role 호출 전에 `[입력 파일]`, `[출력 파일]`, `[체크포인트 파일]` 경로를 할당한다.
+   - 저장·검증·복구 규약은 [run-artifact-protocol.md](references/run-artifact-protocol.md)를 따른다.
+5. 각 마일스톤을 design → implementation → architecture review 순서로 실행한다.
+   - 역할별 input/output/checkpoint 템플릿은 각 `*-contract.md`를 따른다.
+   - 실행 세부 절차는 [milestone-execution-workflow.md](references/milestone-execution-workflow.md)를 따른다.
+6. architecture review 위반이 있으면 수정 루프로 보낸다.
+   - `blocker` 또는 `major` 위반은 통과로 간주하지 않는다.
+   - 반복 한계를 넘으면 [milestone-execution-workflow.md](references/milestone-execution-workflow.md)의 escalation 절차를 따른다.
+7. 완료 시 변경 파일, 검증 결과, architecture review 판정, backend 전달 계약을 보고한다.
 
 ## 검증
 

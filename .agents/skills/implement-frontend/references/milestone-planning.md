@@ -2,7 +2,7 @@
 
 이 문서는 `implement-frontend`가 frontend 요구사항을 어떤 마일스톤 단위로 나누는지 정의한다.
 
-요구사항 명확화 게이트는 [requirement-clarification-gate.md](requirement-clarification-gate.md)가 소유한다. 실행 중 design/implementation/review 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 저장 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)가 소유한다.
+요구사항 명확화 게이트는 [requirement-clarification-gate.md](requirement-clarification-gate.md)가 소유한다. 실행 중 design/implementation/review 호출 순서는 [milestone-execution-workflow.md](milestone-execution-workflow.md)가 소유하고, 파일 저장 규칙은 [run-artifact-protocol.md](run-artifact-protocol.md)가 소유한다.
 
 ## 계획 모델
 
@@ -89,4 +89,4 @@ frontend 마일스톤은 하나의 사용자 흐름 또는 하나의 화면 책�
 - 마일스톤 계획을 사용자에게 짧게 보고한다.
 - 마일스톤이 5개 이상이면 진행 여부를 확인한다.
 - 진행이 확정되면 `run_id`를 생성하고 frontend 마일스톤의 run artifact 경로를 준비한다.
-- run artifact의 디렉토리 구조와 파일명 규칙은 [input-output-checkpoint-protocol.md](input-output-checkpoint-protocol.md)를 따른다.
+- run artifact의 디렉토리 구조와 파일명 규칙은 [run-artifact-protocol.md](run-artifact-protocol.md)를 따른다.
