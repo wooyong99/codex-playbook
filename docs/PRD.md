@@ -56,7 +56,7 @@ codex-playbook은 사람과 AI가 함께 읽고 실행할 수 있는 프로젝�
 - 대규모 코드베이스 분석은 전체 정독이 아니라 census, 우선순위화, 제한 샘플링, confidence report 방식으로 수행한다.
 - 에이전트 간 output artifact와 checkpoint artifact를 파일로 남겨 재개 가능성을 보장한다.
 - 새 프로젝트 적용 시 플레이스홀더, 문서 링크, 문서 맵, 규칙 검증을 수행할 수 있어야 한다.
-- 규칙 위반은 안정적인 Rule ID와 severity를 포함해 보고되어야 한다.
+- 규칙 위반은 reviewer contract별 안정적인 Rule ID와 severity를 포함해 보고되어야 한다.
 - 평가 시나리오와 scorecard를 제공해 플레이북 품질을 반복 측정할 수 있어야 한다.
 
 ---
@@ -85,7 +85,7 @@ codex-playbook은 사람과 AI가 함께 읽고 실행할 수 있는 프로젝�
 - M1: 프로젝트 정체성, PRD, 핵심 문서 플레이스홀더 확정
 - M2: 깨진 링크와 잘못된 참조 정리
 - M3: 플레이북 검증 스크립트와 기본 저장소 위생 추가
-- M4: 규칙 ID와 metadata 체계 도입
+- M4: reviewer contract별 규칙 ID와 metadata 체계 도입
 - M5: 프론트엔드, 문서, 보안 검토 경로 확장
 - M6: TDD 템플릿 중립화
 - M7: 에이전트 평가 suite 초안 추가

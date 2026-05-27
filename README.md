@@ -38,7 +38,6 @@ python3 .agents/scripts/check-playbook.py
   클론 후 무엇부터 손대야 하는지 설명
 - [커스터마이징 체크리스트](docs/customization-checklist.md)  
   프로젝트명, 목표, 문서, 스킬, 서브에이전트 점검 목록
-- [Rule ID and metadata](docs/rules/README.md)
 - [Agent evaluation suite](.agents/evals/README.md)
 - [Backend 문서 홈](docs/backend/README.md)
 - [Frontend 문서 홈](docs/frontend/README.md)

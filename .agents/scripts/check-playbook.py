@@ -48,7 +48,20 @@ REQUIRED_GITIGNORE_ENTRIES = [
     "dist/",
 ]
 
-RULE_ID_RE = re.compile(r"^[A-Z]+-[A-Z0-9]+-[A-Z0-9]+-\d{3}$")
+REVIEWER_RULE_CONTRACTS = [
+    (
+        ROOT / ".agents/skills/implement-backend/references/backend-architecture-reviewer-contract.md",
+        "Backend Rule ID 형식",
+        re.compile(r"^BACKEND-[A-Z0-9]+-[A-Z0-9]+-\d{3}$"),
+        "BACKEND-APP-DTO-001",
+    ),
+    (
+        ROOT / ".agents/skills/implement-frontend/references/frontend-architecture-reviewer-contract.md",
+        "Frontend Rule ID 형식",
+        re.compile(r"^FRONTEND-[A-Z0-9]+-[A-Z0-9]+-\d{3}$"),
+        "FRONTEND-FSD-IMPORT-001",
+    ),
+]
 LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 EXTERNAL_PREFIXES = (
     "http://",
@@ -120,35 +133,40 @@ def check_gitignore(errors):
             errors.append(f".gitignore: missing required entry {required}")
 
 
-def check_rule_metadata(errors):
-    rule_doc = ROOT / "docs/rules/README.md"
-    if not rule_doc.exists():
-        errors.append("docs/rules/README.md: missing rule metadata guide")
-        return
+def check_reviewer_rule_contracts(errors):
+    common_required = [
+        "rule_id",
+        "severity",
+        "file",
+        "rule",
+        "source_path",
+        "line_range",
+        "reason",
+        "UNREGISTERED",
+        "`blocker`, `major`, `minor`, `info`",
+    ]
+    for path, section, rule_id_re, example in REVIEWER_RULE_CONTRACTS:
+        rel_path = path.relative_to(ROOT)
+        if not path.exists():
+            errors.append(f"{rel_path}: missing reviewer rule contract")
+            continue
 
-    text = read_text(rule_doc)
-    for required in ["Rule ID 형식", "Metadata 형식", "Severity", "Reviewer 출력 규칙"]:
-        if required not in text:
-            errors.append(f"docs/rules/README.md: missing section {required}")
+        text = read_text(path)
+        if section not in text:
+            errors.append(f"{rel_path}: missing section {section}")
+        for required in common_required:
+            if required not in text:
+                errors.append(f"{rel_path}: missing reviewer rule field {required}")
+        if example not in text:
+            errors.append(f"{rel_path}: missing rule_id example {example}")
 
-    seen = {}
-    for line_number, line in enumerate(text.splitlines(), start=1):
-        stripped = line.strip()
-        if not stripped.startswith("rule_id:"):
-            continue
-        value = stripped.split(":", 1)[1].strip()
-        if value == "<규칙 ID. 없으면 UNREGISTERED>":
-            continue
-        if not RULE_ID_RE.match(value):
-            errors.append(f"docs/rules/README.md:{line_number}: invalid rule_id {value}")
-            continue
-        if value in seen:
-            errors.append(
-                f"docs/rules/README.md:{line_number}: duplicate rule_id {value} "
-                f"(first seen line {seen[value]})"
-            )
-        else:
-            seen[value] = line_number
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            stripped = line.strip()
+            if not stripped.startswith("- `") or not stripped.endswith("`"):
+                continue
+            value = stripped.strip("- `")
+            if value.endswith("-001") and not rule_id_re.match(value):
+                errors.append(f"{rel_path}:{line_number}: invalid rule_id example {value}")
 
 
 def check_checkpoint_contract(errors):
@@ -176,7 +194,7 @@ def main():
     check_critical_placeholders(errors)
     check_markdown_links(errors)
     check_gitignore(errors)
-    check_rule_metadata(errors)
+    check_reviewer_rule_contracts(errors)
     check_checkpoint_contract(errors)
 
     if errors:

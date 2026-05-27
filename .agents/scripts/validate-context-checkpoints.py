@@ -699,7 +699,6 @@ def main():
         "docs/backend/",
         "docs/frontend/",
         "docs/review/",
-        "docs/rules/",
     ]
     for path in sorted((ROOT / ".codex/agents").glob("*.toml")):
         agent_text = read(path)

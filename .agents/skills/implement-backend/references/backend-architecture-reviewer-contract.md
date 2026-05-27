@@ -129,10 +129,38 @@ created_at: <ISO-8601 timestamp>
 - `## 검토 대상`: 실제 검토한 파일의 절대 경로 목록
 - `## 위반 사항`: 위반이 없으면 `없음`
 - 위반 항목은 `rule_id`, `severity`, `file`, `rule`, `source_path`, `line_range`, `reason`을 포함한다.
-- `rule_id`: [Rule ID and metadata](../../../../docs/rules/README.md) 형식을 따른다. 아직 등록되지 않은 규칙은 `UNREGISTERED`로 둔다.
+- `rule_id`: 이 계약 문서의 `Backend Rule ID 형식`을 따른다. 아직 등록되지 않은 규칙은 `UNREGISTERED`로 둔다.
 - `severity`: `blocker`, `major`, `minor`, `info` 중 하나
 - `file`: 절대 경로
 - `source_path`: 규칙 원문 문서의 저장소 상대 경로
+
+### Backend Rule ID 형식
+
+Backend Architecture Reviewer의 `rule_id`는 backend 규칙 공간 안에서만 안정적인 식별자로 사용한다. Rule ID는 규칙 원문을 대신하지 않고, reviewer 결과, 평가 기록, 수정 backlog가 같은 backend 규칙을 가리키게 만드는 이름표다.
+
+```text
+BACKEND-{UNIT}-{TOPIC}-{NNN}
+```
+
+| 파트 | 설명 | 예시 |
+|------|------|------|
+| `BACKEND` | backend reviewer 규칙 영역 | `BACKEND` |
+| `UNIT` | backend 아키텍처 단위나 문서 단위 | `APP`, `APPLICATION`, `DOMAIN`, `PERSISTENCE`, `EXTERNAL`, `SUPPORT`, `SECURITY` |
+| `TOPIC` | 세부 주제 | `DTO`, `USECASE`, `TRANSACTION`, `QUERY`, `ERRORCODE` |
+| `NNN` | 3자리 일련번호 | `001`, `002` |
+
+예시:
+
+- `BACKEND-APP-DTO-001`
+- `BACKEND-APPLICATION-USECASE-001`
+- `BACKEND-PERSISTENCE-QUERY-001`
+
+운영 원칙:
+
+- 한 번 공개된 `rule_id`는 의미를 바꾸지 않는다. 의미가 바뀌면 새 ID를 만든다.
+- 규칙 원문은 `source_path`가 가리키는 backend Source of Truth 문서가 소유한다.
+- 같은 규칙 원문을 contract에 복사하지 않는다. contract에는 식별자 형식과 출력 필드만 둔다.
+- 등록된 ID를 확정할 근거가 없으면 `rule_id: UNREGISTERED`로 보고하고, `rule`과 `source_path`에 근거 문서를 남긴다.
 
 ### 정상 완료 포맷
 

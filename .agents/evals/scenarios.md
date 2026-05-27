@@ -62,14 +62,14 @@
 - 필요 시 상태관리 구조, API 연동 방식, 컴포넌트 구조, 라우팅, 캐싱 전략, 에러 처리, 폴더 구조를 포함한 frontend TDD
 - `frontend-implementation-engineer` 구현 결과 output artifact
 - `frontend-architecture-reviewer`가 docs/frontend 기준으로 위반 보고
-- 위반에 `rule_id`, `severity`, `source_path` 포함
+- 위반에 reviewer contract 형식의 `rule_id`, `severity`, `source_path` 포함
 - 기능 정확성 추측 없이 문서 근거만 제시
 
 주요 실패 신호:
 
 - backend reviewer만 실행됨
 - docs/frontend를 읽지 않음
-- rule metadata 누락
+- reviewer contract의 rule metadata 누락
 
 ## Scenario 4. Large Codebase Reverse Engineering
 
