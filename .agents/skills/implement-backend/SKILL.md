@@ -1,119 +1,116 @@
 ---
 name: implement-backend
-description: Use when 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 모델 변경, storage/external/app/application 계층 변경, 또는 backend 아키텍처 기준에 영향을 주는 변경을 수행해야 할 때.
+description: Use when 사용자가 $implement-backend를 명시적으로 호출하고 백엔드 기능 구현, 리팩토링, UseCase 추가, 도메인 모델 변경, storage/external/app/application 계층 변경, DB/schema 변경, 또는 backend 아키텍처 기준에 영향을 주는 변경을 요청할 때.
 ---
 
-# implement-backend — 백엔드 구현 실행
+# implement-backend
 
 ## 목적
 
-`implement-backend`는 backend 변경을 하나 이상의 마일스톤으로 나누고, 각 마일스톤을 Backend Design Writer → Backend Implementation Engineer → Backend Architecture Reviewer → 수정 루프로 실행하는 backend 전용 오케스트레이션 스킬이다.
+백엔드 작업이 들어오면 요구사항을 먼저 확정하고, 기술설계문서(TDD) 작성 → 코드 구현 → 코드 리뷰를 각각 전용 서브에이전트에 위임해 `docs/backend` 기준을 지키며 구현한다.
 
-이 문서는 스킬의 진입점이다. 핵심 구조, 문서 맵, 역할 책임 경계, 필수 작업 절차는 이 문서가 소유하고, 마일스톤 분할 기준·마일스톤 실행 세부 절차·파일 저장 규칙·Markdown artifact 섹션·체크포인트 템플릿은 references 문서가 소유한다.
+이 스킬의 핵심은 직접 구현이 아니라 오케스트레이션이다. 메인 에이전트는 질문, 범위 고정, 서브에이전트 호출, 결과 검증, 반복 제어, 사용자 보고를 맡는다.
+
+## 호출 방식
+
+- 이 스킬은 자동 호출되지 않아야 한다. 적용 대상에 해당하는 backend 작업이어도 사용자가 `$implement-backend`를 명시적으로 호출한 경우에만 적용한다.
+- `agents/openai.yaml`의 `policy.allow_implicit_invocation: false`를 유지해 Codex의 description 기반 implicit invocation을 막는다.
+- 사용자가 이 스킬을 쓰지 말라고 명시하거나 단순 설명, 구조 검토, 일반 코드 리뷰만 요청한 경우에는 오케스트레이션을 수행하지 않는다.
 
 ## 적용 대상
 
-포함:
+- backend 코드, 서버 설정, DB/schema, migration 변경
+- UseCase, domain, application, app, storage, external, internal adapter 변경
+- backend API 계약, 운영 설정, 보안 정책, 트랜잭션 경계 변경
+- `docs/backend/**` 기준을 따라야 하는 backend 리팩토링
 
-- backend 코드, 서버 설정, DB/schema, UseCase, domain, storage, external integration 변경
-- `docs/backend/**`에 직접 영향을 주는 backend 설계·정책·전략 변경
-- frontend가 소비할 API 계약 또는 미해결 backend 계약 정리
+비적용 범위:
 
-제외:
-
-- frontend 화면, route, component, client cache, UI 상태 구현
-- backend 아키텍처 기준과 무관한 일반 코드 리뷰
-- 서브에이전트 간 직접 통신
+- frontend 화면, route, component, client state/cache 구현
+- backend 기준과 무관한 단순 설명, 구조 검토, 일반 코드 리뷰
+- 사용자가 명시적으로 직접 구현만 요청한 작업
 
 ## 책임
 
-- 구현 전 요구사항 명확화 게이트를 수행한다.
-- backend 범위, 제외사항, 성공 기준, 확정 요구사항 컨텍스트를 고정한다.
-- backend 마일스톤을 나누고, 각 역할의 input/output/checkpoint artifact를 연결한다.
-- Backend Design Writer, Backend Implementation Engineer, Backend Architecture Reviewer의 역할 경계를 유지한다.
-- architecture review 위반, 검증 실패, 체크포인트, 반복 한계 상황을 라우팅한다.
+- 요구사항 명확화: 구현 판단에 필요한 정책, 범위, 성공 기준이 부족하면 먼저 질문한다.
+- Source of Truth 고정: `docs/backend/README.md`와 관련 `docs/backend/**` 문서를 읽고 role input에 경로와 선정 이유를 남긴다.
+- 서브에이전트 호출: `backend-technical-design-writer`, `backend-implementation-engineer`, `backend-architecture-reviewer`를 순서대로 호출한다.
+- 반복 제어: 구현과 리뷰를 최대 5회 반복하고, 해결되지 않으면 사용자에게 질문한다.
+- 검증: 테스트, lint, build, run artifact 검증 결과를 확인한 뒤 완료를 보고한다.
+
+메인 에이전트는 일반 경로에서 backend 코드를 직접 고치지 않는다. 서브에이전트 도구가 없거나 정책상 호출이 막히면 구현 전에 사용자에게 fallback 진행 여부를 확인한다.
 
 ## 참조 문서
 
-이 문서가 `implement-backend`의 참조 문서 맵을 소유한다. 필요한 세부 문서만 선별해 읽는다.
-
-핵심 개념 문서:
+핵심 작업 흐름은 이 문서가 소유하고, 긴 규격과 템플릿은 아래 reference가 소유한다.
 
 - 요구사항 명확화 게이트: [references/requirement-clarification-gate.md](references/requirement-clarification-gate.md)
 - 확정 요구사항 컨텍스트 템플릿: [references/requirement-context-template.md](references/requirement-context-template.md)
 - 상세 책임 경계: [references/orchestration-boundaries.md](references/orchestration-boundaries.md)
 - 마일스톤 계획: [references/milestone-planning.md](references/milestone-planning.md)
 - 실행 흐름: [references/milestone-execution-workflow.md](references/milestone-execution-workflow.md)
-
-세부 규격 문서:
-
 - run artifact 저장·검증·복구 규약: [references/run-artifact-protocol.md](references/run-artifact-protocol.md)
+- 간소화된 run artifact 최소 형식: [references/run-artifacts.md](references/run-artifacts.md)
+- 서브에이전트 호출 흐름: [references/subagent-workflow.md](references/subagent-workflow.md)
 - Backend Design Writer 계약: [references/backend-technical-design-writer-contract.md](references/backend-technical-design-writer-contract.md)
 - Backend Implementation Engineer 계약: [references/backend-implementation-engineer-contract.md](references/backend-implementation-engineer-contract.md)
 - Backend Architecture Reviewer 계약: [references/backend-architecture-reviewer-contract.md](references/backend-architecture-reviewer-contract.md)
 
-## 역할
-
-| 주체 | 핵심 책임 | 책임이 아닌 것 |
-|------|-----------|----------------|
-| 메인 에이전트 | 요구사항 명확화, 질문 생성, 확정/미확정 정책 분리, 운영 가능성 확인, 마일스톤 분할, Source of Truth 선별, input 작성, output 검증, 다음 단계 라우팅, 사용자 보고 | 서브에이전트의 전문 판단 대체, 미확정 비즈니스/운영 정책 추론 |
-| Backend Design Writer `backend-technical-design-writer` | 확정 요구사항 컨텍스트 기반 backend 설계 판단, TDD 작성 또는 스킵/차단 근거 작성 | 구현, 리뷰, 다음 input 작성, 사용자 직접 질문, 미확정 정책 추론 |
-| Backend Implementation Engineer `backend-implementation-engineer` | backend 코드 작성·수정, 검증 실행, 구현 output 작성 | architecture review 판정, 미확정 정책 구현 |
-| Backend Architecture Reviewer `backend-architecture-reviewer` | 입력된 Source of Truth와 TDD 결정 기준으로 backend 변경 파일 검토 | 기능 QA, 성능 튜닝 제안, frontend 검토, 입력에 없는 기준으로 violation 생성 |
-
-상세 경계와 예외는 [references/orchestration-boundaries.md](references/orchestration-boundaries.md)를 따른다.
-
 ## 작업 흐름
 
-`implement-backend`가 호출되면 메인 에이전트는 아래 순서를 반드시 따른다. 세부 판단 기준은 각 reference 문서가 소유한다.
+1. 요구사항 명확화
+   - 목표, 범위, 제외사항, 성공 기준, 외부 계약, DB/schema 영향, 보안/운영 정책을 확인한다.
+   - 합리적 추론으로 정하면 위험한 정책이 있으면 구현을 시작하지 않고 질문한다.
 
-```text
-백엔드 요청
-  -> 요구사항 명확화 게이트
-  -> 확정 요구사항 컨텍스트 기록
-  -> backend 마일스톤 계획
-  -> run artifact 경로 준비
-  -> Backend Design Writer
-  -> Backend Implementation Engineer
-  -> Backend Architecture Reviewer
-  -> 통과 또는 위반 수정 루프
-  -> 완료 보고
-```
+2. Source of Truth 선정
+   - 항상 `docs/backend/README.md`를 포함한다.
+   - 작업 성격에 맞춰 `docs/backend/architecture/**`, `docs/backend/policies/**`, `docs/backend/api-specs/**`, `docs/backend/design/**` 중 관련 문서를 고른다.
+   - 문서가 없거나 실제 코드와 맞지 않으면 먼저 사용자에게 문서 정리 필요성을 알리거나 `reverse-engineer-backend-docs` 사용을 제안한다.
 
-1. 요구사항 명확화 게이트를 수행한다.
-   - 구현 결정에 필요한 정책이 누락되면 구현, TDD, role input artifact 생성을 시작하지 않는다.
-   - 세부 기준은 [requirement-clarification-gate.md](references/requirement-clarification-gate.md)를 따른다.
-2. 확정 요구사항 컨텍스트를 기록한다.
-   - 업무 목표, 범위, 업무 규칙, 정책, 상태 변화, 정합성, 운영 요구사항을 설계·구현 판단 기준으로 고정한다.
-   - 코드베이스 관례로 처리할 항목, 금지된 추론, 남은 미결정 사항을 분리한다.
-   - 템플릿은 [requirement-context-template.md](references/requirement-context-template.md)를 따른다.
-3. backend 마일스톤을 계획한다.
-   - 하나의 검증 가능한 backend 동작 단위로 나눈다.
-   - 분할 기준은 [milestone-planning.md](references/milestone-planning.md)를 따른다.
-4. run artifact 경로를 준비한다.
-   - `docs/backend`가 비어 있거나 generic 문서이거나 실제 코드와 불일치하면 design 위임 전에 `reverse-engineer-backend-docs`로 backend Source of Truth를 준비한다.
-   - 각 role 호출 전에 `[입력 파일]`, `[출력 파일]`, `[체크포인트 파일]` 경로를 할당한다.
-   - 저장·검증·복구 규약은 [run-artifact-protocol.md](references/run-artifact-protocol.md)를 따른다.
-5. 각 마일스톤을 design → implementation → architecture review 순서로 실행한다.
-   - 역할별 input/output/checkpoint 템플릿은 각 `*-contract.md`를 따른다.
-   - 실행 세부 절차는 [milestone-execution-workflow.md](references/milestone-execution-workflow.md)를 따른다.
-6. architecture review 위반이 있으면 수정 루프로 보낸다.
-   - `blocker` 또는 `major` 위반은 통과로 간주하지 않는다.
-   - 반복 한계를 넘으면 [milestone-execution-workflow.md](references/milestone-execution-workflow.md)의 escalation 절차를 따른다.
-7. 완료 시 변경 파일, 검증 결과, architecture review 판정, frontend 전달 계약을 보고한다.
+3. run artifact 준비
+   - `.agents/runs/{run_id}` 아래에 요구사항, role input/output, checkpoint 파일을 만든다.
+   - 자세한 최소 형식은 [references/run-artifacts.md](references/run-artifacts.md)를 따른다.
+
+4. TDD 작성 서브에이전트 호출
+   - `backend-technical-design-writer`를 호출한다.
+   - 입력에는 확정 요구사항, 제외사항, Source of Truth, TDD 저장 경로, 출력 파일, 체크포인트 파일을 포함한다.
+   - 결과는 구현자가 따를 수 있는 backend TDD 또는 TDD 생략 불가/차단 사유여야 한다.
+
+5. 코드 구현 서브에이전트 호출
+   - `backend-implementation-engineer`를 호출한다.
+   - 입력에는 TDD 결과, Source of Truth, 변경 범위, 검증 명령을 포함한다.
+   - 구현자는 `docs/backend` 하위 문서와 TDD를 기준으로 코드를 수정하고 검증 결과를 남긴다.
+
+6. 코드 리뷰 서브에이전트 호출
+   - `backend-architecture-reviewer`를 호출한다.
+   - 입력에는 구현 결과, 변경 파일, TDD, Source of Truth를 포함한다.
+   - reviewer는 `docs/backend` 하위 문서와 TDD 기준 위반만 판정한다.
+
+7. 최대 5회 수정 루프
+   - reviewer가 `blocker` 또는 `major` 위반을 보고하면 같은 구현 서브에이전트에 수정 입력을 보낸다.
+   - 수정 후 reviewer를 다시 호출한다.
+   - 구현과 리뷰 반복은 최대 5회다.
+   - 5회 후에도 위반이 남으면 직접 고치지 말고 위반 요약, 시도한 수정, 남은 결정 사항을 사용자에게 질문한다.
+
+8. 완료 보고
+   - 변경 파일, TDD 경로, 테스트/lint/build 결과, reviewer 판정, 남은 위험 또는 사용자 결정 사항을 짧게 보고한다.
+
+## 서브에이전트 규칙
+
+- 세부 호출 프롬프트와 출력 형식은 [references/subagent-workflow.md](references/subagent-workflow.md)를 따른다.
+- 서브에이전트는 서로 직접 호출하지 않는다.
+- 서브에이전트는 전달받은 input artifact와 `docs/backend` Source of Truth만 신뢰한다.
+- reviewer는 취향, 일반론, 입력에 없는 규칙을 violation으로 만들지 않는다.
+- 구현자는 reviewer의 `blocker`/`major` 위반을 해결하는 범위로만 수정한다.
 
 ## 검증
 
-backend 실행 규약, 계약 문서, 서브에이전트 정의를 수정한 뒤에는 아래 검증을 수행한다.
+스킬 또는 관련 artifact 구조를 바꾼 뒤 실행한다.
 
-- `python3 .agents/scripts/validate-context-checkpoints.py`
-- `python3 /Users/a1004/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/implement-backend`
-- `python3 .agents/skills/write-skill-artifact/scripts/check_skill_artifact.py .agents/skills/implement-backend/SKILL.md`
+```bash
+python3 .agents/skills/write-skill-artifact/scripts/check_skill_artifact.py .agents/skills/implement-backend/SKILL.md
+python3 .agents/scripts/validate-context-checkpoints.py
+python3 .agents/scripts/check-playbook.py
+```
 
-## 완료 기준
-
-- backend 마일스톤별 design/implementation/review input/output 파일 경로
-- backend 변경 파일 목록
-- backend compile/test 검증 결과
-- backend architecture review 통과 여부와 남은 위반
-- frontend 마일스톤으로 넘겨야 할 계약 또는 미해결 사항
+백엔드 작업 자체를 완료할 때는 해당 작업의 Gradle test, ktlint, bootJar 등 실제 검증 명령을 fresh run으로 수행한다.
